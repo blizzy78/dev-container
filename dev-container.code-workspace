@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"extensions": {
+		"recommendations": [
+			"ms-azuretools.vscode-docker",
+			"EditorConfig.EditorConfig"
+		]
+	}
+}

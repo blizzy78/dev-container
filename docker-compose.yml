@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - vscode-extensions:/home/vscode/.vscode-server/extensions
+      - workspaces:/home/vscode/workspaces
+      - bash-history:/home/vscode/.bash_history_dir
+      - git-config:/home/vscode/.gitconfig_dir
+      - m2-repo:/home/vscode/.m2
+      - sophora-repo:/home/vscode/sophora-repo
+    command: /bin/sh -c "while sleep 1000; do :; done"
+
+volumes:
+  vscode-extensions:
+  workspaces:
+  bash-history:
+  git-config:
+  m2-repo:
+  sophora-repo:
