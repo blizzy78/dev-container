@@ -29,4 +29,6 @@ RUN chmod a+rx /home/$USERNAME/go.sh && sudo -i -u $USERNAME /home/$USERNAME/go.
 COPY --from=builder /mage-static /home/$USERNAME
 RUN chmod 755 /home/$USERNAME/mage-static && sudo -i -u $USERNAME /home/$USERNAME/mage-static -v && rm /home/$USERNAME/mage-static
 
+RUN rm -rf /var/lib/apt/lists/*
+
 USER $USERNAME
