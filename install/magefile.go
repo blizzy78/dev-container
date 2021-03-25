@@ -17,6 +17,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"sync"
 
 	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
@@ -85,10 +86,16 @@ var (
 	npmInstall = sh.RunCmd("npm", "install")
 )
 
+var (
+	systemMu sync.Mutex
+	goMu     sync.Mutex
+	npmMu    sync.Mutex
+)
+
 var Default = Install
 
 func Install(ctx context.Context) {
-	mg.SerialCtxDeps(ctx,
+	mg.CtxDeps(ctx,
 		tools,
 		goTools,
 		mage,
@@ -104,10 +111,14 @@ func Install(ctx context.Context) {
 }
 
 func tools() error {
+	systemMu.Lock()
+	defer systemMu.Unlock()
 	return aptInstall(toolNames...)
 }
 
 func goTools() error {
+	goMu.Lock()
+	defer goMu.Unlock()
 	return g0(append([]string{"get"}, goToolURLs...)...)
 }
 
@@ -117,12 +128,21 @@ func mage() error {
 	}
 	defer sh.Rm("mage")
 
-	if err := os.Chdir("mage"); err != nil {
+	wd, err := os.Getwd()
+	if err != nil {
 		return err
 	}
-	defer os.Chdir("..")
 
-	return sh.Run("go", "run", "bootstrap.go")
+	goMu.Lock()
+	defer goMu.Unlock()
+
+	c := exec.Command("go", "run", "bootstrap.go")
+	c.Dir = wd + "/mage"
+	o, err := c.CombinedOutput()
+	if mg.Verbose() {
+		_, _ = os.Stdout.Write(o)
+	}
+	return err
 }
 
 func protoc(ctx context.Context) error {
@@ -148,7 +168,7 @@ func protoc(ctx context.Context) error {
 }
 
 func protocGenGRPCJava(ctx context.Context) error {
-	mg.SerialCtxDeps(ctx, protoc)
+	mg.CtxDeps(ctx, protoc)
 
 	name := "protoc-gen-grpc-java-" + protocGenGRPCJavaVersion
 	if err := downloadAs(ctx, protocGenGRPCJavaURL, "protoc/bin/"+name); err != nil {
@@ -177,7 +197,7 @@ func nvm(ctx context.Context) error {
 }
 
 func nodeJS(ctx context.Context) error {
-	mg.SerialCtxDeps(ctx, nvm)
+	mg.CtxDeps(ctx, nvm)
 
 	wd, err := os.Getwd()
 	if err != nil {
@@ -188,16 +208,12 @@ func nodeJS(ctx context.Context) error {
 		". ${NVM_DIR}/nvm.sh\n" +
 		"nvm install node\n" +
 		"sudo ln -s $(which node) /usr/bin/node"
-	c := exec.Cmd{
-		Path: "/usr/bin/bash",
-		Args: []string{
-			"/usr/bin/bash",
-			"-e",
-		},
-		Stdin: strings.NewReader(s),
-	}
+	c := exec.Command("bash", "-e")
+	c.Stdin = strings.NewReader(s)
 	o, err := c.CombinedOutput()
-	_, _ = os.Stdout.Write(o)
+	if mg.Verbose() {
+		_, _ = os.Stdout.Write(o)
+	}
 	return err
 }
 
@@ -219,21 +235,19 @@ func npm(ctx context.Context) error {
 		"bash install-npm.sh\n" +
 		"sudo ln -s $(which npm) /usr/bin/npm\n" +
 		"sudo ln -s $(which npx) /usr/bin/npx"
-	c := exec.Cmd{
-		Path: "/usr/bin/bash",
-		Args: []string{
-			"/usr/bin/bash",
-			"-e",
-		},
-		Stdin: strings.NewReader(s),
-	}
+	c := exec.Command("bash", "-e")
+	c.Stdin = strings.NewReader(s)
 	o, err := c.CombinedOutput()
-	_, _ = os.Stdout.Write(o)
+	if mg.Verbose() {
+		_, _ = os.Stdout.Write(o)
+	}
 	return err
 }
 
 func postCSS(ctx context.Context) error {
 	mg.SerialCtxDeps(ctx, npm)
+	npmMu.Lock()
+	defer npmMu.Unlock()
 	return npmInstall(append([]string{"-g"}, postCSSPackages...)...)
 }
 
@@ -307,6 +321,9 @@ func volumes() error {
 
 // https://stackoverflow.com/a/20693661
 func timezone() error {
+	systemMu.Lock()
+	defer systemMu.Unlock()
+
 	err := func() error {
 		f, err := os.OpenFile("preseed.txt", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, os.ModePerm)
 		if err != nil {
