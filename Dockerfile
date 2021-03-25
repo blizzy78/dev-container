@@ -1,3 +1,11 @@
+FROM golang:1.16 AS builder
+
+RUN git clone https://github.com/magefile/mage && cd mage && go run bootstrap.go
+WORKDIR /
+ADD go.mod go.sum install/*.go /
+RUN mage -compile mage-static
+
+
 FROM ubuntu
 
 ARG USERNAME=vscode
@@ -18,28 +26,7 @@ RUN chmod a+rx /home/$USERNAME/tools.sh && sudo -i -u $USERNAME /home/$USERNAME/
 ADD install/go.sh /home/$USERNAME
 RUN chmod a+rx /home/$USERNAME/go.sh && sudo -i -u $USERNAME /home/$USERNAME/go.sh && rm /home/$USERNAME/go.sh
 
-ADD install/go-tools.sh /home/$USERNAME
-RUN chmod a+rx /home/$USERNAME/go-tools.sh && sudo -i -u $USERNAME /home/$USERNAME/go-tools.sh && rm /home/$USERNAME/go-tools.sh
-
-ADD install/protoc.sh /home/$USERNAME
-RUN chmod a+rx /home/$USERNAME/protoc.sh && sudo -i -u $USERNAME /home/$USERNAME/protoc.sh && rm /home/$USERNAME/protoc.sh
-
-ADD install/npm.sh /home/$USERNAME
-RUN chmod a+rx /home/$USERNAME/npm.sh && sudo -i -u $USERNAME /home/$USERNAME/npm.sh && rm /home/$USERNAME/npm.sh
-
-ADD install/postcss.sh /home/$USERNAME
-RUN chmod a+rx /home/$USERNAME/postcss.sh && sudo -i -u $USERNAME /home/$USERNAME/postcss.sh && rm /home/$USERNAME/postcss.sh
-
-ADD install/java.sh /home/$USERNAME
-RUN chmod a+rx /home/$USERNAME/java.sh && sudo -i -u $USERNAME /home/$USERNAME/java.sh && rm /home/$USERNAME/java.sh
-
-ADD install/maven.sh /home/$USERNAME
-RUN chmod a+rx /home/$USERNAME/maven.sh && sudo -i -u $USERNAME /home/$USERNAME/maven.sh && rm /home/$USERNAME/maven.sh
-
-ADD install/volumes.sh /home/$USERNAME
-RUN chmod a+rx /home/$USERNAME/volumes.sh && sudo -i -u $USERNAME /home/$USERNAME/volumes.sh && rm /home/$USERNAME/volumes.sh
-
-ADD install/misc.sh /home/$USERNAME
-RUN chmod a+rx /home/$USERNAME/misc.sh && sudo -i -u $USERNAME /home/$USERNAME/misc.sh && rm /home/$USERNAME/misc.sh
+COPY --from=builder /mage-static /home/$USERNAME
+RUN chmod 755 /home/$USERNAME/mage-static && sudo -i -u $USERNAME /home/$USERNAME/mage-static -v && rm /home/$USERNAME/mage-static
 
 USER $USERNAME

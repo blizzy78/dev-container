@@ -1,3 +1,3 @@
-#!/bin/bash -xe
+#!/bin/bash -e
 
-sudo apt install -y wget curl less vim nano zip unzip xz-utils htop git gcc make
+sudo apt install -y curl git
