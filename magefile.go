@@ -12,9 +12,12 @@ import (
 	"github.com/mattn/go-isatty"
 )
 
-const composeFile = "docker-compose.yml"
+const (
+	composeFile = "docker-compose.yml"
+	projectName = "dev-container"
+)
 
-var dockerCompose = sh.RunCmd("docker-compose", "-f", composeFile)
+var dockerCompose = sh.RunCmd("docker-compose", "-f", composeFile, "-p", projectName)
 
 var Default = BuildImage
 
@@ -32,14 +35,14 @@ func RecreateContainer(ctx context.Context) {
 // Bash enters into a new shell inside a running container.
 func Bash(ctx context.Context) {
 	if !isatty.IsTerminal(os.Stdout.Fd()) && runtime.GOOS == "windows" {
-		sh.RunV("winpty", "docker-compose", "-f", composeFile, "exec", "dev", "bash")
+		sh.RunV("winpty", "docker-compose", "-f", composeFile, "-p", projectName, "exec", "dev", "bash")
 		return
 	}
-	sh.RunV("docker-compose", "-f", composeFile, "exec", "dev", "bash")
+	sh.RunV("docker-compose", "-f", composeFile, "-p", projectName, "exec", "dev", "bash")
 }
 
 func createContainer() error {
-	return dockerCompose("-p", "dev-container", "up", "-d")
+	return dockerCompose("up", "-d")
 }
 
 // DestroyContainer destroys the container.
