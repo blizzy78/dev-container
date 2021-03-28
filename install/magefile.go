@@ -188,12 +188,11 @@ func protocGenGRPCJava(ctx context.Context) error {
 }
 
 func nvm(ctx context.Context) error {
-	if err := downloadAs(ctx, nvmInstallURL, "install-nvm.sh"); err != nil {
+	b, err := download(ctx, nvmInstallURL)
+	if err != nil {
 		return err
 	}
-	defer sh.Rm("install-nvm.sh")
-
-	return sh.Run("bash", "install-nvm.sh")
+	return bashStdin(bytes.NewReader(b))
 }
 
 func nodeJS(ctx context.Context) error {
@@ -208,13 +207,7 @@ func nodeJS(ctx context.Context) error {
 		". ${NVM_DIR}/nvm.sh\n" +
 		"nvm install node\n" +
 		"sudo ln -s $(which node) /usr/bin/node"
-	c := exec.Command("bash", "-e")
-	c.Stdin = strings.NewReader(s)
-	o, err := c.CombinedOutput()
-	if mg.Verbose() {
-		_, _ = os.Stdout.Write(o)
-	}
-	return err
+	return bashStdin(strings.NewReader(s), "-e")
 }
 
 func npm(ctx context.Context) error {
@@ -235,13 +228,7 @@ func npm(ctx context.Context) error {
 		"bash install-npm.sh\n" +
 		"sudo ln -s $(which npm) /usr/bin/npm\n" +
 		"sudo ln -s $(which npx) /usr/bin/npx"
-	c := exec.Command("bash", "-e")
-	c.Stdin = strings.NewReader(s)
-	o, err := c.CombinedOutput()
-	if mg.Verbose() {
-		_, _ = os.Stdout.Write(o)
-	}
-	return err
+	return bashStdin(strings.NewReader(s), "-e")
 }
 
 func postCSS(ctx context.Context) error {
@@ -359,6 +346,16 @@ func timezone() error {
 	return sh.Run("sudo", "env", "DEBIAN_FRONTEND=noninteractive", "DEBCONF_NONINTERACTIVE_SEEN=true", "apt", "install", "-y", "tzdata")
 }
 
+func bashStdin(r io.Reader, args ...string) error {
+	c := exec.Command("bash", args...)
+	c.Stdin = r
+	o, err := c.CombinedOutput()
+	if mg.Verbose() {
+		_, _ = os.Stdout.Write(o)
+	}
+	return err
+}
+
 func mkdir(path string) error {
 	return os.MkdirAll(path, os.ModePerm)
 }
@@ -393,35 +390,24 @@ func unZipTo(b []byte, dest string) error {
 		}
 
 		if f.FileInfo().IsDir() {
-			if err := os.MkdirAll(fpath, os.ModePerm); err != nil {
+			if err := mkdir(fpath); err != nil {
 				return err
 			}
 			continue
 		}
 
-		if err := os.MkdirAll(filepath.Dir(fpath), os.ModePerm); err != nil {
+		if err := mkdir(filepath.Dir(fpath)); err != nil {
 			return err
 		}
 
 		createFile := func() error {
-			file, err := os.OpenFile(fpath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
-			if err != nil {
-				return err
-			}
-			defer file.Close()
-
 			fr, err := f.Open()
 			if err != nil {
 				return err
 			}
 			defer fr.Close()
 
-			_, err = io.Copy(file, fr)
-			if err != nil {
-				return err
-			}
-
-			return nil
+			return copyToFile(fr, fpath, f.Mode())
 		}
 
 		if err := createFile(); err != nil {
@@ -461,37 +447,33 @@ func unTarGZIPTo(b []byte, dest string) error {
 		}
 
 		if h.Typeflag == tar.TypeDir {
-			if err := os.MkdirAll(fpath, os.ModePerm); err != nil {
+			if err := mkdir(fpath); err != nil {
 				return err
 			}
 			continue
 		}
 
-		if err := os.MkdirAll(filepath.Dir(fpath), os.ModePerm); err != nil {
+		if err := mkdir(filepath.Dir(fpath)); err != nil {
 			return err
 		}
 
-		createFile := func() error {
-			file, err := os.OpenFile(fpath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, h.FileInfo().Mode())
-			if err != nil {
-				return err
-			}
-			defer file.Close()
-
-			_, err = io.Copy(file, tr)
-			if err != nil {
-				return err
-			}
-
-			return nil
-		}
-
-		if err := createFile(); err != nil {
+		if err := copyToFile(tr, fpath, h.FileInfo().Mode()); err != nil {
 			return err
 		}
 	}
 
 	return nil
+}
+
+func copyToFile(r io.Reader, path string, perm fs.FileMode) error {
+	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, perm)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	_, err = io.Copy(f, r)
+	return err
 }
 
 func downloadAs(ctx context.Context, url string, path string) error {
