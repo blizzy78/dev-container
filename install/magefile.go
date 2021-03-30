@@ -39,7 +39,7 @@ const (
 
 var (
 	toolNames = []string{
-		"apt-utils", "wget", "less", "vim", "nano", "zip", "unzip", "xz-utils", "htop", "gcc", "make",
+		"apt-utils", "locales", "wget", "less", "vim", "nano", "zip", "unzip", "xz-utils", "htop", "gcc", "make",
 	}
 
 	goToolURLs = []string{
@@ -107,6 +107,7 @@ func Install(ctx context.Context) {
 		maven,
 		volumes,
 		timezone,
+		locales,
 	)
 }
 
@@ -344,6 +345,19 @@ func timezone() error {
 	}
 
 	return sh.Run("sudo", "env", "DEBIAN_FRONTEND=noninteractive", "DEBCONF_NONINTERACTIVE_SEEN=true", "apt", "install", "-y", "tzdata")
+}
+
+func locales(ctx context.Context) error {
+	mg.CtxDeps(ctx, tools)
+
+	systemMu.Lock()
+	defer systemMu.Unlock()
+
+	if err := sh.Run("sudo", "locale-gen", "en_US"); err != nil {
+		return err
+	}
+
+	return sh.Run("sudo", "locale-gen", "en_US.UTF-8")
 }
 
 func bashStdin(r io.Reader, args ...string) error {
