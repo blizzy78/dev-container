@@ -18,6 +18,7 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
@@ -64,6 +65,11 @@ var (
 		".m2",
 		"sophora-repo",
 	}
+
+	protocGoPackages = []string{
+		"google.golang.org/protobuf/cmd/protoc-gen-go",
+		"google.golang.org/grpc/cmd/protoc-gen-go-grpc",
+	}
 )
 
 const (
@@ -101,6 +107,7 @@ func Install(ctx context.Context) {
 		mage,
 		protoc,
 		protocGenGRPCJava,
+		protocGo,
 		npm,
 		postCSS,
 		jdk,
@@ -109,6 +116,7 @@ func Install(ctx context.Context) {
 		timezone,
 		locales,
 	)
+
 }
 
 func tools() error {
@@ -188,6 +196,12 @@ func protocGenGRPCJava(ctx context.Context) error {
 	return sudoLn(wd+"/protoc/bin/protoc-gen-grpc-java", "/usr/bin/protoc-gen-grpc-java")
 }
 
+func protocGo() error {
+	goMu.Lock()
+	defer goMu.Unlock()
+	return g0(append([]string{"get"}, protocGoPackages...)...)
+}
+
 func nvm(ctx context.Context) error {
 	b, err := download(ctx, nvmInstallURL)
 	if err != nil {
@@ -212,8 +226,6 @@ func nodeJS(ctx context.Context) error {
 }
 
 func npm(ctx context.Context) error {
-	mg.SerialCtxDeps(ctx, nodeJS)
-
 	if err := downloadAs(ctx, npmInstallURL, "install-npm.sh"); err != nil {
 		return err
 	}
@@ -224,6 +236,8 @@ func npm(ctx context.Context) error {
 		return err
 	}
 
+	mg.CtxDeps(ctx, nodeJS)
+
 	s := "export NVM_DIR=\"" + wd + "/.nvm\"\n" +
 		". ${NVM_DIR}/nvm.sh\n" +
 		"bash install-npm.sh\n" +
@@ -233,7 +247,7 @@ func npm(ctx context.Context) error {
 }
 
 func postCSS(ctx context.Context) error {
-	mg.SerialCtxDeps(ctx, npm)
+	mg.CtxDeps(ctx, npm)
 	npmMu.Lock()
 	defer npmMu.Unlock()
 	return npmInstall(append([]string{"-g"}, postCSSPackages...)...)
@@ -511,12 +525,21 @@ func downloadAs(ctx context.Context, url string, path string) error {
 }
 
 func download(ctx context.Context, url string) ([]byte, error) {
+	c := http.Client{
+		Transport: &http.Transport{
+			ResponseHeaderTimeout: 10 * time.Second,
+		},
+	}
+
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Minute)
+	defer cancel()
+
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	res, err := http.DefaultClient.Do(req)
+	res, err := c.Do(req)
 	if err != nil {
 		return nil, err
 	}
