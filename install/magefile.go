@@ -41,6 +41,7 @@ const (
 var (
 	toolNames = []string{
 		"apt-utils", "locales", "wget", "less", "vim", "nano", "zip", "unzip", "xz-utils", "htop", "gcc", "make",
+		"telnet", "netcat",
 	}
 
 	goToolURLs = []string{
@@ -53,6 +54,8 @@ var (
 		"github.com/go-delve/delve/cmd/dlv",
 		"github.com/golangci/golangci-lint/cmd/golangci-lint",
 		"golang.org/x/tools/gopls",
+		"github.com/dvyukov/go-fuzz/go-fuzz",
+		"github.com/dvyukov/go-fuzz/go-fuzz-build",
 	}
 
 	postCSSPackages = []string{
