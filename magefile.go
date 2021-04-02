@@ -18,17 +18,31 @@ const (
 )
 
 var dockerCompose = sh.RunCmd("docker-compose", "-f", composeFile, "-p", projectName)
+var dockerPull = sh.RunCmd("docker", "pull")
 
 var Default = BuildImage
 
 // BuildImage rebuilds the docker image.
 func BuildImage(ctx context.Context) error {
+	mg.CtxDeps(ctx, pullGolang, pullUbuntu)
 	return dockerCompose("build")
 }
 
+func pullGolang() error {
+	return dockerPull("golang")
+}
+
+func pullUbuntu() error {
+	return dockerPull("ubuntu")
+}
+
 // RecreateContainer destroys the container and spins up a new one.
-func RecreateContainer(ctx context.Context) {
-	mg.CtxDeps(ctx, BuildImage, DestroyContainer)
+func RecreateContainer(ctx context.Context, rebuildImage bool) {
+	if rebuildImage {
+		mg.CtxDeps(ctx, BuildImage, DestroyContainer)
+	} else {
+		mg.CtxDeps(ctx, DestroyContainer)
+	}
 	mg.CtxDeps(ctx, createContainer)
 }
 
