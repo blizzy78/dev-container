@@ -26,10 +26,10 @@ import (
 
 const (
 	// https://github.com/protocolbuffers/protobuf/releases
-	protocVersion = "3.15.6"
+	protocVersion = "3.15.7"
 
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
-	protocGenGRPCJavaVersion = "1.36.1"
+	protocGenGRPCJavaVersion = "1.37.0"
 
 	// https://github.com/nvm-sh/nvm/releases
 	nvmVersion = "0.38.0"
@@ -39,7 +39,7 @@ const (
 	zuluJDKVersion = "11.0.10"
 
 	// https://maven.apache.org/download.cgi
-	mavenVersion = "3.6.3"
+	mavenVersion = "3.8.1"
 
 	tz = "Europe/Berlin"
 )
