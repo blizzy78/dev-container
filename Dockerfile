@@ -12,7 +12,7 @@ ARG USERNAME=vscode
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
-RUN apt upgrade -y && apt update && apt upgrade -y
+RUN apt clean && apt upgrade -y && apt update && apt upgrade -y
 
 RUN groupadd --gid $USER_GID $USERNAME && \
     useradd --uid $USER_UID --gid $USER_GID -m $USERNAME && \
@@ -28,6 +28,6 @@ RUN rm /home/$USERNAME/tools.sh /home/$USERNAME/go.sh
 COPY --from=builder /mage-static /home/$USERNAME
 RUN sudo -i -u $USERNAME /home/$USERNAME/mage-static -v && rm /home/$USERNAME/mage-static
 
-RUN rm -rf /var/lib/apt/lists/*
+RUN apt clean && rm -rf /var/lib/apt/lists/*
 
 USER $USERNAME

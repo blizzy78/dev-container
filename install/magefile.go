@@ -26,7 +26,7 @@ import (
 
 const (
 	// https://github.com/protocolbuffers/protobuf/releases
-	protocVersion = "3.15.7"
+	protocVersion = "3.15.8"
 
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
 	protocGenGRPCJavaVersion = "1.37.0"
@@ -134,7 +134,9 @@ func tools() error {
 	return aptInstall(toolNames...)
 }
 
-func goTools() error {
+func goTools(ctx context.Context) error {
+	mg.CtxDeps(ctx, tools)
+
 	goMu.Lock()
 	defer goMu.Unlock()
 	return g0(append([]string{"get"}, goToolURLs...)...)
