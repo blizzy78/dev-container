@@ -47,7 +47,7 @@ const (
 var (
 	toolNames = []string{
 		"apt-utils", "locales", "wget", "less", "vim", "nano", "zip", "unzip", "xz-utils", "htop", "gcc", "make",
-		"telnet", "netcat", "docker.io",
+		"telnet", "netcat", "docker.io", "libfontconfig",
 	}
 
 	goToolURLs = []string{
