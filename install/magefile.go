@@ -64,8 +64,8 @@ var (
 		"github.com/dvyukov/go-fuzz/go-fuzz-build",
 	}
 
-	postCSSPackages = []string{
-		"postcss@latest", "postcss-cli@latest",
+	npmToolPackages = []string{
+		"postcss@latest", "postcss-cli@latest", "serve",
 	}
 
 	volumeFolders = []string{
@@ -118,14 +118,13 @@ func Install(ctx context.Context) {
 		protocGenGRPCJava,
 		protocGo,
 		npm,
-		postCSS,
+		npmTools,
 		jdk,
 		maven,
 		volumes,
 		timezone,
 		locales,
 	)
-
 }
 
 func tools() error {
@@ -257,11 +256,11 @@ func npm(ctx context.Context) error {
 	return bashStdin(strings.NewReader(s), "-e")
 }
 
-func postCSS(ctx context.Context) error {
+func npmTools(ctx context.Context) error {
 	mg.CtxDeps(ctx, npm)
 	npmMu.Lock()
 	defer npmMu.Unlock()
-	return npmInstall(append([]string{"-g"}, postCSSPackages...)...)
+	return npmInstall(append([]string{"-g"}, npmToolPackages...)...)
 }
 
 func jdk(ctx context.Context) error {
