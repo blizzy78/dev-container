@@ -133,6 +133,11 @@ func Install(ctx context.Context) {
 func tools() error {
 	systemMu.Lock()
 	defer systemMu.Unlock()
+
+	if err := sh.Run("sudo", "apt", "update"); err != nil {
+		return err
+	}
+
 	return aptInstall(toolNames...)
 }
 
