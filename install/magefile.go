@@ -65,7 +65,10 @@ var (
 	}
 
 	npmToolPackages = []string{
-		"postcss@latest", "postcss-cli@latest", "serve",
+		"postcss@latest",
+		"postcss-cli@latest",
+		"serve",
+		"gatsby",
 	}
 
 	volumeFolders = []string{
