@@ -26,7 +26,7 @@ import (
 
 const (
 	// https://github.com/protocolbuffers/protobuf/releases
-	protocVersion = "3.15.8"
+	protocVersion = "3.16.0"
 
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
 	protocGenGRPCJavaVersion = "1.37.0"
@@ -35,8 +35,8 @@ const (
 	nvmVersion = "0.38.0"
 
 	// https://www.azul.com/downloads/zulu-community/?version=java-11-lts&os=ubuntu&architecture=x86-64-bit&package=jdk
-	zuluVersion    = "11.45.27"
-	zuluJDKVersion = "11.0.10"
+	zuluVersion    = "11.48.21"
+	zuluJDKVersion = "11.0.11"
 
 	// https://maven.apache.org/download.cgi
 	mavenVersion = "3.8.1"
