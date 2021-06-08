@@ -12,7 +12,7 @@ ARG USERNAME=vscode
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
-RUN apt clean && apt upgrade -y && apt update && apt upgrade -y
+RUN apt clean && rm -rf /var/lib/apt/lists/* && apt upgrade -y && apt update && apt upgrade -y
 
 RUN groupadd --gid $USER_GID $USERNAME && \
     useradd --uid $USER_UID --gid $USER_GID -m $USERNAME && \
