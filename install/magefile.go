@@ -26,7 +26,7 @@ import (
 
 const (
 	// https://github.com/protocolbuffers/protobuf/releases
-	protocVersion = "3.17.1"
+	protocVersion = "3.17.3"
 
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
 	protocGenGRPCJavaVersion = "1.38.0"
