@@ -29,7 +29,7 @@ const (
 	protocVersion = "3.17.3"
 
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
-	protocGenGRPCJavaVersion = "1.38.0"
+	protocGenGRPCJavaVersion = "1.38.1"
 
 	// https://github.com/nvm-sh/nvm/releases
 	nvmVersion = "0.38.0"
@@ -47,7 +47,7 @@ const (
 var (
 	toolNames = []string{
 		"apt-utils", "locales", "wget", "less", "vim", "nano", "zip", "unzip", "xz-utils", "htop", "gcc", "make",
-		"telnet", "netcat", "docker.io", "libfontconfig",
+		"telnet", "netcat", "docker.io", "libfontconfig", "postgresql-client",
 	}
 
 	goToolURLs = []string{
@@ -76,6 +76,7 @@ var (
 		"workspaces",
 		".m2",
 		"sophora-repo",
+		".ssh",
 	}
 
 	protocGoPackages = []string{
@@ -308,11 +309,11 @@ func maven(ctx context.Context) error {
 		return err
 	}
 
-	name := "apache-maven-" + mavenVersion
 	if err := downloadAndUnTarGZIPTo(ctx, mavenURL, wd); err != nil {
 		return err
 	}
 
+	name := "apache-maven-" + mavenVersion
 	if err := ln(name, "maven"); err != nil {
 		return err
 	}

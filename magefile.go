@@ -43,7 +43,7 @@ func RecreateContainer(ctx context.Context, rebuildImage bool) {
 	} else {
 		mg.CtxDeps(ctx, DestroyContainer)
 	}
-	mg.CtxDeps(ctx, createContainer)
+	mg.CtxDeps(ctx, CreateContainer)
 }
 
 // Bash enters into a new shell inside a running container.
@@ -55,7 +55,7 @@ func Bash(ctx context.Context) {
 	sh.RunV("docker-compose", "-f", composeFile, "-p", projectName, "exec", "dev", "bash")
 }
 
-func createContainer() error {
+func CreateContainer() error {
 	return dockerCompose("up", "-d")
 }
 

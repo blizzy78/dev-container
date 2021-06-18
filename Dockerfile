@@ -1,4 +1,4 @@
-FROM golang AS builder
+FROM golang AS mage-builder
 
 RUN git clone https://github.com/magefile/mage && cd mage && go run bootstrap.go
 WORKDIR /
@@ -25,7 +25,7 @@ RUN sudo -i -u $USERNAME bash </home/$USERNAME/tools.sh
 RUN sudo -i -u $USERNAME bash </home/$USERNAME/go.sh
 RUN rm /home/$USERNAME/tools.sh /home/$USERNAME/go.sh
 
-COPY --from=builder /mage-static /home/$USERNAME
+COPY --from=mage-builder /mage-static /home/$USERNAME
 RUN sudo -i -u $USERNAME /home/$USERNAME/mage-static -v && rm /home/$USERNAME/mage-static
 
 RUN apt clean && rm -rf /var/lib/apt/lists/*
