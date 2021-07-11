@@ -17,9 +17,6 @@ const (
 	projectName = "dev-container"
 )
 
-var dockerCompose = sh.RunCmd("docker-compose", "-f", composeFile, "-p", projectName)
-var dockerPull = sh.RunCmd("docker", "pull")
-
 var Default = BuildImage
 
 // BuildImage rebuilds the docker image.
@@ -36,7 +33,7 @@ func pullUbuntu() error {
 	return dockerPull("ubuntu")
 }
 
-// RecreateContainer destroys the container and spins up a new one.
+// RecreateContainer destroys the container and spins up a new one, optionally recreating the image first.
 func RecreateContainer(ctx context.Context, rebuildImage bool) {
 	if rebuildImage {
 		mg.CtxDeps(ctx, BuildImage, DestroyContainer)
@@ -55,6 +52,7 @@ func Bash(ctx context.Context) {
 	sh.RunV("docker-compose", "-f", composeFile, "-p", projectName, "exec", "dev", "bash")
 }
 
+// CreateContainer creates the container.
 func CreateContainer() error {
 	return dockerCompose("up", "-d")
 }
@@ -62,4 +60,18 @@ func CreateContainer() error {
 // DestroyContainer destroys the container.
 func DestroyContainer() error {
 	return dockerCompose("down")
+}
+
+func dockerPull(args ...string) error {
+	if !isatty.IsTerminal(os.Stdout.Fd()) && runtime.GOOS == "windows" {
+		return sh.RunV("winpty", append([]string{"docker", "pull"}, args...)...)
+	}
+	return sh.RunV("docker", append([]string{"pull"}, args...)...)
+}
+
+func dockerCompose(args ...string) error {
+	if !isatty.IsTerminal(os.Stdout.Fd()) && runtime.GOOS == "windows" {
+		return sh.RunV("winpty", append([]string{"docker", "compose", "-f", composeFile, "-p", projectName}, args...)...)
+	}
+	return sh.RunV("docker", append([]string{"compose", "-f", composeFile, "-p", projectName}, args...)...)
 }

@@ -396,7 +396,7 @@ func locales(ctx context.Context) error {
 
 func gatsby(ctx context.Context) error {
 	mg.CtxDeps(ctx, npmTools)
-	return sh.Run("gatsby", "telemetry", "--disable")
+	return sh.Run("npx", "gatsby", "telemetry", "--disable")
 }
 
 func bashStdin(r io.Reader, args ...string) error {
