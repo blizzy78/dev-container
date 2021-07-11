@@ -128,6 +128,7 @@ func Install(ctx context.Context) {
 		volumes,
 		timezone,
 		locales,
+		gatsby,
 	)
 }
 
@@ -391,6 +392,11 @@ func locales(ctx context.Context) error {
 	}
 
 	return sh.Run("sudo", "locale-gen", "en_US.UTF-8")
+}
+
+func gatsby(ctx context.Context) error {
+	mg.CtxDeps(ctx, npmTools)
+	return sh.Run("gatsby", "telemetry", "--disable")
 }
 
 func bashStdin(r io.Reader, args ...string) error {
