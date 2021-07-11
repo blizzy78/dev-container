@@ -29,7 +29,7 @@ const (
 	protocVersion = "3.17.3"
 
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
-	protocGenGRPCJavaVersion = "1.38.1"
+	protocGenGRPCJavaVersion = "1.39.0"
 
 	// https://github.com/nvm-sh/nvm/releases
 	nvmVersion = "0.38.0"
