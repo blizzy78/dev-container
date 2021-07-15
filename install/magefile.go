@@ -45,12 +45,12 @@ const (
 )
 
 var (
-	toolNames = []string{
+	aptPackageNames = []string{
 		"apt-utils", "locales", "wget", "less", "vim", "nano", "zip", "unzip", "xz-utils", "htop", "gcc", "make",
-		"telnet", "netcat", "docker.io", "libfontconfig", "postgresql-client",
+		"telnet", "netcat", "docker.io", "libfontconfig", "postgresql-client", "ffmpeg",
 	}
 
-	goToolURLs = []string{
+	goModuleURLs = []string{
 		"github.com/uudashr/gopkgs/v2/cmd/gopkgs",
 		"github.com/ramya-rao-a/go-outline",
 		"github.com/cweill/gotests/gotests",
@@ -64,7 +64,7 @@ var (
 		"github.com/dvyukov/go-fuzz/go-fuzz-build",
 	}
 
-	npmToolPackages = []string{
+	npmPackageNames = []string{
 		"postcss@latest",
 		"postcss-cli@latest",
 		"serve",
@@ -79,7 +79,7 @@ var (
 		".ssh",
 	}
 
-	protocGoPackages = []string{
+	protocGoPackageURLs = []string{
 		"google.golang.org/protobuf/cmd/protoc-gen-go",
 		"google.golang.org/grpc/cmd/protoc-gen-go-grpc",
 	}
@@ -115,14 +115,14 @@ var Default = Install
 
 func Install(ctx context.Context) {
 	mg.CtxDeps(ctx,
-		tools,
-		goTools,
+		aptPackages,
+		goModules,
 		mage,
 		protoc,
 		protocGenGRPCJava,
-		protocGo,
+		protocGoPackages,
 		npm,
-		npmTools,
+		npmPackages,
 		jdk,
 		maven,
 		volumes,
@@ -132,7 +132,7 @@ func Install(ctx context.Context) {
 	)
 }
 
-func tools() error {
+func aptPackages() error {
 	systemMu.Lock()
 	defer systemMu.Unlock()
 
@@ -140,15 +140,15 @@ func tools() error {
 		return err
 	}
 
-	return aptInstall(toolNames...)
+	return aptInstall(aptPackageNames...)
 }
 
-func goTools(ctx context.Context) error {
-	mg.CtxDeps(ctx, tools)
+func goModules(ctx context.Context) error {
+	mg.CtxDeps(ctx, aptPackages)
 
 	goMu.Lock()
 	defer goMu.Unlock()
-	return g0(append([]string{"get"}, goToolURLs...)...)
+	return g0(append([]string{"get"}, goModuleURLs...)...)
 }
 
 func mage() error {
@@ -216,10 +216,10 @@ func protocGenGRPCJava(ctx context.Context) error {
 	return sudoLn(wd+"/protoc/bin/protoc-gen-grpc-java", "/usr/bin/protoc-gen-grpc-java")
 }
 
-func protocGo() error {
+func protocGoPackages() error {
 	goMu.Lock()
 	defer goMu.Unlock()
-	return g0(append([]string{"get"}, protocGoPackages...)...)
+	return g0(append([]string{"get"}, protocGoPackageURLs...)...)
 }
 
 func nvm(ctx context.Context) error {
@@ -266,11 +266,11 @@ func npm(ctx context.Context) error {
 	return bashStdin(strings.NewReader(s), "-e")
 }
 
-func npmTools(ctx context.Context) error {
+func npmPackages(ctx context.Context) error {
 	mg.CtxDeps(ctx, npm)
 	npmMu.Lock()
 	defer npmMu.Unlock()
-	return npmInstall(append([]string{"-g"}, npmToolPackages...)...)
+	return npmInstall(append([]string{"-g"}, npmPackageNames...)...)
 }
 
 func jdk(ctx context.Context) error {
@@ -382,7 +382,7 @@ func timezone() error {
 }
 
 func locales(ctx context.Context) error {
-	mg.CtxDeps(ctx, tools)
+	mg.CtxDeps(ctx, aptPackages)
 
 	systemMu.Lock()
 	defer systemMu.Unlock()
@@ -395,7 +395,7 @@ func locales(ctx context.Context) error {
 }
 
 func gatsby(ctx context.Context) error {
-	mg.CtxDeps(ctx, npmTools)
+	mg.CtxDeps(ctx, npmPackages)
 	return sh.Run("npx", "gatsby", "telemetry", "--disable")
 }
 
