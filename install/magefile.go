@@ -29,7 +29,7 @@ const tz = "Europe/Berlin"
 var (
 	aptPackageNames = []string{
 		"apt-utils", "locales", "wget", "less", "vim", "nano", "zip", "unzip", "xz-utils", "htop", "gcc", "make",
-		"telnet", "netcat", "docker.io", "libfontconfig", "postgresql-client", "ffmpeg",
+		"telnet", "netcat", "docker.io", "libfontconfig", "postgresql-client",
 	}
 
 	goModuleURLs = []string{
