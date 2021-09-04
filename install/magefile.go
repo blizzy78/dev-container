@@ -1,4 +1,5 @@
-//+build mage
+//go:build mage
+// +build mage
 
 package main
 
@@ -32,18 +33,18 @@ var (
 		"telnet", "netcat", "docker.io", "libfontconfig", "postgresql-client",
 	}
 
-	goModuleURLs = []string{
-		"github.com/uudashr/gopkgs/v2/cmd/gopkgs",
-		"github.com/ramya-rao-a/go-outline",
-		"github.com/cweill/gotests/gotests",
-		"github.com/fatih/gomodifytags",
-		"github.com/josharian/impl",
-		"github.com/haya14busa/goplay/cmd/goplay",
-		"github.com/go-delve/delve/cmd/dlv",
-		"github.com/golangci/golangci-lint/cmd/golangci-lint",
-		"golang.org/x/tools/gopls",
-		"github.com/dvyukov/go-fuzz/go-fuzz",
-		"github.com/dvyukov/go-fuzz/go-fuzz-build",
+	goToolURLs = []string{
+		"github.com/uudashr/gopkgs/v2/cmd/gopkgs@latest",
+		"github.com/ramya-rao-a/go-outline@latest",
+		"github.com/cweill/gotests/gotests@latest",
+		"github.com/fatih/gomodifytags@latest",
+		"github.com/josharian/impl@latest",
+		"github.com/haya14busa/goplay/cmd/goplay@latest",
+		"github.com/go-delve/delve/cmd/dlv@latest",
+		"github.com/golangci/golangci-lint/cmd/golangci-lint@latest",
+		"golang.org/x/tools/gopls@latest",
+		"github.com/dvyukov/go-fuzz/go-fuzz@latest",
+		"github.com/dvyukov/go-fuzz/go-fuzz-build@latest",
 	}
 
 	npmPackageNames = []string{
@@ -98,7 +99,7 @@ var Default = Install
 func Install(ctx context.Context) {
 	mg.CtxDeps(ctx,
 		aptPackages,
-		goModules,
+		goTools,
 		mage,
 		protoc,
 		protocGenGRPCJava,
@@ -125,12 +126,22 @@ func aptPackages() error {
 	return aptInstall(aptPackageNames...)
 }
 
-func goModules(ctx context.Context) error {
+func goTools(ctx context.Context) error {
 	mg.CtxDeps(ctx, aptPackages)
 
-	goMu.Lock()
-	defer goMu.Unlock()
-	return g0(append([]string{"get"}, goModuleURLs...)...)
+	for _, u := range goToolURLs {
+		err := func() error {
+			goMu.Lock()
+			defer goMu.Unlock()
+
+			return g0("install", u)
+		}()
+		if err != nil {
+			return err
+		}
+	}
+
+	return ln("dlv", "/home/vscode/go/bin/dlv-dap")
 }
 
 func mage() error {
