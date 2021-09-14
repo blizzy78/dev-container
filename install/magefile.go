@@ -30,7 +30,7 @@ const tz = "Europe/Berlin"
 var (
 	aptPackageNames = []string{
 		"apt-utils", "locales", "wget", "less", "vim", "nano", "zip", "unzip", "xz-utils", "htop", "gcc", "make",
-		"telnet", "netcat", "docker.io", "libfontconfig", "postgresql-client",
+		"telnet", "netcat", "docker.io", "libfontconfig", "postgresql-client", "iputils-ping",
 	}
 
 	goToolURLs = []string{

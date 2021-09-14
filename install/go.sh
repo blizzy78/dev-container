@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 # https://golang.org/dl/
-GO_VERSION="1.17"
+GO_VERSION="1.17.1"
 
 curl -LO https://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz
 tar xzf go${GO_VERSION}.linux-amd64.tar.gz
