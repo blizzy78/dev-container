@@ -5,10 +5,10 @@ package main
 
 const (
 	// https://github.com/protocolbuffers/protobuf/releases
-	protocVersion = "3.17.3"
+	protocVersion = "3.18.0"
 
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
-	protocGenGRPCJavaVersion = "1.40.1"
+	protocGenGRPCJavaVersion = "1.41.0"
 
 	// https://github.com/nvm-sh/nvm/releases
 	nvmVersion = "0.38.0"
