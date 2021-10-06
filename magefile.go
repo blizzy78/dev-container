@@ -23,7 +23,7 @@ var Default = BuildImage
 // BuildImage rebuilds the docker image.
 func BuildImage(ctx context.Context) error {
 	mg.CtxDeps(ctx, pullGolang, pullUbuntu)
-	return dockerCompose("build")
+	return dockerCompose("build", "--no-cache", "--force-rm")
 }
 
 func pullGolang() error {
@@ -47,10 +47,10 @@ func RecreateContainer(ctx context.Context, rebuildImage bool) {
 // Bash enters into a new shell inside a running container.
 func Bash(ctx context.Context) {
 	if !isatty.IsTerminal(os.Stdout.Fd()) && runtime.GOOS == "windows" {
-		sh.RunV("winpty", "docker-compose", "-f", composeFile, "-p", projectName, "exec", "dev", "bash")
+		sh.RunV("winpty", "docker", "compose", "-f", composeFile, "-p", projectName, "exec", "dev", "bash")
 		return
 	}
-	sh.RunV("docker-compose", "-f", composeFile, "-p", projectName, "exec", "dev", "bash")
+	sh.RunV("docker", "compose", "-f", composeFile, "-p", projectName, "exec", "dev", "bash")
 }
 
 // CreateContainer creates the container.
