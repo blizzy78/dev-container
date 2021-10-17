@@ -1,5 +1,4 @@
 //go:build mage
-// +build mage
 
 package main
 
@@ -9,6 +8,7 @@ import (
 	"bytes"
 	"compress/gzip"
 	"context"
+	"crypto/tls"
 	"errors"
 	"fmt"
 	"io"
@@ -31,6 +31,7 @@ var (
 	aptPackageNames = []string{
 		"apt-utils", "locales", "wget", "less", "vim", "nano", "zip", "unzip", "xz-utils", "htop", "gcc", "make",
 		"telnet", "netcat", "socat", "docker.io", "libfontconfig", "postgresql-client", "iputils-ping", "libxml2-utils",
+		"curl", "git", "ca-certificates",
 	}
 
 	goToolURLs = []string{
@@ -70,6 +71,8 @@ var (
 )
 
 const (
+	goURL = "https://golang.org/dl/go" + goVersion + ".linux-amd64.tar.gz"
+
 	protocURL            = "https://github.com/protocolbuffers/protobuf/releases/download/v" + protocVersion + "/protoc-" + protocVersion + "-linux-x86_64.zip"
 	protocGenGRPCJavaURL = "https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/" + protocGenGRPCJavaVersion + "/protoc-gen-grpc-java-" + protocGenGRPCJavaVersion + "-linux-x86_64.exe"
 
@@ -100,8 +103,10 @@ var Default = Install
 func Install(ctx context.Context) {
 	mg.CtxDeps(ctx, timezone)
 
+	mg.CtxDeps(ctx, aptPackages, caCertificates)
+
 	mg.CtxDeps(ctx,
-		aptPackages,
+		installGo,
 		goTools,
 		mage,
 		protoc,
@@ -128,8 +133,52 @@ func aptPackages() error {
 	return aptInstall(aptPackageNames...)
 }
 
+func caCertificates(ctx context.Context) error {
+	mg.CtxDeps(ctx, aptPackages, installGo)
+	return sh.Run("sudo", "update-ca-certificates")
+}
+
+func installGo(ctx context.Context) error {
+	wd, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+
+	if err := downloadAndUnTarGZIPTo(ctx, goURL, wd); err != nil {
+		return err
+	}
+
+	if err := os.Rename("go", "go-"+goVersion); err != nil {
+		return err
+	}
+
+	if err := ln("go-"+goVersion, "go"); err != nil {
+		return err
+	}
+
+	if err := sudoLn(wd+"/go", "/go"); err != nil {
+		return err
+	}
+
+	if err := sudoLn("/go/bin/go", "/usr/bin/go"); err != nil {
+		return err
+	}
+
+	file, err := os.OpenFile(".bashrc", os.O_WRONLY|os.O_APPEND, os.ModePerm)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	if _, err = file.WriteString("export PATH=\"$PATH:/go/bin\"\n"); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func goTools(ctx context.Context) error {
-	mg.CtxDeps(ctx, aptPackages)
+	mg.CtxDeps(ctx, aptPackages, installGo)
 
 	for _, u := range goToolURLs {
 		err := func() error {
@@ -146,7 +195,9 @@ func goTools(ctx context.Context) error {
 	return ln("dlv", "/home/vscode/go/bin/dlv-dap")
 }
 
-func mage() error {
+func mage(ctx context.Context) error {
+	mg.CtxDeps(ctx, aptPackages, installGo)
+
 	if err := sh.Run("git", "clone", "https://github.com/magefile/mage"); err != nil {
 		return err
 	}
@@ -211,7 +262,9 @@ func protocGenGRPCJava(ctx context.Context) error {
 	return sudoLn(wd+"/protoc/bin/protoc-gen-grpc-java", "/usr/bin/protoc-gen-grpc-java")
 }
 
-func protocGoModules() error {
+func protocGoModules(ctx context.Context) error {
+	mg.CtxDeps(ctx, installGo)
+
 	goMu.Lock()
 	defer goMu.Unlock()
 	return g0(append([]string{"get"}, protocGoModuleURLs...)...)
@@ -548,10 +601,14 @@ func download(ctx context.Context, url string) ([]byte, error) {
 	c := http.Client{
 		Transport: &http.Transport{
 			ResponseHeaderTimeout: 10 * time.Second,
+
+			TLSClientConfig: &tls.Config{
+				InsecureSkipVerify: true,
+			},
 		},
 	}
 
-	ctx, cancel := context.WithTimeout(ctx, 10*time.Minute)
+	ctx, cancel := context.WithTimeout(ctx, 3*time.Minute)
 	defer cancel()
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)

@@ -1,9 +1,11 @@
 //go:build mage
-// +build mage
 
 package main
 
 const (
+	// https://golang.org/dl/
+	goVersion = "1.17.2"
+
 	// https://github.com/protocolbuffers/protobuf/releases
 	protocVersion = "3.18.1"
 

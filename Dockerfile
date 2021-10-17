@@ -20,11 +20,6 @@ RUN groupadd --gid $USER_GID $USERNAME && \
     echo "$USERNAME ALL=(root) NOPASSWD:ALL" >/etc/sudoers.d/$USERNAME && \
     chmod 0440 /etc/sudoers.d/$USERNAME
 
-ADD install/tools.sh install/go.sh /home/$USERNAME
-RUN sudo -i -u $USERNAME bash </home/$USERNAME/tools.sh
-RUN sudo -i -u $USERNAME bash </home/$USERNAME/go.sh
-RUN rm /home/$USERNAME/tools.sh /home/$USERNAME/go.sh
-
 COPY --from=mage-builder /mage-static /home/$USERNAME
 RUN sudo -i -u $USERNAME /home/$USERNAME/mage-static -v && rm /home/$USERNAME/mage-static
 
