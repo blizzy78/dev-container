@@ -11,7 +11,7 @@ const (
 	protocGenGRPCJavaVersion = "1.41.0"
 
 	// https://github.com/nvm-sh/nvm/releases
-	nvmVersion = "0.38.0"
+	nvmVersion = "0.39.0"
 
 	// https://www.azul.com/downloads/zulu-community/?version=java-11-lts&os=ubuntu&architecture=x86-64-bit&package=jdk
 	zuluVersion    = "11.50.19"

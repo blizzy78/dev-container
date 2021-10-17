@@ -45,6 +45,7 @@ var (
 		"golang.org/x/tools/gopls@latest",
 		"github.com/dvyukov/go-fuzz/go-fuzz@latest",
 		"github.com/dvyukov/go-fuzz/go-fuzz-build@latest",
+		"golang.org/x/perf/cmd/benchstat@latest",
 	}
 
 	npmPackageNames = []string{
@@ -97,6 +98,8 @@ var (
 var Default = Install
 
 func Install(ctx context.Context) {
+	mg.CtxDeps(ctx, timezone)
+
 	mg.CtxDeps(ctx,
 		aptPackages,
 		goTools,
@@ -109,7 +112,6 @@ func Install(ctx context.Context) {
 		jdk,
 		maven,
 		volumes,
-		timezone,
 		locales,
 		gatsby,
 	)
