@@ -13,6 +13,7 @@ services:
       - m2-repo:/home/vscode/.m2
       - sophora-repo:/home/vscode/sophora-repo
       - ssh:/home/vscode/.ssh
+      - restic-repos:/home/vscode/restic-repos
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - dev-container
@@ -35,6 +36,7 @@ volumes:
   m2-repo:
   sophora-repo:
   ssh:
+  restic-repos:
   pg:
 
 networks:

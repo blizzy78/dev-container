@@ -21,4 +21,7 @@ const (
 
 	// https://maven.apache.org/download.cgi
 	mavenVersion = "3.8.3"
+
+	// https://github.com/restic/restic/releases
+	resticVersion = "0.12.1"
 )

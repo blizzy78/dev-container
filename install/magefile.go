@@ -6,6 +6,7 @@ import (
 	"archive/tar"
 	"archive/zip"
 	"bytes"
+	"compress/bzip2"
 	"compress/gzip"
 	"context"
 	"crypto/tls"
@@ -62,6 +63,7 @@ var (
 		".m2",
 		"sophora-repo",
 		".ssh",
+		"restic-repos",
 	}
 
 	protocGoModuleURLs = []string{
@@ -82,6 +84,8 @@ const (
 	zuluJDKURL = "https://cdn.azul.com/zulu/bin/zulu" + zuluVersion + "-ca-jdk" + zuluJDKVersion + "-linux_x64.tar.gz"
 
 	mavenURL = "https://mirror.netcologne.de/apache.org/maven/maven-3/" + mavenVersion + "/binaries/apache-maven-" + mavenVersion + "-bin.tar.gz"
+
+	resticURL = "https://github.com/restic/restic/releases/download/v" + resticVersion + "/restic_" + resticVersion + "_linux_amd64.bz2"
 )
 
 var (
@@ -119,6 +123,7 @@ func Install(ctx context.Context) {
 		volumes,
 		locales,
 		gatsby,
+		restic,
 	)
 }
 
@@ -447,6 +452,27 @@ func gatsby(ctx context.Context) error {
 	return sh.Run("npx", "gatsby", "telemetry", "--disable")
 }
 
+func restic(ctx context.Context) error {
+	wd, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+
+	if err := downloadAndUnBZip2To(ctx, resticURL, wd+"/restic_"+resticVersion+"_linux_amd64"); err != nil {
+		return err
+	}
+
+	if err := os.Chmod(wd+"/restic_"+resticVersion+"_linux_amd64", 0755); err != nil {
+		return err
+	}
+
+	if err := ln(wd+"/restic_"+resticVersion+"_linux_amd64", wd+"/restic"); err != nil {
+		return err
+	}
+
+	return sudoLn(wd+"/restic", "/usr/bin/restic")
+}
+
 func bashStdin(r io.Reader, args ...string) error {
 	c := exec.Command("bash", args...)
 	c.Stdin = r
@@ -475,6 +501,14 @@ func downloadAndUnTarGZIPTo(ctx context.Context, url string, dest string) error 
 		return err
 	}
 	return unTarGZIPTo(b, dest)
+}
+
+func downloadAndUnBZip2To(ctx context.Context, url string, dest string) error {
+	b, err := download(ctx, url)
+	if err != nil {
+		return err
+	}
+	return unBZip2To(b, dest)
 }
 
 func unZipTo(b []byte, dest string) error {
@@ -564,6 +598,11 @@ func unTarGZIPTo(b []byte, dest string) error {
 	}
 
 	return nil
+}
+
+func unBZip2To(b []byte, dest string) error {
+	r := bzip2.NewReader(bytes.NewReader(b))
+	return copyToFile(r, dest, fs.ModePerm)
 }
 
 func copyToFile(r io.Reader, path string, perm fs.FileMode) error {
