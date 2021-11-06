@@ -3,24 +3,15 @@
 package main
 
 import (
-	"archive/tar"
-	"archive/zip"
 	"bytes"
-	"compress/bzip2"
-	"compress/gzip"
 	"context"
-	"crypto/tls"
-	"errors"
 	"fmt"
 	"io"
 	"io/fs"
-	"net/http"
 	"os"
 	"os/exec"
-	"path/filepath"
 	"strings"
 	"sync"
-	"time"
 
 	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
@@ -48,6 +39,7 @@ var (
 		"github.com/dvyukov/go-fuzz/go-fuzz@latest",
 		"github.com/dvyukov/go-fuzz/go-fuzz-build@latest",
 		"golang.org/x/perf/cmd/benchstat@latest",
+		"github.com/orijtech/structslop/cmd/structslop@latest",
 	}
 
 	npmPackageNames = []string{
@@ -83,7 +75,7 @@ const (
 
 	zuluJDKURL = "https://cdn.azul.com/zulu/bin/zulu" + zuluVersion + "-ca-jdk" + zuluJDKVersion + "-linux_x64.tar.gz"
 
-	mavenURL = "https://mirror.netcologne.de/apache.org/maven/maven-3/" + mavenVersion + "/binaries/apache-maven-" + mavenVersion + "-bin.tar.gz"
+	mavenURL = "https://dlcdn.apache.org/maven/maven-3/" + mavenVersion + "/binaries/apache-maven-" + mavenVersion + "-bin.tar.gz"
 
 	resticURL = "https://github.com/restic/restic/releases/download/v" + resticVersion + "/restic_" + resticVersion + "_linux_amd64.bz2"
 )
@@ -132,51 +124,60 @@ func aptPackages() error {
 	defer systemMu.Unlock()
 
 	if err := sh.Run("sudo", "apt", "update"); err != nil {
-		return err
+		return fmt.Errorf("sudo apt update: %w", err)
 	}
 
-	return aptInstall(aptPackageNames...)
+	if err := aptInstall(aptPackageNames...); err != nil {
+		return fmt.Errorf("apt install packages: %w", err)
+	}
+
+	return nil
 }
 
 func caCertificates(ctx context.Context) error {
 	mg.CtxDeps(ctx, aptPackages, installGo)
-	return sh.Run("sudo", "update-ca-certificates")
+
+	if err := sh.Run("sudo", "update-ca-certificates"); err != nil {
+		return fmt.Errorf("sudo update-ca-certificates: %w", err)
+	}
+
+	return nil
 }
 
 func installGo(ctx context.Context) error {
 	wd, err := os.Getwd()
 	if err != nil {
-		return err
+		return fmt.Errorf("Getwd: %w", err)
 	}
 
 	if err := downloadAndUnTarGZIPTo(ctx, goURL, wd); err != nil {
-		return err
+		return fmt.Errorf("download and extract Go: %w", err)
 	}
 
 	if err := os.Rename("go", "go-"+goVersion); err != nil {
-		return err
+		return fmt.Errorf("rename Go folder: %w", err)
 	}
 
 	if err := ln("go-"+goVersion, "go"); err != nil {
-		return err
+		return fmt.Errorf("ln Go folder: %w", err)
 	}
 
 	if err := sudoLn(wd+"/go", "/go"); err != nil {
-		return err
+		return fmt.Errorf("sudo ln Go folder: %w", err)
 	}
 
 	if err := sudoLn("/go/bin/go", "/usr/bin/go"); err != nil {
-		return err
+		return fmt.Errorf("sudo ln /go/bin/go: %w", err)
 	}
 
 	file, err := os.OpenFile(".bashrc", os.O_WRONLY|os.O_APPEND, os.ModePerm)
 	if err != nil {
-		return err
+		return fmt.Errorf("open .bashrc: %w", err)
 	}
 	defer file.Close()
 
 	if _, err = file.WriteString("export PATH=\"$PATH:/go/bin\"\n"); err != nil {
-		return err
+		return fmt.Errorf("write Go PATH to .bashrc: %w", err)
 	}
 
 	return nil
@@ -192,25 +193,30 @@ func goTools(ctx context.Context) error {
 
 			return g0("install", u)
 		}()
+
 		if err != nil {
-			return err
+			return fmt.Errorf("install Go tools: %w", err)
 		}
 	}
 
-	return ln("dlv", "/home/vscode/go/bin/dlv-dap")
+	if err := ln("dlv", "/home/vscode/go/bin/dlv-dap"); err != nil {
+		return fmt.Errorf("ln dlv-dap: %w", err)
+	}
+
+	return nil
 }
 
 func mage(ctx context.Context) error {
 	mg.CtxDeps(ctx, aptPackages, installGo)
 
 	if err := sh.Run("git", "clone", "https://github.com/magefile/mage"); err != nil {
-		return err
+		return fmt.Errorf("git clone mage: %w", err)
 	}
 	defer sh.Rm("mage")
 
 	wd, err := os.Getwd()
 	if err != nil {
-		return err
+		return fmt.Errorf("Getwd: %w", err)
 	}
 
 	goMu.Lock()
@@ -222,29 +228,38 @@ func mage(ctx context.Context) error {
 	if mg.Verbose() {
 		_, _ = os.Stdout.Write(o)
 	}
-	return err
+
+	if err != nil {
+		return fmt.Errorf("go run bootstrap.go: %w", err)
+	}
+
+	return nil
 }
 
 func protoc(ctx context.Context) error {
 	dir := "protoc-" + protocVersion
 	if err := mkdir(dir); err != nil {
-		return err
+		return fmt.Errorf("create protoc folder: %w", err)
 	}
 
 	if err := downloadAndUnZipTo(ctx, protocURL, dir); err != nil {
-		return err
+		return fmt.Errorf("download and extract protoc: %w", err)
 	}
 
 	if err := ln(dir, "protoc"); err != nil {
-		return err
+		return fmt.Errorf("ln protoc folder: %w", err)
 	}
 
 	wd, err := os.Getwd()
 	if err != nil {
-		return err
+		return fmt.Errorf("Getwd: %w", err)
 	}
 
-	return sudoLn(wd+"/protoc/bin/protoc", "/usr/bin/protoc")
+	if err := sudoLn(wd+"/protoc/bin/protoc", "/usr/bin/protoc"); err != nil {
+		return fmt.Errorf("sudo ln /usr/bin/protoc: %w", err)
+	}
+
+	return nil
 }
 
 func protocGenGRPCJava(ctx context.Context) error {
@@ -252,19 +267,23 @@ func protocGenGRPCJava(ctx context.Context) error {
 
 	name := "protoc-gen-grpc-java-" + protocGenGRPCJavaVersion
 	if err := downloadAs(ctx, protocGenGRPCJavaURL, "protoc/bin/"+name); err != nil {
-		return err
+		return fmt.Errorf("download protoc-gen-grpc-java: %w", err)
 	}
 
 	if err := ln(name, "protoc/bin/protoc-gen-grpc-java"); err != nil {
-		return err
+		return fmt.Errorf("ln protoc-gen-grpc-java: %w", err)
 	}
 
 	wd, err := os.Getwd()
 	if err != nil {
-		return err
+		return fmt.Errorf("Getwd: %w", err)
 	}
 
-	return sudoLn(wd+"/protoc/bin/protoc-gen-grpc-java", "/usr/bin/protoc-gen-grpc-java")
+	if err := sudoLn(wd+"/protoc/bin/protoc-gen-grpc-java", "/usr/bin/protoc-gen-grpc-java"); err != nil {
+		return fmt.Errorf("sudo ln /usr/bin/protoc-gen-grpc-java: %w", err)
+	}
+
+	return nil
 }
 
 func protocGoModules(ctx context.Context) error {
@@ -272,15 +291,25 @@ func protocGoModules(ctx context.Context) error {
 
 	goMu.Lock()
 	defer goMu.Unlock()
-	return g0(append([]string{"get"}, protocGoModuleURLs...)...)
+
+	if err := g0(append([]string{"get"}, protocGoModuleURLs...)...); err != nil {
+		return fmt.Errorf("go get protoc modules: %w", err)
+	}
+
+	return nil
 }
 
 func nvm(ctx context.Context) error {
 	b, err := download(ctx, nvmInstallURL)
 	if err != nil {
-		return err
+		return fmt.Errorf("download nvm install script: %w", err)
 	}
-	return bashStdin(bytes.NewReader(b))
+
+	if err := bashStdin(bytes.NewReader(b)); err != nil {
+		return fmt.Errorf("run nvm install script: %w", err)
+	}
+
+	return nil
 }
 
 func nodeJS(ctx context.Context) error {
@@ -288,25 +317,30 @@ func nodeJS(ctx context.Context) error {
 
 	wd, err := os.Getwd()
 	if err != nil {
-		return err
+		return fmt.Errorf("Getwd: %w", err)
 	}
 
 	s := "export NVM_DIR=\"" + wd + "/.nvm\"\n" +
 		". ${NVM_DIR}/nvm.sh\n" +
 		"nvm install node\n" +
 		"sudo ln -s $(which node) /usr/bin/node"
-	return bashStdin(strings.NewReader(s), "-e")
+
+	if err := bashStdin(strings.NewReader(s), "-e"); err != nil {
+		return fmt.Errorf("run node install script: %w", err)
+	}
+
+	return nil
 }
 
 func npm(ctx context.Context) error {
 	if err := downloadAs(ctx, npmInstallURL, "install-npm.sh"); err != nil {
-		return err
+		return fmt.Errorf("download npm install script: %w", err)
 	}
 	defer sh.Rm("install-npm.sh")
 
 	wd, err := os.Getwd()
 	if err != nil {
-		return err
+		return fmt.Errorf("Getwd: %w", err)
 	}
 
 	mg.CtxDeps(ctx, nodeJS)
@@ -316,41 +350,52 @@ func npm(ctx context.Context) error {
 		"bash install-npm.sh\n" +
 		"sudo ln -s $(which npm) /usr/bin/npm\n" +
 		"sudo ln -s $(which npx) /usr/bin/npx"
-	return bashStdin(strings.NewReader(s), "-e")
+
+	if err := bashStdin(strings.NewReader(s), "-e"); err != nil {
+		return fmt.Errorf("run npm install script: %w", err)
+	}
+
+	return nil
 }
 
 func npmPackages(ctx context.Context) error {
 	mg.CtxDeps(ctx, npm)
+
 	npmMu.Lock()
 	defer npmMu.Unlock()
-	return npmInstall(append([]string{"-g"}, npmPackageNames...)...)
+
+	if err := npmInstall(append([]string{"-g"}, npmPackageNames...)...); err != nil {
+		return fmt.Errorf("npm install packages: %w", err)
+	}
+
+	return nil
 }
 
 func jdk(ctx context.Context) error {
 	wd, err := os.Getwd()
 	if err != nil {
-		return err
+		return fmt.Errorf("Getwd: %w", err)
 	}
 
 	name := "zulu" + zuluVersion + "-ca-jdk" + zuluJDKVersion + "-linux_x64"
 	if err := downloadAndUnTarGZIPTo(ctx, zuluJDKURL, wd); err != nil {
-		return err
+		return fmt.Errorf("download and extract JDK: %w", err)
 	}
 
 	if err := ln(name, "jdk"); err != nil {
-		return err
+		return fmt.Errorf("ln JDK folder: %w", err)
 	}
 
 	path := wd + "/jdk/bin"
 	dir := os.DirFS(path)
 	files, err := fs.Glob(dir, "*")
 	if err != nil {
-		return err
+		return fmt.Errorf("find JDK binaries: %w", err)
 	}
 
 	for _, f := range files {
 		if err = sudoLn(path+"/"+f, "/usr/bin/"+f); err != nil {
-			return err
+			return fmt.Errorf("sudo ln /usr/bin/%s: %w", f, err)
 		}
 	}
 
@@ -360,34 +405,38 @@ func jdk(ctx context.Context) error {
 func maven(ctx context.Context) error {
 	wd, err := os.Getwd()
 	if err != nil {
-		return err
+		return fmt.Errorf("Getwd: %w", err)
 	}
 
 	if err := downloadAndUnTarGZIPTo(ctx, mavenURL, wd); err != nil {
-		return err
+		return fmt.Errorf("download and extract Maven: %w", err)
 	}
 
 	name := "apache-maven-" + mavenVersion
 	if err := ln(name, "maven"); err != nil {
-		return err
+		return fmt.Errorf("ln Maven folder: %w", err)
 	}
 
-	return sudoLn(wd+"/maven/bin/mvn", "/usr/bin/mvn")
+	if err := sudoLn(wd+"/maven/bin/mvn", "/usr/bin/mvn"); err != nil {
+		return fmt.Errorf("sudo ln /usr/bin/maven: %w", err)
+	}
+
+	return nil
 }
 
 func volumes() error {
 	for _, f := range volumeFolders {
 		if err := mkdir(f); err != nil {
-			return err
+			return fmt.Errorf("create volume folder %s: %w", f, err)
 		}
 	}
 
 	for _, f := range []string{".bash_history", ".gitconfig"} {
 		if err := mkdir(f + "_dir"); err != nil {
-			return err
+			return fmt.Errorf("create volume folder %s_dir: %w", f, err)
 		}
 		if err := ln(f+"_dir/"+f, f); err != nil {
-			return err
+			return fmt.Errorf("ln volume folder %s_dir: %w", f, err)
 		}
 	}
 
@@ -402,7 +451,7 @@ func timezone() error {
 	err := func() error {
 		f, err := os.OpenFile("preseed.txt", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, os.ModePerm)
 		if err != nil {
-			return err
+			return fmt.Errorf("open preseed.txt: %w", err)
 		}
 		defer f.Close()
 
@@ -410,7 +459,7 @@ func timezone() error {
 		s := "tzdata tzdata/Areas select " + parts[0] + "\n" +
 			"tzdata tzdata/Zones/" + parts[0] + " select " + parts[1] + "\n"
 		if _, err = io.WriteString(f, s); err != nil {
-			return err
+			return fmt.Errorf("write preseed.txt: %w", err)
 		}
 
 		return nil
@@ -424,14 +473,18 @@ func timezone() error {
 
 	wd, err := os.Getwd()
 	if err != nil {
-		return err
+		return fmt.Errorf("Getwd: %w", err)
 	}
 
 	if err := sh.Run("sudo", "debconf-set-selections", wd+"/preseed.txt"); err != nil {
-		return err
+		return fmt.Errorf("sudo debconf-set-selections: %w", err)
 	}
 
-	return sh.Run("sudo", "env", "DEBIAN_FRONTEND=noninteractive", "DEBCONF_NONINTERACTIVE_SEEN=true", "apt", "install", "-y", "tzdata")
+	if err := sh.Run("sudo", "env", "DEBIAN_FRONTEND=noninteractive", "DEBCONF_NONINTERACTIVE_SEEN=true", "apt", "install", "-y", "tzdata"); err != nil {
+		return fmt.Errorf("sudo apt install tzdata: %w", err)
+	}
+
+	return nil
 }
 
 func locales(ctx context.Context) error {
@@ -440,226 +493,46 @@ func locales(ctx context.Context) error {
 	systemMu.Lock()
 	defer systemMu.Unlock()
 
-	if err := sh.Run("sudo", "locale-gen", "en_US"); err != nil {
-		return err
+	for _, l := range []string{"en_US", "en_US.UTF-8"} {
+		if err := sh.Run("sudo", "locale-gen", l); err != nil {
+			return fmt.Errorf("sudo locale-gen %s: %w", l, err)
+		}
 	}
 
-	return sh.Run("sudo", "locale-gen", "en_US.UTF-8")
+	return nil
 }
 
 func gatsby(ctx context.Context) error {
 	mg.CtxDeps(ctx, npmPackages)
-	return sh.Run("npx", "gatsby", "telemetry", "--disable")
+
+	if err := sh.Run("npx", "gatsby", "telemetry", "--disable"); err != nil {
+		return fmt.Errorf("disable Gatsby telemetry: %w", err)
+	}
+
+	return nil
 }
 
 func restic(ctx context.Context) error {
 	wd, err := os.Getwd()
 	if err != nil {
-		return err
+		return fmt.Errorf("Getwd: %w", err)
 	}
 
 	if err := downloadAndUnBZip2To(ctx, resticURL, wd+"/restic_"+resticVersion+"_linux_amd64"); err != nil {
-		return err
+		return fmt.Errorf("download and extract restic: %w", err)
 	}
 
 	if err := os.Chmod(wd+"/restic_"+resticVersion+"_linux_amd64", 0755); err != nil {
-		return err
+		return fmt.Errorf("chmod restic: %w", err)
 	}
 
 	if err := ln(wd+"/restic_"+resticVersion+"_linux_amd64", wd+"/restic"); err != nil {
-		return err
+		return fmt.Errorf("ln restic: %w", err)
 	}
 
-	return sudoLn(wd+"/restic", "/usr/bin/restic")
-}
-
-func bashStdin(r io.Reader, args ...string) error {
-	c := exec.Command("bash", args...)
-	c.Stdin = r
-	o, err := c.CombinedOutput()
-	if mg.Verbose() {
-		_, _ = os.Stdout.Write(o)
-	}
-	return err
-}
-
-func mkdir(path string) error {
-	return os.MkdirAll(path, os.ModePerm)
-}
-
-func downloadAndUnZipTo(ctx context.Context, url string, dest string) error {
-	b, err := download(ctx, url)
-	if err != nil {
-		return err
-	}
-	return unZipTo(b, dest)
-}
-
-func downloadAndUnTarGZIPTo(ctx context.Context, url string, dest string) error {
-	b, err := download(ctx, url)
-	if err != nil {
-		return err
-	}
-	return unTarGZIPTo(b, dest)
-}
-
-func downloadAndUnBZip2To(ctx context.Context, url string, dest string) error {
-	b, err := download(ctx, url)
-	if err != nil {
-		return err
-	}
-	return unBZip2To(b, dest)
-}
-
-func unZipTo(b []byte, dest string) error {
-	r, err := zip.NewReader(bytes.NewReader(b), int64(len(b)))
-	if err != nil {
-		return err
-	}
-
-	for _, f := range r.File {
-		fpath := filepath.Join(dest, f.Name)
-
-		if !strings.HasPrefix(fpath, filepath.Clean(dest)+string(os.PathSeparator)) {
-			return fmt.Errorf("%s: illegal file path", fpath)
-		}
-
-		if f.FileInfo().IsDir() {
-			if err := mkdir(fpath); err != nil {
-				return err
-			}
-			continue
-		}
-
-		if err := mkdir(filepath.Dir(fpath)); err != nil {
-			return err
-		}
-
-		createFile := func() error {
-			fr, err := f.Open()
-			if err != nil {
-				return err
-			}
-			defer fr.Close()
-
-			return copyToFile(fr, fpath, f.Mode())
-		}
-
-		if err := createFile(); err != nil {
-			return err
-		}
+	if err := sudoLn(wd+"/restic", "/usr/bin/restic"); err != nil {
+		return fmt.Errorf("sudo ln /usr/bin/restic: %w", err)
 	}
 
 	return nil
-}
-
-func unTarGZIPTo(b []byte, dest string) error {
-	r, err := gzip.NewReader(bytes.NewReader(b))
-	if err != nil {
-		return err
-	}
-	defer r.Close()
-
-	tr := tar.NewReader(r)
-
-	for {
-		h, err := tr.Next()
-		if err != nil {
-			if errors.Is(err, io.EOF) {
-				break
-			}
-			return err
-		}
-
-		if h.Typeflag != tar.TypeReg && h.Typeflag == tar.TypeDir {
-			continue
-		}
-
-		fpath := filepath.Join(dest, h.Name)
-
-		if !strings.HasPrefix(fpath, filepath.Clean(dest)+string(os.PathSeparator)) {
-			return fmt.Errorf("%s: illegal file path", fpath)
-		}
-
-		if h.Typeflag == tar.TypeDir {
-			if err := mkdir(fpath); err != nil {
-				return err
-			}
-			continue
-		}
-
-		if err := mkdir(filepath.Dir(fpath)); err != nil {
-			return err
-		}
-
-		if err := copyToFile(tr, fpath, h.FileInfo().Mode()); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func unBZip2To(b []byte, dest string) error {
-	r := bzip2.NewReader(bytes.NewReader(b))
-	return copyToFile(r, dest, fs.ModePerm)
-}
-
-func copyToFile(r io.Reader, path string, perm fs.FileMode) error {
-	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, perm)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	_, err = io.Copy(f, r)
-	return err
-}
-
-func downloadAs(ctx context.Context, url string, path string) error {
-	b, err := download(ctx, url)
-	if err != nil {
-		return err
-	}
-
-	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, os.ModePerm)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	_, err = f.Write(b)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func download(ctx context.Context, url string) ([]byte, error) {
-	c := http.Client{
-		Transport: &http.Transport{
-			ResponseHeaderTimeout: 10 * time.Second,
-
-			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: true,
-			},
-		},
-	}
-
-	ctx, cancel := context.WithTimeout(ctx, 3*time.Minute)
-	defer cancel()
-
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	res, err := c.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer res.Body.Close()
-
-	return io.ReadAll(res.Body)
 }
