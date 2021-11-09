@@ -322,7 +322,7 @@ func nodeJS(ctx context.Context) error {
 
 	s := "export NVM_DIR=\"" + wd + "/.nvm\"\n" +
 		". ${NVM_DIR}/nvm.sh\n" +
-		"nvm install node\n" +
+		"nvm install --lts=" + nodeLTSName + "\n" +
 		"sudo ln -s $(which node) /usr/bin/node"
 
 	if err := bashStdin(strings.NewReader(s), "-e"); err != nil {

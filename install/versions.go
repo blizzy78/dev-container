@@ -25,3 +25,5 @@ const (
 	// https://github.com/restic/restic/releases
 	resticVersion = "0.12.1"
 )
+
+const nodeLTSName = "gallium"
