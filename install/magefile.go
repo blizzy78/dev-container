@@ -327,7 +327,9 @@ func nodeJS(ctx context.Context) error {
 		s += "nvm install --lts=" + v + "\n"
 	}
 
-	s += "sudo ln -s $(which node) /usr/bin/node"
+	s += "nvm alias default lts/" + nodeLTSNames[0] + "\n" +
+		"nvm use default\n" +
+		"sudo ln -s $(which node) /usr/bin/node"
 
 	if err := bashStdin(strings.NewReader(s), "-e"); err != nil {
 		return fmt.Errorf("run node install script: %w", err)
