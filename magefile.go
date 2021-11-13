@@ -1,10 +1,10 @@
 //go:build mage
-// +build mage
 
 package main
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"runtime"
 
@@ -23,15 +23,28 @@ var Default = BuildImage
 // BuildImage rebuilds the docker image.
 func BuildImage(ctx context.Context) error {
 	mg.CtxDeps(ctx, pullGolang, pullUbuntu)
-	return dockerCompose("build", "--no-cache", "--force-rm")
+
+	if err := dockerCompose("build", "--no-cache", "--force-rm"); err != nil {
+		return fmt.Errorf("docker compose build: %w", err)
+	}
+
+	return nil
 }
 
 func pullGolang() error {
-	return dockerPull("golang")
+	if err := dockerPull("golang"); err != nil {
+		return fmt.Errorf("docker pull golang: %w", err)
+	}
+
+	return nil
 }
 
 func pullUbuntu() error {
-	return dockerPull("ubuntu")
+	if err := dockerPull("ubuntu"); err != nil {
+		return fmt.Errorf("docker pull ubuntu: %w", err)
+	}
+
+	return nil
 }
 
 // RecreateContainer destroys the container and spins up a new one, optionally recreating the image first.
@@ -41,38 +54,71 @@ func RecreateContainer(ctx context.Context, rebuildImage bool) {
 	} else {
 		mg.CtxDeps(ctx, DestroyContainer)
 	}
+
 	mg.CtxDeps(ctx, CreateContainer)
 }
 
 // Bash enters into a new shell inside a running container.
-func Bash(ctx context.Context) {
+func Bash(ctx context.Context) error {
 	if !isatty.IsTerminal(os.Stdout.Fd()) && runtime.GOOS == "windows" {
-		sh.RunV("winpty", "docker", "compose", "-f", composeFile, "-p", projectName, "exec", "dev", "bash")
-		return
+		if err := sh.RunV("winpty", "docker", "compose", "-f", composeFile, "-p", projectName, "exec", "dev", "bash"); err != nil {
+			return fmt.Errorf("winpty docker compose exec bash: %w", err)
+		}
+
+		return nil
 	}
-	sh.RunV("docker", "compose", "-f", composeFile, "-p", projectName, "exec", "dev", "bash")
+
+	if err := sh.RunV("docker", "compose", "-f", composeFile, "-p", projectName, "exec", "dev", "bash"); err != nil {
+		return fmt.Errorf("docker compose exec bash: %w", err)
+	}
+
+	return nil
 }
 
 // CreateContainer creates the container.
 func CreateContainer() error {
-	return dockerCompose("up", "-d")
+	if err := dockerCompose("up", "-d"); err != nil {
+		return fmt.Errorf("docker compose up: %w", err)
+	}
+
+	return nil
 }
 
 // DestroyContainer destroys the container.
 func DestroyContainer() error {
-	return dockerCompose("down")
+	if err := dockerCompose("down", "--remove-orphans"); err != nil {
+		return fmt.Errorf("docker compose down: %w", err)
+	}
+
+	return nil
 }
 
 func dockerPull(args ...string) error {
 	if !isatty.IsTerminal(os.Stdout.Fd()) && runtime.GOOS == "windows" {
-		return sh.RunV("winpty", append([]string{"docker", "pull"}, args...)...)
+		if err := sh.RunV("winpty", append([]string{"docker", "pull"}, args...)...); err != nil {
+			return fmt.Errorf("winpty docker pull: %w", err)
+		}
 	}
-	return sh.RunV("docker", append([]string{"pull"}, args...)...)
+
+	if err := sh.RunV("docker", append([]string{"pull"}, args...)...); err != nil {
+		return fmt.Errorf("docker pull: %w", err)
+	}
+
+	return nil
 }
 
 func dockerCompose(args ...string) error {
 	if !isatty.IsTerminal(os.Stdout.Fd()) && runtime.GOOS == "windows" {
-		return sh.RunV("winpty", append([]string{"docker", "compose", "-f", composeFile, "-p", projectName}, args...)...)
+		if err := sh.RunV("winpty", append([]string{"docker", "compose", "-f", composeFile, "-p", projectName}, args...)...); err != nil {
+			return fmt.Errorf("winpty docker compose: %w", err)
+		}
+
+		return nil
 	}
-	return sh.RunV("docker", append([]string{"compose", "-f", composeFile, "-p", projectName}, args...)...)
+
+	if err := sh.RunV("docker", append([]string{"compose", "-f", composeFile, "-p", projectName}, args...)...); err != nil {
+		return fmt.Errorf("docker compose: %w", err)
+	}
+
+	return nil
 }
