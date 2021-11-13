@@ -10,7 +10,7 @@ const (
 	protocVersion = "3.19.1"
 
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
-	protocGenGRPCJavaVersion = "1.42.0"
+	protocGenGRPCJavaVersion = "1.42.1"
 
 	// https://github.com/nvm-sh/nvm/releases
 	nvmVersion = "0.39.0"
@@ -26,4 +26,4 @@ const (
 	resticVersion = "0.12.1"
 )
 
-const nodeLTSName = "gallium"
+var nodeLTSNames = []string{"dubnium", "gallium"}
