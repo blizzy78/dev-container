@@ -26,4 +26,4 @@ const (
 	resticVersion = "0.12.1"
 )
 
-var nodeLTSNames = []string{"dubnium", "gallium"}
+var nodeLTSNames = []string{"gallium", "dubnium"}
