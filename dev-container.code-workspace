@@ -2,8 +2,21 @@
 	"folders": [
 		{
 			"path": "."
+		},
+		{
+			"name": "installer",
+			"path": "./cmd/installer"
+		},
+		{
+			"name": "containerrunner",
+			"path": "./cmd/containerrunner"
 		}
 	],
+	"settings": {
+		"gopls": {
+			"build.buildFlags": ["-tags=mage"]
+		}
+	},
 	"extensions": {
 		"recommendations": [
 			"ms-azuretools.vscode-docker",

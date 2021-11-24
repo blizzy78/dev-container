@@ -1,9 +1,15 @@
-FROM golang AS mage-builder
+FROM golang AS builder
 
 RUN git clone https://github.com/magefile/mage && cd mage && go run bootstrap.go
-WORKDIR /
-ADD go.mod go.sum install/*.go /
-RUN mage -compile mage-static && chmod 755 mage-static
+
+COPY cmd/installer /installer
+COPY cmd/containerrunner /containerrunner
+
+WORKDIR /installer
+RUN mage -compile installer && chmod 755 installer
+
+WORKDIR /containerrunner
+RUN go build -o containerrunner . && chmod 755 containerrunner
 
 
 FROM ubuntu
@@ -20,8 +26,9 @@ RUN groupadd --gid $USER_GID $USERNAME && \
     echo "$USERNAME ALL=(root) NOPASSWD:ALL" >/etc/sudoers.d/$USERNAME && \
     chmod 0440 /etc/sudoers.d/$USERNAME
 
-COPY --from=mage-builder /mage-static /home/$USERNAME
-RUN sudo -i -u $USERNAME /home/$USERNAME/mage-static -v && rm /home/$USERNAME/mage-static
+COPY --from=builder /installer/installer /containerrunner/containerrunner /home/$USERNAME
+
+RUN sudo -i -u $USERNAME /home/$USERNAME/installer -v && rm /home/$USERNAME/installer
 
 RUN apt clean && rm -rf /var/lib/apt/lists/*
 

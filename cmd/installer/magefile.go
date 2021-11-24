@@ -17,69 +17,6 @@ import (
 	"github.com/magefile/mage/sh"
 )
 
-const tz = "Europe/Berlin"
-
-var (
-	aptPackageNames = []string{
-		"apt-utils", "locales", "wget", "less", "vim", "nano", "zip", "unzip", "xz-utils", "htop", "gcc", "make",
-		"telnet", "netcat", "socat", "docker.io", "libfontconfig", "postgresql-client", "iputils-ping", "libxml2-utils",
-		"curl", "git", "ca-certificates",
-	}
-
-	goToolURLs = []string{
-		"github.com/uudashr/gopkgs/v2/cmd/gopkgs@latest",
-		"github.com/ramya-rao-a/go-outline@latest",
-		"github.com/cweill/gotests/gotests@latest",
-		"github.com/fatih/gomodifytags@latest",
-		"github.com/josharian/impl@latest",
-		"github.com/haya14busa/goplay/cmd/goplay@latest",
-		"github.com/go-delve/delve/cmd/dlv@latest",
-		"github.com/golangci/golangci-lint/cmd/golangci-lint@latest",
-		"golang.org/x/tools/gopls@latest",
-		"github.com/dvyukov/go-fuzz/go-fuzz@latest",
-		"github.com/dvyukov/go-fuzz/go-fuzz-build@latest",
-		"golang.org/x/perf/cmd/benchstat@latest",
-		"github.com/orijtech/structslop/cmd/structslop@latest",
-	}
-
-	npmPackageNames = []string{
-		"postcss@latest",
-		"postcss-cli@latest",
-		"serve",
-		"gatsby",
-	}
-
-	volumeFolders = []string{
-		".vscode-server/extensions",
-		"workspaces",
-		".m2",
-		"sophora-repo",
-		".ssh",
-		"restic-repos",
-	}
-
-	protocGoModuleURLs = []string{
-		"google.golang.org/protobuf/cmd/protoc-gen-go",
-		"google.golang.org/grpc/cmd/protoc-gen-go-grpc",
-	}
-)
-
-const (
-	goURL = "https://golang.org/dl/go" + goVersion + ".linux-amd64.tar.gz"
-
-	protocURL            = "https://github.com/protocolbuffers/protobuf/releases/download/v" + protocVersion + "/protoc-" + protocVersion + "-linux-x86_64.zip"
-	protocGenGRPCJavaURL = "https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/" + protocGenGRPCJavaVersion + "/protoc-gen-grpc-java-" + protocGenGRPCJavaVersion + "-linux-x86_64.exe"
-
-	nvmInstallURL = "https://raw.githubusercontent.com/nvm-sh/nvm/v" + nvmVersion + "/install.sh"
-	npmInstallURL = "https://www.npmjs.com/install.sh"
-
-	zuluJDKURL = "https://cdn.azul.com/zulu/bin/zulu" + zuluVersion + "-ca-jdk" + zuluJDKVersion + "-linux_x64.tar.gz"
-
-	mavenURL = "https://dlcdn.apache.org/maven/maven-3/" + mavenVersion + "/binaries/apache-maven-" + mavenVersion + "-bin.tar.gz"
-
-	resticURL = "https://github.com/restic/restic/releases/download/v" + resticVersion + "/restic_" + resticVersion + "_linux_amd64.bz2"
-)
-
 var (
 	aptInstall = sh.RunCmd("sudo", "apt", "install", "-y")
 	ln         = sh.RunCmd("ln", "-s")

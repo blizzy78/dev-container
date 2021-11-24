@@ -17,7 +17,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - dev-container
-    command: /bin/sh -c "while sleep 1000; do :; done"
+    command: /home/vscode/containerrunner
 
   pg:
     image: postgres
