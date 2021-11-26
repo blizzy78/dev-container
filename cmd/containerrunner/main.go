@@ -27,28 +27,72 @@ func main() {
 		panic(errMissingConfigPath)
 	}
 
-	config, err := loadConfig(configPath)
-	if err != nil {
-		err = fmt.Errorf("load configuration: %w", err)
-
-		if !errors.Is(err, os.ErrNotExist) {
+	for {
+		done, err := runSignals(context.Background(), configPath)
+		if err != nil {
 			panic(err)
 		}
 
-		fmt.Fprintln(os.Stderr, fmt.Errorf("ignoring error: %w", err).Error())
-
-		config = &configuration{}
-	}
-
-	if err = run(context.Background(), config); err != nil {
-		panic(err)
+		if done {
+			break
+		}
 	}
 }
 
-func run(ctx context.Context, config *configuration) error {
-	ctx, cancel := signal.NotifyContext(ctx, syscall.SIGINT, syscall.SIGTERM)
+func runSignals(ctx context.Context, configPath string) (bool, error) {
+	fmt.Printf("load configuration from file: %s\n", configPath)
+
+	config, loaded, err := loadConfigDefault(configPath)
+	if err != nil {
+		return true, fmt.Errorf("load configuration: %w", err)
+	}
+
+	if !loaded {
+		fmt.Fprintf(os.Stderr, "%s: file not found, ignoring\n", configPath)
+	}
+
+	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
+	ctx, stop := signal.NotifyContext(ctx, syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+
+	hup := make(chan os.Signal, 1)
+	defer close(hup)
+
+	signal.Notify(hup, syscall.SIGHUP)
+	defer signal.Stop(hup)
+
+	hupDone := make(chan struct{})
+	defer close(hupDone)
+
+	huped := false
+
+	go func() {
+		select {
+		case <-hupDone:
+
+		case <-hup:
+			fmt.Println("HUP received")
+
+			huped = true
+
+			cancel()
+		}
+	}()
+
+	if err := run(ctx, config); err != nil {
+		return true, err
+	}
+
+	if huped {
+		return false, nil
+	}
+
+	return true, nil
+}
+
+func run(ctx context.Context, config *configuration) error {
 	cronConfig := &cronConfiguration{}
 	if config.Cron != nil {
 		cronConfig = config.Cron
@@ -96,6 +140,8 @@ func startCron(config *cronConfiguration) (func(), error) {
 }
 
 func runJob(job *cronJobConfiguration) {
+	fmt.Printf("run job: %s\n", job.Command)
+
 	cmd := exec.CommandContext(context.Background(), job.Command, job.Args...) //nolint:gosec // command is user input
 
 	output, err := cmd.CombinedOutput()

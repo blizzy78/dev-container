@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
@@ -20,6 +21,19 @@ type cronJobConfiguration struct {
 	Delay   string   `yaml:"delay,omitempty"`
 	Command string   `yaml:"command"`
 	Args    []string `yaml:"args,omitempty"`
+}
+
+func loadConfigDefault(path string) (*configuration, bool, error) {
+	config, err := loadConfig(path)
+	if err != nil {
+		if !errors.Is(err, os.ErrNotExist) {
+			return nil, false, fmt.Errorf("load: %w", err)
+		}
+
+		return &configuration{}, false, nil
+	}
+
+	return config, true, nil
 }
 
 func loadConfig(path string) (*configuration, error) {
