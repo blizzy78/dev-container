@@ -1,4 +1,4 @@
-module github.com/blizzy78/dev-container/installer
+module installer
 
 go 1.17
 

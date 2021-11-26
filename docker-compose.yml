@@ -14,10 +14,11 @@ services:
       - sophora-repo:/home/vscode/sophora-repo
       - ssh:/home/vscode/.ssh
       - restic-repos:/home/vscode/restic-repos
+      - containerrunner:/home/vscode/.containerrunner
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - dev-container
-    command: /home/vscode/containerrunner
+    command: /home/vscode/containerrunner -config /home/vscode/.containerrunner/config.yaml
 
   pg:
     image: postgres
@@ -37,6 +38,7 @@ volumes:
   sophora-repo:
   ssh:
   restic-repos:
+  containerrunner:
   pg:
 
 networks:
