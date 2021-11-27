@@ -73,7 +73,7 @@ func runSignals(ctx context.Context, configPath string) (bool, error) {
 		case <-hupDone:
 
 		case <-hup:
-			fmt.Println("HUP received")
+			fmt.Println("received SIGHUP")
 
 			huped = true
 
@@ -98,45 +98,47 @@ func run(ctx context.Context, config *configuration) error {
 		cronConfig = config.Cron
 	}
 
-	stopCron, err := startCron(cronConfig)
-	if err != nil {
-		return fmt.Errorf("start cron: %w", err)
-	}
-
-	defer stopCron()
+	stop := startCron(cronConfig)
+	defer stop()
 
 	<-ctx.Done()
 
 	return nil
 }
 
-func startCron(config *cronConfiguration) (func(), error) {
+func startCron(config *cronConfiguration) func() {
 	sched := gocron.NewScheduler(time.Local)
 
 	now := time.Now()
 
 	for _, job := range config.Jobs {
-		sched.Every(job.Every)
-
-		if job.Delay != "" {
-			delay, err := time.ParseDuration(job.Delay)
-			if err != nil {
-				return nil, fmt.Errorf("job '%s': initial delay '%s': %w", job.Command, job.Delay, err)
-			}
-
-			sched.StartAt(now.Add(delay))
-		}
-
-		if _, err := sched.Do(runJob, job); err != nil {
-			return nil, fmt.Errorf("schedule job '%s': %w", job.Command, err)
+		if err := scheduleJob(job, sched, now); err != nil {
+			fmt.Fprintln(os.Stderr, fmt.Errorf("schedule job '%s': %w", job.Command, err).Error())
 		}
 	}
 
 	sched.StartAsync()
 
-	return func() {
-		sched.Stop()
-	}, nil
+	return sched.Stop
+}
+
+func scheduleJob(job *cronJobConfiguration, sched *gocron.Scheduler, now time.Time) error {
+	sched.Every(job.Every)
+
+	if job.Delay != "" {
+		delay, err := time.ParseDuration(job.Delay)
+		if err != nil {
+			return fmt.Errorf("delay '%s': %w", job.Command, job.Delay, err)
+		}
+
+		sched.StartAt(now.Add(delay))
+	}
+
+	if _, err := sched.Do(runJob, job); err != nil {
+		return fmt.Errorf("schedule: %w", job.Command, err)
+	}
+
+	return nil
 }
 
 func runJob(job *cronJobConfiguration) {
