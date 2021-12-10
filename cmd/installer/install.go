@@ -4,7 +4,7 @@ package main
 
 const (
 	// https://golang.org/dl/
-	goVersion = "1.17.3"
+	goVersion = "1.17.5"
 
 	// https://github.com/protocolbuffers/protobuf/releases
 	protocVersion = "3.19.1"
@@ -26,10 +26,6 @@ const (
 	resticVersion = "0.12.1"
 )
 
-var nodeLTSNames = []string{"gallium", "dubnium"}
-
-const tz = "Europe/Berlin"
-
 var (
 	aptPackageNames = []string{
 		"apt-utils", "locales", "wget", "less", "vim", "nano", "zip", "unzip", "xz-utils", "htop", "gcc", "make",
@@ -37,7 +33,7 @@ var (
 		"curl", "git", "ca-certificates",
 	}
 
-	goToolURLs = []string{
+	goToolModules = []string{
 		"github.com/uudashr/gopkgs/v2/cmd/gopkgs@latest",
 		"github.com/ramya-rao-a/go-outline@latest",
 		"github.com/cweill/gotests/gotests@latest",
@@ -52,6 +48,8 @@ var (
 		"golang.org/x/perf/cmd/benchstat@latest",
 		"github.com/orijtech/structslop/cmd/structslop@latest",
 	}
+
+	nodeLTSNames = []string{"gallium", "dubnium"}
 
 	npmPackageNames = []string{
 		"postcss@latest",
@@ -74,6 +72,8 @@ var (
 		"google.golang.org/grpc/cmd/protoc-gen-go-grpc",
 	}
 )
+
+const tz = "Europe/Berlin"
 
 const (
 	goURL = "https://golang.org/dl/go" + goVersion + ".linux-amd64.tar.gz"

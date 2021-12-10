@@ -40,7 +40,7 @@ func Install(ctx context.Context) {
 
 	mg.CtxDeps(ctx,
 		installGo,
-		goTools,
+		goModules,
 		mage,
 		protoc,
 		protocGenGRPCJava,
@@ -72,7 +72,7 @@ func aptPackages() error {
 }
 
 func caCertificates(ctx context.Context) error {
-	mg.CtxDeps(ctx, aptPackages, installGo)
+	mg.CtxDeps(ctx, aptPackages)
 
 	if err := sh.Run("sudo", "update-ca-certificates"); err != nil {
 		return fmt.Errorf("sudo update-ca-certificates: %w", err)
@@ -120,10 +120,10 @@ func installGo(ctx context.Context) error {
 	return nil
 }
 
-func goTools(ctx context.Context) error {
+func goModules(ctx context.Context) error {
 	mg.CtxDeps(ctx, aptPackages, installGo)
 
-	for _, u := range goToolURLs {
+	for _, u := range goToolModules {
 		err := func() error {
 			goMu.Lock()
 			defer goMu.Unlock()

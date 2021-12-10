@@ -74,7 +74,7 @@ func downloadAs(ctx context.Context, url string, path string) error {
 func download(ctx context.Context, url string) ([]byte, error) {
 	c := http.Client{
 		Transport: &http.Transport{
-			ResponseHeaderTimeout: 10 * time.Second,
+			ResponseHeaderTimeout: 30 * time.Second,
 
 			TLSClientConfig: &tls.Config{
 				InsecureSkipVerify: true,
