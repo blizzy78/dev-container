@@ -53,6 +53,7 @@ func Install(ctx context.Context) {
 		locales,
 		gatsby,
 		restic,
+		icdiff,
 	)
 }
 
@@ -475,6 +476,27 @@ func restic(ctx context.Context) error {
 
 	if err := sudoLn(wd+"/restic", "/usr/bin/restic"); err != nil {
 		return fmt.Errorf("sudo ln /usr/bin/restic: %w", err)
+	}
+
+	return nil
+}
+
+func icdiff(ctx context.Context) error {
+	wd, err := os.Getwd()
+	if err != nil {
+		return fmt.Errorf("Getwd: %w", err)
+	}
+
+	if err := downloadAndUnTarGZIPTo(ctx, icdiffURL, wd); err != nil {
+		return fmt.Errorf("download and extract icdiff: %w", err)
+	}
+
+	if err := ln(wd+"/icdiff-release-"+icdiffVersion, wd+"/icdiff"); err != nil {
+		return fmt.Errorf("ln icdiff: %w", err)
+	}
+
+	if err := sudoLn(wd+"/icdiff/icdiff", "/usr/bin/icdiff"); err != nil {
+		return fmt.Errorf("sudo ln /usr/bin/icdiff: %w", err)
 	}
 
 	return nil

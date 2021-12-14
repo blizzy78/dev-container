@@ -24,6 +24,9 @@ const (
 
 	// https://github.com/restic/restic/releases
 	resticVersion = "0.12.1"
+
+	// https://github.com/jeffkaufman/icdiff/tags
+	icdiffVersion = "2.0.4"
 )
 
 var (
@@ -47,6 +50,7 @@ var (
 		"github.com/dvyukov/go-fuzz/go-fuzz-build@latest",
 		"golang.org/x/perf/cmd/benchstat@latest",
 		"github.com/orijtech/structslop/cmd/structslop@latest",
+		"github.com/blizzy78/textsimilarity/cmd/textsimilarity@latest",
 	}
 
 	nodeLTSNames = []string{"gallium", "dubnium"}
@@ -89,4 +93,6 @@ const (
 	mavenURL = "https://dlcdn.apache.org/maven/maven-3/" + mavenVersion + "/binaries/apache-maven-" + mavenVersion + "-bin.tar.gz"
 
 	resticURL = "https://github.com/restic/restic/releases/download/v" + resticVersion + "/restic_" + resticVersion + "_linux_amd64.bz2"
+
+	icdiffURL = "https://github.com/jeffkaufman/icdiff/archive/refs/tags/release-" + icdiffVersion + ".tar.gz"
 )
