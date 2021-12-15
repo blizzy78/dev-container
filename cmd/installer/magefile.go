@@ -108,13 +108,7 @@ func installGo(ctx context.Context) error {
 		return fmt.Errorf("sudo ln /go/bin/go: %w", err)
 	}
 
-	file, err := os.OpenFile(".bashrc", os.O_WRONLY|os.O_APPEND, os.ModePerm)
-	if err != nil {
-		return fmt.Errorf("open .bashrc: %w", err)
-	}
-	defer file.Close()
-
-	if _, err = file.WriteString("export PATH=\"$PATH:/go/bin\"\n"); err != nil {
+	if err := appendText(".bashrc", "export PATH=\"$PATH:/go/bin\"\n"); err != nil {
 		return fmt.Errorf("write Go PATH to .bashrc: %w", err)
 	}
 
@@ -341,6 +335,10 @@ func jdk(ctx context.Context) error {
 		if err = sudoLn(path+"/"+f, "/usr/bin/"+f); err != nil {
 			return fmt.Errorf("sudo ln /usr/bin/%s: %w", f, err)
 		}
+	}
+
+	if err := appendText(".bashrc", "export JAVA_HOME=\""+wd+"/jdk\"\n"); err != nil {
+		return fmt.Errorf("write JAVA_HOME to .bashrc: %w", err)
 	}
 
 	return nil

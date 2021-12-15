@@ -108,6 +108,20 @@ func download(ctx context.Context, url string) ([]byte, error) {
 	return body, nil
 }
 
+func appendText(path string, text string) error {
+	file, err := os.OpenFile(path, os.O_WRONLY|os.O_APPEND, os.ModePerm)
+	if err != nil {
+		return fmt.Errorf("open: %w", err)
+	}
+	defer file.Close()
+
+	if _, err = file.WriteString(text); err != nil {
+		return fmt.Errorf("write: %w", err)
+	}
+
+	return nil
+}
+
 func (e httpError) Error() string {
 	return "HTTP error: " + string(e)
 }
