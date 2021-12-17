@@ -56,8 +56,6 @@ var (
 	nodeLTSNames = []string{"gallium", "dubnium"}
 
 	npmPackageNames = []string{
-		"postcss@latest",
-		"postcss-cli@latest",
 		"serve",
 		"gatsby",
 	}
