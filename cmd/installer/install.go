@@ -4,16 +4,16 @@ package main
 
 const (
 	// https://golang.org/dl/
-	goVersion = "1.17.5"
+	goVersion = "1.17.6"
 
 	// https://github.com/protocolbuffers/protobuf/releases
-	protocVersion = "3.19.1"
+	protocVersion = "3.19.2"
 
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
-	protocGenGRPCJavaVersion = "1.43.1"
+	protocGenGRPCJavaVersion = "1.43.2"
 
 	// https://github.com/nvm-sh/nvm/releases
-	nvmVersion = "0.39.0"
+	nvmVersion = "0.39.1"
 
 	// https://www.azul.com/downloads/zulu-community/?version=java-11-lts&os=ubuntu&architecture=x86-64-bit&package=jdk
 	zuluVersion    = "11.52.13"
