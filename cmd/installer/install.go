@@ -7,7 +7,7 @@ const (
 	goVersion = "1.17.6"
 
 	// https://github.com/protocolbuffers/protobuf/releases
-	protocVersion = "3.19.2"
+	protocVersion = "3.19.3"
 
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
 	protocGenGRPCJavaVersion = "1.43.2"
