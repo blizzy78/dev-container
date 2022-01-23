@@ -16,8 +16,8 @@ const (
 	nvmVersion = "0.39.1"
 
 	// https://www.azul.com/downloads/zulu-community/?version=java-11-lts&os=ubuntu&architecture=x86-64-bit&package=jdk
-	zuluVersion    = "11.52.13"
-	zuluJDKVersion = "11.0.13"
+	zuluVersion    = "11.54.23"
+	zuluJDKVersion = "11.0.14"
 
 	// https://maven.apache.org/download.cgi
 	mavenVersion = "3.8.4"
