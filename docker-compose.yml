@@ -2,6 +2,7 @@ version: '3'
 
 services:
   dev:
+    container_name: dev-container-dev-1
     build:
       context: .
       dockerfile: Dockerfile
@@ -21,6 +22,7 @@ services:
     command: /home/vscode/containerrunner -config /home/vscode/.containerrunner/config.yaml
 
   pg:
+    container_name: dev-container-pg-1
     image: postgres
     environment:
       - POSTGRES_PASSWORD=postgres
