@@ -54,6 +54,7 @@ func Install(ctx context.Context) {
 		gatsby,
 		restic,
 		icdiff,
+		dockerGroup,
 	)
 }
 
@@ -495,6 +496,16 @@ func icdiff(ctx context.Context) error {
 
 	if err := sudoLn(wd+"/icdiff/icdiff", "/usr/bin/icdiff"); err != nil {
 		return fmt.Errorf("sudo ln /usr/bin/icdiff: %w", err)
+	}
+
+	return nil
+}
+
+func dockerGroup(ctx context.Context) error {
+	mg.CtxDeps(ctx, aptPackages)
+
+	if err := sh.Run("sudo", "usermod", "-G", "docker", "vscode"); err != nil {
+		return fmt.Errorf("sudo usermod: %w", err)
 	}
 
 	return nil
