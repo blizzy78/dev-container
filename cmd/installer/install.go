@@ -7,7 +7,7 @@ const (
 	goVersion = "1.17.6"
 
 	// https://github.com/protocolbuffers/protobuf/releases
-	protocVersion = "3.19.3"
+	protocVersion = "3.19.4"
 
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
 	protocGenGRPCJavaVersion = "1.44.0"
@@ -33,7 +33,7 @@ var (
 	aptPackageNames = []string{
 		"apt-utils", "locales", "wget", "less", "vim", "nano", "zip", "unzip", "xz-utils", "htop", "gcc", "make",
 		"telnet", "netcat", "socat", "docker.io", "libfontconfig", "postgresql-client", "iputils-ping", "libxml2-utils",
-		"curl", "git", "ca-certificates",
+		"curl", "git", "ca-certificates", "graphviz",
 	}
 
 	goToolModules = []string{
