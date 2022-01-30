@@ -73,6 +73,11 @@ var (
 		"google.golang.org/protobuf/cmd/protoc-gen-go",
 		"google.golang.org/grpc/cmd/protoc-gen-go-grpc",
 	}
+
+	gitCompletionURL = "https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash"
+
+	gitPromptURL    = "https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh"
+	gitPromptBashRC = `export PS1="\[\033[01;34m\]\w\[\033[00m\]\[\033[32m\]"'$(__git_ps1 " [%s]")'"\[\033[00m\] \$ "` + "\n"
 )
 
 const tz = "Europe/Berlin"

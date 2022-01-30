@@ -55,6 +55,8 @@ func Install(ctx context.Context) {
 		restic,
 		icdiff,
 		dockerGroup,
+		gitCompletion,
+		gitPrompt,
 	)
 }
 
@@ -506,6 +508,40 @@ func dockerGroup(ctx context.Context) error {
 
 	if err := sh.Run("sudo", "usermod", "-G", "docker", "vscode"); err != nil {
 		return fmt.Errorf("sudo usermod: %w", err)
+	}
+
+	return nil
+}
+
+func gitCompletion(ctx context.Context) error {
+	wd, err := os.Getwd()
+	if err != nil {
+		return fmt.Errorf("Getwd: %w", err)
+	}
+
+	if err = downloadAs(ctx, gitCompletionURL, wd+"/.git-completion.sh"); err != nil {
+		return fmt.Errorf("download git-completion: %w", err)
+	}
+
+	if err := appendText(".bashrc", ". ~/.git-completion.sh\n"); err != nil {
+		return fmt.Errorf("add git-completion to .bashrc: %w", err)
+	}
+
+	return nil
+}
+
+func gitPrompt(ctx context.Context) error {
+	wd, err := os.Getwd()
+	if err != nil {
+		return fmt.Errorf("Getwd: %w", err)
+	}
+
+	if err = downloadAs(ctx, gitPromptURL, wd+"/.git-prompt.sh"); err != nil {
+		return fmt.Errorf("download git-prompt: %w", err)
+	}
+
+	if err := appendText(".bashrc", ". ~/.git-prompt.sh\n"+gitPromptBashRC); err != nil {
+		return fmt.Errorf("add git-prompt to .bashrc: %w", err)
 	}
 
 	return nil
