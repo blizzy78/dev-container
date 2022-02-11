@@ -4,7 +4,7 @@ package main
 
 const (
 	// https://golang.org/dl/
-	goVersion = "1.17.6"
+	goVersion = "1.17.7"
 
 	// https://github.com/protocolbuffers/protobuf/releases
 	protocVersion = "3.19.4"
@@ -53,7 +53,7 @@ var (
 		"github.com/blizzy78/textsimilarity/cmd/textsimilarity@latest",
 	}
 
-	nodeLTSNames = []string{"gallium", "dubnium"}
+	nodeLTSNames = []string{"gallium", "dubnium"} // first is default
 
 	npmPackageNames = []string{
 		"serve",
@@ -77,7 +77,7 @@ var (
 	gitCompletionURL = "https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash"
 
 	gitPromptURL    = "https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh"
-	gitPromptBashRC = `export PS1="\[\033[01;34m\]\w\[\033[00m\]\[\033[32m\]"'$(__git_ps1 " [%s]")'"\[\033[00m\] \$ "` + "\n"
+	gitPromptBashRC = `export PS1="\[\033[30;44m\] \w \[\033[00m\]\[\033[30;42m\]\$(__git_ps1 \" %s \")\[\033[00m\] "` + "\n"
 )
 
 const tz = "Europe/Berlin"
