@@ -4,7 +4,7 @@ package main
 
 const (
 	// https://golang.org/dl/
-	goVersion = "1.17.7"
+	goVersion = "1.17.8"
 
 	// https://github.com/protocolbuffers/protobuf/releases
 	protocVersion = "3.19.4"
