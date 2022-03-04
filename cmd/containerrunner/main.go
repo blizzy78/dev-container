@@ -81,9 +81,7 @@ func runSignals(ctx context.Context, configPath string) (bool, error) {
 		}
 	}()
 
-	if err := run(ctx, config); err != nil {
-		return true, err
-	}
+	run(ctx, config)
 
 	if huped {
 		return false, nil
@@ -92,7 +90,7 @@ func runSignals(ctx context.Context, configPath string) (bool, error) {
 	return true, nil
 }
 
-func run(ctx context.Context, config *configuration) error {
+func run(ctx context.Context, config *configuration) {
 	cronConfig := &cronConfiguration{}
 	if config.Cron != nil {
 		cronConfig = config.Cron
@@ -102,8 +100,6 @@ func run(ctx context.Context, config *configuration) error {
 	defer stop()
 
 	<-ctx.Done()
-
-	return nil
 }
 
 func startCron(config *cronConfiguration) func() {
@@ -123,32 +119,37 @@ func startCron(config *cronConfiguration) func() {
 }
 
 func scheduleJob(job *cronJobConfiguration, sched *gocron.Scheduler, now time.Time) error {
-	sched.Every(job.Every)
+	if job.Every != "" {
+		sched.Every(job.Every)
+	} else {
+		sched.Every(1)
+		sched.LimitRunsTo(1)
+	}
 
 	if job.Delay != "" {
 		delay, err := time.ParseDuration(job.Delay)
 		if err != nil {
-			return fmt.Errorf("delay '%s': %w", job.Command, job.Delay, err)
+			return fmt.Errorf("delay '%s': %w", job.Delay, err)
 		}
 
 		sched.StartAt(now.Add(delay))
 	}
 
-	if _, err := sched.Do(runJob, job); err != nil {
-		return fmt.Errorf("schedule: %w", job.Command, err)
+	if _, err := sched.Do(runCommand, job.Command, job.Args); err != nil {
+		return fmt.Errorf("schedule: %w", err)
 	}
 
 	return nil
 }
 
-func runJob(job *cronJobConfiguration) {
-	fmt.Printf("run job: %s\n", job.Command)
+func runCommand(command string, args []string) {
+	fmt.Printf("run command: %s\n", command)
 
-	cmd := exec.CommandContext(context.Background(), job.Command, job.Args...) //nolint:gosec // command is user input
+	cmd := exec.CommandContext(context.Background(), command, args...)
 
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		fmt.Fprintln(os.Stderr, fmt.Errorf("run job '%s': %w", job.Command, err).Error())
+		fmt.Fprintln(os.Stderr, fmt.Errorf("run command '%s': %w", command, err).Error())
 		return
 	}
 
