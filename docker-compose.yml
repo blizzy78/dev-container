@@ -16,6 +16,7 @@ services:
       - ssh:/home/vscode/.ssh
       - restic-repos:/home/vscode/restic-repos
       - containerrunner:/home/vscode/.containerrunner
+      - go-fuzz-cache:/home/vscode/.cache/go-build/fuzz
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - dev-container
@@ -41,6 +42,7 @@ volumes:
   ssh:
   restic-repos:
   containerrunner:
+  go-fuzz-cache:
   pg:
 
 networks:

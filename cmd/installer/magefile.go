@@ -121,16 +121,16 @@ func installGo(ctx context.Context) error {
 func goModules(ctx context.Context) error {
 	mg.CtxDeps(ctx, aptPackages, installGo)
 
-	for _, u := range goToolModules {
+	for _, mod := range goToolModules {
 		err := func() error {
 			goMu.Lock()
 			defer goMu.Unlock()
 
-			return g0("install", u)
+			return g0("install", mod)
 		}()
 
 		if err != nil {
-			return fmt.Errorf("install Go tools: %w", err)
+			return fmt.Errorf("install Go module %s: %w", mod, err)
 		}
 	}
 
@@ -224,11 +224,17 @@ func protocGenGRPCJava(ctx context.Context) error {
 func protocGoModules(ctx context.Context) error {
 	mg.CtxDeps(ctx, installGo)
 
-	goMu.Lock()
-	defer goMu.Unlock()
+	for _, mod := range protocGoModuleURLs {
+		err := func() error {
+			goMu.Lock()
+			defer goMu.Unlock()
 
-	if err := g0(append([]string{"get"}, protocGoModuleURLs...)...); err != nil {
-		return fmt.Errorf("go get protoc modules: %w", err)
+			return g0("install", mod)
+		}()
+
+		if err != nil {
+			return fmt.Errorf("install protoc Go module %s: %w", mod, err)
+		}
 	}
 
 	return nil

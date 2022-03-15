@@ -4,13 +4,13 @@ package main
 
 const (
 	// https://golang.org/dl/
-	goVersion = "1.17.8"
+	goVersion = "1.18"
 
 	// https://github.com/protocolbuffers/protobuf/releases
 	protocVersion = "3.19.4"
 
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
-	protocGenGRPCJavaVersion = "1.44.1"
+	protocGenGRPCJavaVersion = "1.45.0"
 
 	// https://github.com/nvm-sh/nvm/releases
 	nvmVersion = "0.39.1"
@@ -20,7 +20,7 @@ const (
 	zuluJDKVersion = "11.0.14.1"
 
 	// https://maven.apache.org/download.cgi
-	mavenVersion = "3.8.4"
+	mavenVersion = "3.8.5"
 
 	// https://github.com/restic/restic/releases
 	resticVersion = "0.12.1"
@@ -46,8 +46,6 @@ var (
 		"github.com/go-delve/delve/cmd/dlv@latest",
 		"github.com/golangci/golangci-lint/cmd/golangci-lint@latest",
 		"golang.org/x/tools/gopls@latest",
-		"github.com/dvyukov/go-fuzz/go-fuzz@latest",
-		"github.com/dvyukov/go-fuzz/go-fuzz-build@latest",
 		"golang.org/x/perf/cmd/benchstat@latest",
 		"github.com/orijtech/structslop/cmd/structslop@latest",
 		"github.com/blizzy78/textsimilarity/cmd/textsimilarity@latest",
@@ -63,15 +61,19 @@ var (
 	volumeFolders = []string{
 		".vscode-server/extensions",
 		"workspaces",
+		".bash_history_dir",
+		".gitconfig_dir",
 		".m2",
 		"sophora-repo",
 		".ssh",
 		"restic-repos",
+		".containerrunner",
+		".cache/go-build/fuzz",
 	}
 
 	protocGoModuleURLs = []string{
-		"google.golang.org/protobuf/cmd/protoc-gen-go",
-		"google.golang.org/grpc/cmd/protoc-gen-go-grpc",
+		"google.golang.org/protobuf/cmd/protoc-gen-go@latest",
+		"google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest",
 	}
 
 	gitCompletionURL = "https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash"
