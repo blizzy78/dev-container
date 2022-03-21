@@ -6,7 +6,6 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"io"
 	"io/fs"
 	"os"
 	"os/exec"
@@ -18,11 +17,11 @@ import (
 )
 
 var (
-	aptInstall = sh.RunCmd("sudo", "apt", "install", "-y")
-	ln         = sh.RunCmd("ln", "-s")
-	sudoLn     = sh.RunCmd("sudo", "ln", "-s")
-	g0         = sh.RunCmd("/go/bin/go")
-	npmInstall = sh.RunCmd("npm", "install")
+	sudoPacmanInstall = sh.RunCmd("sudo", "pacman", "-S", "--noconfirm")
+	ln                = sh.RunCmd("ln", "-s")
+	sudoLn            = sh.RunCmd("sudo", "ln", "-s")
+	g0                = sh.RunCmd("/go/bin/go")
+	npmInstall        = sh.RunCmd("npm", "install")
 )
 
 var (
@@ -36,7 +35,7 @@ var Default = Install
 func Install(ctx context.Context) {
 	mg.CtxDeps(ctx, timezone)
 
-	mg.CtxDeps(ctx, aptPackages, caCertificates)
+	mg.CtxDeps(ctx, pacmanPackages, caCertificates)
 
 	mg.CtxDeps(ctx,
 		installGo,
@@ -50,7 +49,6 @@ func Install(ctx context.Context) {
 		jdk,
 		maven,
 		volumes,
-		locales,
 		gatsby,
 		restic,
 		icdiff,
@@ -60,26 +58,22 @@ func Install(ctx context.Context) {
 	)
 }
 
-func aptPackages() error {
+func pacmanPackages() error {
 	systemMu.Lock()
 	defer systemMu.Unlock()
 
-	if err := sh.Run("sudo", "apt", "update"); err != nil {
-		return fmt.Errorf("sudo apt update: %w", err)
-	}
-
-	if err := aptInstall(aptPackageNames...); err != nil {
-		return fmt.Errorf("apt install packages: %w", err)
+	if err := sudoPacmanInstall(pacmanPackageNames...); err != nil {
+		return fmt.Errorf("pacman install packages: %w", err)
 	}
 
 	return nil
 }
 
 func caCertificates(ctx context.Context) error {
-	mg.CtxDeps(ctx, aptPackages)
+	mg.CtxDeps(ctx, pacmanPackages)
 
-	if err := sh.Run("sudo", "update-ca-certificates"); err != nil {
-		return fmt.Errorf("sudo update-ca-certificates: %w", err)
+	if err := sh.Run("sudo", "update-ca-trust"); err != nil {
+		return fmt.Errorf("sudo update-ca-trust: %w", err)
 	}
 
 	return nil
@@ -119,7 +113,7 @@ func installGo(ctx context.Context) error {
 }
 
 func goModules(ctx context.Context) error {
-	mg.CtxDeps(ctx, aptPackages, installGo)
+	mg.CtxDeps(ctx, pacmanPackages, installGo)
 
 	for _, mod := range goToolModules {
 		err := func() error {
@@ -142,7 +136,7 @@ func goModules(ctx context.Context) error {
 }
 
 func mage(ctx context.Context) error {
-	mg.CtxDeps(ctx, aptPackages, installGo)
+	mg.CtxDeps(ctx, pacmanPackages, installGo)
 
 	if err := sh.Run("git", "clone", "https://github.com/magefile/mage"); err != nil {
 		return fmt.Errorf("git clone mage: %w", err)
@@ -394,60 +388,12 @@ func volumes() error {
 	return nil
 }
 
-// https://stackoverflow.com/a/20693661
 func timezone() error {
 	systemMu.Lock()
 	defer systemMu.Unlock()
 
-	err := func() error {
-		f, err := os.OpenFile("preseed.txt", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, os.ModePerm)
-		if err != nil {
-			return fmt.Errorf("open preseed.txt: %w", err)
-		}
-		defer f.Close()
-
-		parts := strings.SplitN(tz, "/", 2)
-		s := "tzdata tzdata/Areas select " + parts[0] + "\n" +
-			"tzdata tzdata/Zones/" + parts[0] + " select " + parts[1] + "\n"
-		if _, err = io.WriteString(f, s); err != nil {
-			return fmt.Errorf("write preseed.txt: %w", err)
-		}
-
-		return nil
-	}()
-
-	if err != nil {
-		return err
-	}
-
-	defer sh.Rm("preseed.txt")
-
-	wd, err := os.Getwd()
-	if err != nil {
-		return fmt.Errorf("Getwd: %w", err)
-	}
-
-	if err := sh.Run("sudo", "debconf-set-selections", wd+"/preseed.txt"); err != nil {
-		return fmt.Errorf("sudo debconf-set-selections: %w", err)
-	}
-
-	if err := sh.Run("sudo", "env", "DEBIAN_FRONTEND=noninteractive", "DEBCONF_NONINTERACTIVE_SEEN=true", "apt", "install", "-y", "tzdata"); err != nil {
-		return fmt.Errorf("sudo apt install tzdata: %w", err)
-	}
-
-	return nil
-}
-
-func locales(ctx context.Context) error {
-	mg.CtxDeps(ctx, aptPackages)
-
-	systemMu.Lock()
-	defer systemMu.Unlock()
-
-	for _, l := range []string{"en_US", "en_US.UTF-8"} {
-		if err := sh.Run("sudo", "locale-gen", l); err != nil {
-			return fmt.Errorf("sudo locale-gen %s: %w", l, err)
-		}
+	if err := sudoLn("/usr/share/zoneinfo/"+tz, "/etc/localtime"); err != nil {
+		return fmt.Errorf("sudo ln /etc/localtime: %w", err)
 	}
 
 	return nil
@@ -510,7 +456,7 @@ func icdiff(ctx context.Context) error {
 }
 
 func dockerGroup(ctx context.Context) error {
-	mg.CtxDeps(ctx, aptPackages)
+	mg.CtxDeps(ctx, pacmanPackages)
 
 	if err := sh.Run("sudo", "usermod", "-G", "docker", "vscode"); err != nil {
 		return fmt.Errorf("sudo usermod: %w", err)

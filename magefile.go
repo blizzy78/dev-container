@@ -22,7 +22,7 @@ var Default = BuildImage
 
 // BuildImage rebuilds the docker image.
 func BuildImage(ctx context.Context) error {
-	mg.CtxDeps(ctx, pullGolang, pullUbuntu)
+	mg.CtxDeps(ctx, pullGolang, pullArchLinux)
 
 	if err := dockerCompose("build", "--no-cache", "--force-rm"); err != nil {
 		return fmt.Errorf("docker compose build: %w", err)
@@ -39,9 +39,9 @@ func pullGolang() error {
 	return nil
 }
 
-func pullUbuntu() error {
-	if err := dockerPull("ubuntu"); err != nil {
-		return fmt.Errorf("docker pull ubuntu: %w", err)
+func pullArchLinux() error {
+	if err := dockerPull("archlinux"); err != nil {
+		return fmt.Errorf("docker pull archlinux: %w", err)
 	}
 
 	return nil

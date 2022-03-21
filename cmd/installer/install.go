@@ -15,7 +15,7 @@ const (
 	// https://github.com/nvm-sh/nvm/releases
 	nvmVersion = "0.39.1"
 
-	// https://www.azul.com/downloads/zulu-community/?version=java-11-lts&os=ubuntu&architecture=x86-64-bit&package=jdk
+	// https://www.azul.com/downloads/?version=java-11-lts&os=linux&architecture=x86-64-bit&package=jdk
 	zuluVersion    = "11.54.25"
 	zuluJDKVersion = "11.0.14.1"
 
@@ -30,10 +30,9 @@ const (
 )
 
 var (
-	aptPackageNames = []string{
-		"apt-utils", "locales", "wget", "less", "vim", "nano", "zip", "unzip", "xz-utils", "htop", "gcc", "make",
-		"telnet", "netcat", "socat", "docker.io", "libfontconfig", "postgresql-client", "iputils-ping", "libxml2-utils",
-		"curl", "git", "ca-certificates", "graphviz",
+	pacmanPackageNames = []string{
+		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "fontconfig",
+		"postgresql", "git", "graphviz",
 	}
 
 	goToolModules = []string{
