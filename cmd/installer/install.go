@@ -61,6 +61,7 @@ var (
 		".vscode-server/extensions",
 		"workspaces",
 		".bash_history_dir",
+		".bashrc_dir",
 		".gitconfig_dir",
 		".m2",
 		"sophora-repo",

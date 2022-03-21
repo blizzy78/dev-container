@@ -24,20 +24,16 @@ var (
 	npmInstall        = sh.RunCmd("npm", "install")
 )
 
-var (
-	systemMu sync.Mutex
-	goMu     sync.Mutex
-	npmMu    sync.Mutex
-)
+var goMu sync.Mutex
 
 var Default = Install
 
 func Install(ctx context.Context) {
-	mg.CtxDeps(ctx, timezone)
-
-	mg.CtxDeps(ctx, pacmanPackages, caCertificates)
-
 	mg.CtxDeps(ctx,
+		timezone,
+		caCertificates,
+		bashrc,
+		pacmanPackages,
 		installGo,
 		goModules,
 		mage,
@@ -58,19 +54,16 @@ func Install(ctx context.Context) {
 	)
 }
 
-func pacmanPackages() error {
-	systemMu.Lock()
-	defer systemMu.Unlock()
-
-	if err := sudoPacmanInstall(pacmanPackageNames...); err != nil {
-		return fmt.Errorf("pacman install packages: %w", err)
+func timezone() error {
+	if err := sudoLn("/usr/share/zoneinfo/"+tz, "/etc/localtime"); err != nil {
+		return fmt.Errorf("sudo ln /etc/localtime: %w", err)
 	}
 
 	return nil
 }
 
 func caCertificates(ctx context.Context) error {
-	mg.CtxDeps(ctx, pacmanPackages)
+	mg.CtxDeps(ctx, timezone)
 
 	if err := sh.Run("sudo", "update-ca-trust"); err != nil {
 		return fmt.Errorf("sudo update-ca-trust: %w", err)
@@ -79,7 +72,19 @@ func caCertificates(ctx context.Context) error {
 	return nil
 }
 
+func pacmanPackages(ctx context.Context) error {
+	mg.CtxDeps(ctx, timezone, caCertificates)
+
+	if err := sudoPacmanInstall(pacmanPackageNames...); err != nil {
+		return fmt.Errorf("pacman install packages: %w", err)
+	}
+
+	return nil
+}
+
 func installGo(ctx context.Context) error {
+	mg.CtxDeps(ctx, timezone, caCertificates, bashrc)
+
 	wd, err := os.Getwd()
 	if err != nil {
 		return fmt.Errorf("Getwd: %w", err)
@@ -113,7 +118,7 @@ func installGo(ctx context.Context) error {
 }
 
 func goModules(ctx context.Context) error {
-	mg.CtxDeps(ctx, pacmanPackages, installGo)
+	mg.CtxDeps(ctx, timezone, caCertificates, installGo)
 
 	for _, mod := range goToolModules {
 		err := func() error {
@@ -136,7 +141,7 @@ func goModules(ctx context.Context) error {
 }
 
 func mage(ctx context.Context) error {
-	mg.CtxDeps(ctx, pacmanPackages, installGo)
+	mg.CtxDeps(ctx, timezone, caCertificates, pacmanPackages, installGo)
 
 	if err := sh.Run("git", "clone", "https://github.com/magefile/mage"); err != nil {
 		return fmt.Errorf("git clone mage: %w", err)
@@ -166,6 +171,8 @@ func mage(ctx context.Context) error {
 }
 
 func protoc(ctx context.Context) error {
+	mg.CtxDeps(ctx, timezone, caCertificates)
+
 	dir := "protoc-" + protocVersion
 	if err := mkdir(dir); err != nil {
 		return fmt.Errorf("create protoc folder: %w", err)
@@ -192,7 +199,7 @@ func protoc(ctx context.Context) error {
 }
 
 func protocGenGRPCJava(ctx context.Context) error {
-	mg.CtxDeps(ctx, protoc)
+	mg.CtxDeps(ctx, timezone, caCertificates, protoc)
 
 	name := "protoc-gen-grpc-java-" + protocGenGRPCJavaVersion
 	if err := downloadAs(ctx, protocGenGRPCJavaURL, "protoc/bin/"+name); err != nil {
@@ -216,7 +223,7 @@ func protocGenGRPCJava(ctx context.Context) error {
 }
 
 func protocGoModules(ctx context.Context) error {
-	mg.CtxDeps(ctx, installGo)
+	mg.CtxDeps(ctx, timezone, caCertificates, installGo)
 
 	for _, mod := range protocGoModuleURLs {
 		err := func() error {
@@ -235,6 +242,8 @@ func protocGoModules(ctx context.Context) error {
 }
 
 func nvm(ctx context.Context) error {
+	mg.CtxDeps(ctx, timezone, caCertificates, pacmanPackages)
+
 	b, err := download(ctx, nvmInstallURL)
 	if err != nil {
 		return fmt.Errorf("download nvm install script: %w", err)
@@ -248,7 +257,7 @@ func nvm(ctx context.Context) error {
 }
 
 func nodeJS(ctx context.Context) error {
-	mg.CtxDeps(ctx, nvm)
+	mg.CtxDeps(ctx, timezone, caCertificates, pacmanPackages, nvm)
 
 	wd, err := os.Getwd()
 	if err != nil {
@@ -274,6 +283,8 @@ func nodeJS(ctx context.Context) error {
 }
 
 func npm(ctx context.Context) error {
+	mg.CtxDeps(ctx, timezone, caCertificates, pacmanPackages)
+
 	if err := downloadAs(ctx, npmInstallURL, "install-npm.sh"); err != nil {
 		return fmt.Errorf("download npm install script: %w", err)
 	}
@@ -300,10 +311,7 @@ func npm(ctx context.Context) error {
 }
 
 func npmPackages(ctx context.Context) error {
-	mg.CtxDeps(ctx, npm)
-
-	npmMu.Lock()
-	defer npmMu.Unlock()
+	mg.CtxDeps(ctx, timezone, caCertificates, npm)
 
 	if err := npmInstall(append([]string{"-g"}, npmPackageNames...)...); err != nil {
 		return fmt.Errorf("npm install packages: %w", err)
@@ -313,6 +321,8 @@ func npmPackages(ctx context.Context) error {
 }
 
 func jdk(ctx context.Context) error {
+	mg.CtxDeps(ctx, timezone, caCertificates, bashrc)
+
 	wd, err := os.Getwd()
 	if err != nil {
 		return fmt.Errorf("Getwd: %w", err)
@@ -348,6 +358,8 @@ func jdk(ctx context.Context) error {
 }
 
 func maven(ctx context.Context) error {
+	mg.CtxDeps(ctx, timezone, caCertificates)
+
 	wd, err := os.Getwd()
 	if err != nil {
 		return fmt.Errorf("Getwd: %w", err)
@@ -369,7 +381,9 @@ func maven(ctx context.Context) error {
 	return nil
 }
 
-func volumes() error {
+func volumes(ctx context.Context) error {
+	mg.CtxDeps(ctx, timezone)
+
 	for _, f := range volumeFolders {
 		if err := mkdir(f); err != nil {
 			return fmt.Errorf("create volume folder %s: %w", f, err)
@@ -377,9 +391,6 @@ func volumes() error {
 	}
 
 	for _, f := range []string{".bash_history", ".gitconfig"} {
-		if err := mkdir(f + "_dir"); err != nil {
-			return fmt.Errorf("create volume folder %s_dir: %w", f, err)
-		}
 		if err := ln(f+"_dir/"+f, f); err != nil {
 			return fmt.Errorf("ln volume folder %s_dir: %w", f, err)
 		}
@@ -388,19 +399,8 @@ func volumes() error {
 	return nil
 }
 
-func timezone() error {
-	systemMu.Lock()
-	defer systemMu.Unlock()
-
-	if err := sudoLn("/usr/share/zoneinfo/"+tz, "/etc/localtime"); err != nil {
-		return fmt.Errorf("sudo ln /etc/localtime: %w", err)
-	}
-
-	return nil
-}
-
 func gatsby(ctx context.Context) error {
-	mg.CtxDeps(ctx, npmPackages)
+	mg.CtxDeps(ctx, timezone, npmPackages)
 
 	if err := sh.Run("npx", "gatsby", "telemetry", "--disable"); err != nil {
 		return fmt.Errorf("disable Gatsby telemetry: %w", err)
@@ -410,6 +410,8 @@ func gatsby(ctx context.Context) error {
 }
 
 func restic(ctx context.Context) error {
+	mg.CtxDeps(ctx, timezone, caCertificates)
+
 	wd, err := os.Getwd()
 	if err != nil {
 		return fmt.Errorf("Getwd: %w", err)
@@ -423,7 +425,7 @@ func restic(ctx context.Context) error {
 		return fmt.Errorf("chmod restic: %w", err)
 	}
 
-	if err := ln(wd+"/restic_"+resticVersion+"_linux_amd64", wd+"/restic"); err != nil {
+	if err := ln("restic_"+resticVersion+"_linux_amd64", wd+"/restic"); err != nil {
 		return fmt.Errorf("ln restic: %w", err)
 	}
 
@@ -435,6 +437,8 @@ func restic(ctx context.Context) error {
 }
 
 func icdiff(ctx context.Context) error {
+	mg.CtxDeps(ctx, timezone, caCertificates)
+
 	wd, err := os.Getwd()
 	if err != nil {
 		return fmt.Errorf("Getwd: %w", err)
@@ -444,7 +448,7 @@ func icdiff(ctx context.Context) error {
 		return fmt.Errorf("download and extract icdiff: %w", err)
 	}
 
-	if err := ln(wd+"/icdiff-release-"+icdiffVersion, wd+"/icdiff"); err != nil {
+	if err := ln("icdiff-release-"+icdiffVersion, wd+"/icdiff"); err != nil {
 		return fmt.Errorf("ln icdiff: %w", err)
 	}
 
@@ -456,7 +460,7 @@ func icdiff(ctx context.Context) error {
 }
 
 func dockerGroup(ctx context.Context) error {
-	mg.CtxDeps(ctx, pacmanPackages)
+	mg.CtxDeps(ctx, timezone, pacmanPackages)
 
 	if err := sh.Run("sudo", "usermod", "-G", "docker", "vscode"); err != nil {
 		return fmt.Errorf("sudo usermod: %w", err)
@@ -466,6 +470,8 @@ func dockerGroup(ctx context.Context) error {
 }
 
 func gitCompletion(ctx context.Context) error {
+	mg.CtxDeps(ctx, timezone, caCertificates, bashrc)
+
 	wd, err := os.Getwd()
 	if err != nil {
 		return fmt.Errorf("Getwd: %w", err)
@@ -483,6 +489,8 @@ func gitCompletion(ctx context.Context) error {
 }
 
 func gitPrompt(ctx context.Context) error {
+	mg.CtxDeps(ctx, timezone, caCertificates, bashrc)
+
 	wd, err := os.Getwd()
 	if err != nil {
 		return fmt.Errorf("Getwd: %w", err)
@@ -494,6 +502,16 @@ func gitPrompt(ctx context.Context) error {
 
 	if err := appendText(".bashrc", ". ~/.git-prompt.sh\n"+gitPromptBashRC); err != nil {
 		return fmt.Errorf("add git-prompt to .bashrc: %w", err)
+	}
+
+	return nil
+}
+
+func bashrc(ctx context.Context) error {
+	mg.CtxDeps(ctx, timezone)
+
+	if err := appendText(".bashrc", "[[ -f ~/.bashrc_dir/.bashrc ]] && . ~/.bashrc_dir/.bashrc\n"); err != nil {
+		return fmt.Errorf("source ~/.bashrc_dir/.bashrc in .bashrc: %w", err)
 	}
 
 	return nil
