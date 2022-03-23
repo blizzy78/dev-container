@@ -1,6 +1,6 @@
 module containerrunner
 
-go 1.17
+go 1.18
 
 require (
 	github.com/go-co-op/gocron v1.13.0
