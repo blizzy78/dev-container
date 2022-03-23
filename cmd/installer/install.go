@@ -32,7 +32,7 @@ const (
 var (
 	pacmanPackageNames = []string{
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "fontconfig",
-		"postgresql", "git", "graphviz", "inetutils", "openssh",
+		"postgresql", "git", "graphviz", "inetutils", "openssh", "man-db", "man-pages",
 	}
 
 	goToolModules = []string{

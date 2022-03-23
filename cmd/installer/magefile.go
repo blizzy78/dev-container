@@ -52,6 +52,8 @@ func Install(ctx context.Context) {
 		gitCompletion,
 		gitPrompt,
 	)
+
+	mg.CtxDeps(ctx, manPages)
 }
 
 func timezone() error {
@@ -512,6 +514,16 @@ func bashrc(ctx context.Context) error {
 
 	if err := appendText(".bashrc", "[[ -f ~/.bashrc_dir/.bashrc ]] && . ~/.bashrc_dir/.bashrc\n"); err != nil {
 		return fmt.Errorf("source ~/.bashrc_dir/.bashrc in .bashrc: %w", err)
+	}
+
+	return nil
+}
+
+func manPages(ctx context.Context) error {
+	mg.CtxDeps(ctx, timezone, pacmanPackages)
+
+	if err := sh.Run("sudo", "mandb", "-c"); err != nil {
+		return fmt.Errorf("sudo mandb: %w", err)
 	}
 
 	return nil
