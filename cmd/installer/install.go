@@ -23,7 +23,7 @@ const (
 	mavenVersion = "3.8.5"
 
 	// https://github.com/restic/restic/releases
-	resticVersion = "0.12.1"
+	resticVersion = "0.13.0"
 
 	// https://github.com/jeffkaufman/icdiff/tags
 	icdiffVersion = "2.0.4"
@@ -32,7 +32,7 @@ const (
 var (
 	pacmanPackageNames = []string{
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "fontconfig",
-		"postgresql", "git", "graphviz", "inetutils", "openssh", "man-db", "man-pages",
+		"postgresql", "git", "graphviz", "inetutils", "openssh", "man-db", "man-pages", "diffutils", "bash-completion",
 	}
 
 	goToolModules = []string{
