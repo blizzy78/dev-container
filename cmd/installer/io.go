@@ -54,18 +54,18 @@ func copyToFile(r io.Reader, path string, perm fs.FileMode) error {
 func downloadAs(ctx context.Context, url string, path string) error {
 	b, err := download(ctx, url)
 	if err != nil {
-		return fmt.Errorf("download: %w", err)
+		return fmt.Errorf("download %s: %w", url, err)
 	}
 
 	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, os.ModePerm)
 	if err != nil {
-		return fmt.Errorf("open: %w", err)
+		return fmt.Errorf("open %s: %w", path, err)
 	}
 	defer f.Close()
 
 	_, err = f.Write(b)
 	if err != nil {
-		return fmt.Errorf("write: %w", err)
+		return fmt.Errorf("write %s: %w", path, err)
 	}
 
 	return nil

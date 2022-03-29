@@ -21,7 +21,7 @@ import (
 func downloadAndUnZipTo(ctx context.Context, url string, dest string) error {
 	b, err := download(ctx, url)
 	if err != nil {
-		return fmt.Errorf("download: %w", err)
+		return fmt.Errorf("download %s: %w", url, err)
 	}
 
 	if err := unZipTo(b, dest); err != nil {
@@ -34,7 +34,7 @@ func downloadAndUnZipTo(ctx context.Context, url string, dest string) error {
 func downloadAndUnTarGZIPTo(ctx context.Context, url string, dest string) error {
 	b, err := download(ctx, url)
 	if err != nil {
-		return fmt.Errorf("download: %w", err)
+		return fmt.Errorf("download %s: %w", url, err)
 	}
 
 	if err := unTarGZIPTo(b, dest); err != nil {
@@ -47,7 +47,7 @@ func downloadAndUnTarGZIPTo(ctx context.Context, url string, dest string) error 
 func downloadAndUnBZip2To(ctx context.Context, url string, dest string) error {
 	b, err := download(ctx, url)
 	if err != nil {
-		return fmt.Errorf("download: %w", err)
+		return fmt.Errorf("download %s: %w", url, err)
 	}
 
 	if err := unBZip2To(b, dest); err != nil {

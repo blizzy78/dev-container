@@ -3,9 +3,6 @@
 package main
 
 const (
-	// https://golang.org/dl/
-	goVersion = "1.18"
-
 	// https://github.com/protocolbuffers/protobuf/releases
 	protocVersion = "3.19.4"
 
@@ -30,6 +27,9 @@ const (
 )
 
 var (
+	// https://golang.org/dl/
+	goVersions = []string{"1.18", "1.16.15"} // first is default
+
 	pacmanPackageNames = []string{
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "fontconfig",
 		"postgresql", "git", "graphviz", "inetutils", "openssh", "man-db", "man-pages", "diffutils", "bash-completion",
@@ -52,10 +52,7 @@ var (
 
 	nodeLTSNames = []string{"gallium", "dubnium"} // first is default
 
-	npmPackageNames = []string{
-		"serve",
-		"gatsby",
-	}
+	npmPackageNames = []string{"serve", "gatsby"}
 
 	volumeFolders = []string{
 		".vscode-server/extensions",
@@ -85,8 +82,6 @@ var (
 const tz = "Europe/Berlin"
 
 const (
-	goURL = "https://golang.org/dl/go" + goVersion + ".linux-amd64.tar.gz"
-
 	protocURL            = "https://github.com/protocolbuffers/protobuf/releases/download/v" + protocVersion + "/protoc-" + protocVersion + "-linux-x86_64.zip"
 	protocGenGRPCJavaURL = "https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/" + protocGenGRPCJavaVersion + "/protoc-gen-grpc-java-" + protocGenGRPCJavaVersion + "-linux-x86_64.exe"
 
@@ -101,3 +96,5 @@ const (
 
 	icdiffURL = "https://github.com/jeffkaufman/icdiff/archive/refs/tags/release-" + icdiffVersion + ".tar.gz"
 )
+
+var goURL = "https://golang.org/dl/go" + goVersions[0] + ".linux-amd64.tar.gz"

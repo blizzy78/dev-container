@@ -35,6 +35,7 @@ func Install(ctx context.Context) {
 		bashrc,
 		pacmanPackages,
 		installGo,
+		installGoSecondary,
 		goModules,
 		mage,
 		protoc,
@@ -96,11 +97,11 @@ func installGo(ctx context.Context) error {
 		return fmt.Errorf("download and extract Go: %w", err)
 	}
 
-	if err := os.Rename("go", "go-"+goVersion); err != nil {
+	if err := os.Rename("go", "go-"+goVersions[0]); err != nil {
 		return fmt.Errorf("rename Go folder: %w", err)
 	}
 
-	if err := ln("go-"+goVersion, "go"); err != nil {
+	if err := ln("go-"+goVersions[0], "go"); err != nil {
 		return fmt.Errorf("ln Go folder: %w", err)
 	}
 
@@ -119,8 +120,24 @@ func installGo(ctx context.Context) error {
 	return nil
 }
 
-func goModules(ctx context.Context) error {
+func installGoSecondary(ctx context.Context) error {
 	mg.CtxDeps(ctx, timezone, caCertificates, installGo)
+
+	for _, ver := range goVersions[1:] {
+		if err := g0("install", "golang.org/dl/go"+ver+"@latest"); err != nil {
+			return fmt.Errorf("install Go dl v%s: %w", ver, err)
+		}
+
+		if err := sh.Run("/go/bin/go"+ver, "download"); err != nil {
+			return fmt.Errorf("download Go v%s: %w", ver, err)
+		}
+	}
+
+	return nil
+}
+
+func goModules(ctx context.Context) error {
+	mg.CtxDeps(ctx, timezone, caCertificates, installGo, installGoSecondary)
 
 	for _, mod := range goToolModules {
 		err := func() error {
