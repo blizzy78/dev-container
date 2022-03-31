@@ -7,7 +7,7 @@ const (
 	protocVersion = "3.19.4"
 
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
-	protocGenGRPCJavaVersion = "1.45.0"
+	protocGenGRPCJavaVersion = "1.45.1"
 
 	// https://github.com/nvm-sh/nvm/releases
 	nvmVersion = "0.39.1"
