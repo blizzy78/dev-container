@@ -17,7 +17,7 @@ import (
 )
 
 var (
-	sudoPacmanInstall = sh.RunCmd("sudo", "pacman", "-S", "--noconfirm")
+	sudoPacmanInstall = sh.RunCmd("sudo", "pacman", "-S", "--noconfirm", "--needed")
 	ln                = sh.RunCmd("ln", "-s")
 	sudoLn            = sh.RunCmd("sudo", "ln", "-s")
 	g0                = sh.RunCmd("/go/bin/go")

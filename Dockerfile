@@ -18,12 +18,11 @@ ARG USERNAME=vscode
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
-RUN pacman -Syy --noconfirm && pacman -Syu --noconfirm
-RUN pacman -S --noconfirm rsync reflector
+RUN pacman -Syu --noconfirm --needed rsync reflector
 RUN reflector -c DE -f 12 -l 10 -n 12 --save /etc/pacman.d/mirrorlist
 RUN sed -i -r '/^NoExtract / d' /etc/pacman.conf
 RUN pacman -Qqn | pacman -S --noconfirm -
-RUN pacman -S --noconfirm sudo
+RUN pacman -S --noconfirm --needed sudo
 
 RUN groupadd --gid $USER_GID $USERNAME && \
     useradd --uid $USER_UID --gid $USER_GID -m $USERNAME && \
