@@ -1,0 +1,62 @@
+{{with $volume_prefix := ""}}{{else -}}
+{{if ne .GOOS "windows" -}}
+  {{$volume_prefix = "/home/mickey/.dev-container-volumes/" -}}
+{{end -}}
+
+version: '3'
+
+services:
+  dev:
+    container_name: dev-container-dev-1
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - {{$volume_prefix}}vscode-extensions:/home/vscode/.vscode-server/extensions
+      - {{$volume_prefix}}workspaces:/home/vscode/workspaces
+      - {{$volume_prefix}}bash-history:/home/vscode/.bash_history_dir
+      - {{$volume_prefix}}bashrc:/home/vscode/.bashrc_dir
+      - {{$volume_prefix}}git-config:/home/vscode/.gitconfig_dir
+      - {{$volume_prefix}}m2-repo:/home/vscode/.m2
+      - {{$volume_prefix}}sophora-repo:/home/vscode/sophora-repo
+      - {{$volume_prefix}}ssh:/home/vscode/.ssh
+      - {{$volume_prefix}}restic-repos:/home/vscode/restic-repos
+      - {{$volume_prefix}}containerrunner:/home/vscode/.containerrunner
+      - {{$volume_prefix}}go-fuzz-cache:/home/vscode/.cache/go-build/fuzz
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - dev-container
+    command: /home/vscode/containerrunner -config /home/vscode/.containerrunner/config.yaml
+
+  pg:
+    container_name: dev-container-pg-1
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - {{$volume_prefix}}pg:/var/lib/postgresql/data
+    networks:
+      - dev-container
+
+{{if eq .GOOS "windows"}}
+
+volumes:
+  vscode-extensions:
+  workspaces:
+  bash-history:
+  bashrc:
+  git-config:
+  m2-repo:
+  sophora-repo:
+  ssh:
+  restic-repos:
+  containerrunner:
+  go-fuzz-cache:
+  pg:
+
+{{end}}
+
+networks:
+  dev-container:
+
+{{- end}}
