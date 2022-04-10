@@ -1,12 +1,18 @@
-FROM golang AS builder
+FROM golang AS installer-builder
 
 RUN git clone https://github.com/magefile/mage && cd mage && go run bootstrap.go
 
 COPY cmd/installer /installer
-COPY cmd/containerrunner /containerrunner
 
 WORKDIR /installer
 RUN mage -compile installer && chmod 755 installer
+
+
+FROM golang AS containerrunner-builder
+
+RUN git clone https://github.com/magefile/mage && cd mage && go run bootstrap.go
+
+COPY cmd/containerrunner /containerrunner
 
 WORKDIR /containerrunner
 RUN go build -o containerrunner . && chmod 755 containerrunner
@@ -29,7 +35,8 @@ RUN groupadd --gid $USER_GID $USERNAME && \
     echo "$USERNAME ALL=(root) NOPASSWD:ALL" >/etc/sudoers.d/$USERNAME && \
     chmod 0440 /etc/sudoers.d/$USERNAME
 
-COPY --from=builder /installer/installer /containerrunner/containerrunner /home/$USERNAME
+COPY --from=installer-builder /installer/installer /home/$USERNAME
+COPY --from=containerrunner-builder /containerrunner/containerrunner /home/$USERNAME
 
 RUN sudo -i -u $USERNAME /home/$USERNAME/installer -v && rm /home/$USERNAME/installer
 

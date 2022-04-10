@@ -20,10 +20,10 @@ const (
 	mavenVersion = "3.8.5"
 
 	// https://github.com/restic/restic/releases
-	resticVersion = "0.13.0"
+	resticVersion = "0.13.1"
 
 	// https://github.com/jeffkaufman/icdiff/tags
-	icdiffVersion = "2.0.4"
+	icdiffVersion = "2.0.5"
 )
 
 var (
