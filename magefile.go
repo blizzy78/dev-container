@@ -192,6 +192,5 @@ func createComposeFile() (func(), error) {
 
 	return func() {
 		defer composeFileMu.Unlock()
-		_ = os.Remove(composeFile)
 	}, nil
 }

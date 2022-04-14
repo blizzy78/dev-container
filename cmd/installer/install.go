@@ -28,7 +28,7 @@ const (
 
 var (
 	// https://golang.org/dl/
-	goVersions = []string{"1.18", "1.16.15"} // first is default
+	goVersions = []string{"1.18.1", "1.16.15"} // first is default
 
 	pacmanPackageNames = []string{
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "fontconfig",
