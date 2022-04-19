@@ -32,7 +32,7 @@ var (
 
 	pacmanPackageNames = []string{
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "fontconfig",
-		"postgresql", "git", "graphviz", "inetutils", "openssh", "man-db", "man-pages", "diffutils", "bash-completion",
+		"postgresql", "git", "graphviz", "inetutils", "openssh", "man-db", "man-pages", "diffutils", "bash-completion", "fakeroot",
 	}
 
 	goToolModules = []string{
@@ -95,6 +95,8 @@ const (
 	resticURL = "https://github.com/restic/restic/releases/download/v" + resticVersion + "/restic_" + resticVersion + "_linux_amd64.bz2"
 
 	icdiffURL = "https://github.com/jeffkaufman/icdiff/archive/refs/tags/release-" + icdiffVersion + ".tar.gz"
+
+	yayURL = "https://aur.archlinux.org/yay-bin.git"
 )
 
 var goURL = "https://golang.org/dl/go" + goVersions[0] + ".linux-amd64.tar.gz"

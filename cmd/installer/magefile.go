@@ -9,6 +9,7 @@ import (
 	"io/fs"
 	"os"
 	"os/exec"
+	"path"
 	"strings"
 	"sync"
 
@@ -33,7 +34,12 @@ func Install(ctx context.Context) {
 		timezone,
 		caCertificates,
 		bashrc,
-		pacmanPackages,
+		pacmanPackages)
+
+	// need to do this separately because of different working directory
+	mg.CtxDeps(ctx, yay)
+
+	mg.CtxDeps(ctx,
 		installGo,
 		installGoSecondary,
 		goModules,
@@ -544,4 +550,53 @@ func manPages(ctx context.Context) error {
 	}
 
 	return nil
+}
+
+func yay(ctx context.Context) error {
+	mg.CtxDeps(ctx, timezone, caCertificates, pacmanPackages)
+
+	return doInTempDir(func() error {
+		if err := sh.Run("git", "clone", yayURL); err != nil {
+			return fmt.Errorf("git clone: %w", err)
+		}
+
+		wd, err := os.Getwd()
+		if err != nil {
+			return fmt.Errorf("get wd: %w", err)
+		}
+
+		repoName := path.Base(strings.TrimSuffix(yayURL, ".git"))
+
+		return doInDir(wd+"/"+repoName, func() error {
+			if err := sh.Run("makepkg", "-srci", "--noconfirm"); err != nil {
+				return fmt.Errorf("makepkg: %w", err)
+			}
+
+			return nil
+		})
+	})
+}
+
+func doInTempDir(f func() error) error {
+	dir, err := os.MkdirTemp("", "")
+	if err != nil {
+		return fmt.Errorf("make temp dir: %w", err)
+	}
+	defer os.RemoveAll(dir)
+
+	return doInDir(dir, f)
+}
+
+func doInDir(dir string, f func() error) error {
+	oldWd, err := os.Getwd()
+	if err != nil {
+		return fmt.Errorf("get wd: %w", err)
+	}
+
+	if err := os.Chdir(dir); err != nil {
+		return fmt.Errorf("change dir: %w", err)
+	}
+	defer os.Chdir(oldWd)
+
+	return f()
 }
