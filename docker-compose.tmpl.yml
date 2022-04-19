@@ -30,7 +30,7 @@ services:
 
   pg:
     container_name: dev-container-pg-1
-    image: postgres
+    image: postgres:13
     environment:
       - POSTGRES_PASSWORD=postgres
     volumes:
