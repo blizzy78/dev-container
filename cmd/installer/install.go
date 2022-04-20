@@ -18,12 +18,6 @@ const (
 
 	// https://maven.apache.org/download.cgi
 	mavenVersion = "3.8.5"
-
-	// https://github.com/restic/restic/releases
-	resticVersion = "0.13.1"
-
-	// https://github.com/jeffkaufman/icdiff/tags
-	icdiffVersion = "2.0.5"
 )
 
 var (
@@ -33,6 +27,11 @@ var (
 	pacmanPackageNames = []string{
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "fontconfig",
 		"postgresql", "git", "graphviz", "inetutils", "openssh", "man-db", "man-pages", "diffutils", "bash-completion", "fakeroot",
+		"restic",
+	}
+
+	yayPackageNames = []string{
+		"icdiff",
 	}
 
 	goToolModules = []string{
@@ -91,10 +90,6 @@ const (
 	zuluJDKURL = "https://cdn.azul.com/zulu/bin/zulu" + zuluVersion + "-ca-jdk" + zuluJDKVersion + "-linux_x64.tar.gz"
 
 	mavenURL = "https://dlcdn.apache.org/maven/maven-3/" + mavenVersion + "/binaries/apache-maven-" + mavenVersion + "-bin.tar.gz"
-
-	resticURL = "https://github.com/restic/restic/releases/download/v" + resticVersion + "/restic_" + resticVersion + "_linux_amd64.bz2"
-
-	icdiffURL = "https://github.com/jeffkaufman/icdiff/archive/refs/tags/release-" + icdiffVersion + ".tar.gz"
 
 	yayURL = "https://aur.archlinux.org/yay-bin.git"
 )

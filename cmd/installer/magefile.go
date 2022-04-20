@@ -19,6 +19,7 @@ import (
 
 var (
 	sudoPacmanInstall = sh.RunCmd("sudo", "pacman", "-S", "--noconfirm", "--needed")
+	yayInstall        = sh.RunCmd("yay", "-S", "--noconfirm", "--needed")
 	ln                = sh.RunCmd("ln", "-s")
 	sudoLn            = sh.RunCmd("sudo", "ln", "-s")
 	g0                = sh.RunCmd("/go/bin/go")
@@ -40,6 +41,7 @@ func Install(ctx context.Context) {
 	mg.CtxDeps(ctx, yay)
 
 	mg.CtxDeps(ctx,
+		yayPackages,
 		installGo,
 		installGoSecondary,
 		goModules,
@@ -53,8 +55,6 @@ func Install(ctx context.Context) {
 		maven,
 		volumes,
 		gatsby,
-		restic,
-		icdiff,
 		dockerGroup,
 		gitCompletion,
 		gitPrompt,
@@ -86,6 +86,16 @@ func pacmanPackages(ctx context.Context) error {
 
 	if err := sudoPacmanInstall(pacmanPackageNames...); err != nil {
 		return fmt.Errorf("pacman install packages: %w", err)
+	}
+
+	return nil
+}
+
+func yayPackages(ctx context.Context) error {
+	mg.CtxDeps(ctx, timezone, caCertificates, yay)
+
+	if err := yayInstall(yayPackageNames...); err != nil {
+		return fmt.Errorf("yay install packages: %w", err)
 	}
 
 	return nil
@@ -429,56 +439,6 @@ func gatsby(ctx context.Context) error {
 
 	if err := sh.Run("npx", "gatsby", "telemetry", "--disable"); err != nil {
 		return fmt.Errorf("disable Gatsby telemetry: %w", err)
-	}
-
-	return nil
-}
-
-func restic(ctx context.Context) error {
-	mg.CtxDeps(ctx, timezone, caCertificates)
-
-	wd, err := os.Getwd()
-	if err != nil {
-		return fmt.Errorf("Getwd: %w", err)
-	}
-
-	if err := downloadAndUnBZip2To(ctx, resticURL, wd+"/restic_"+resticVersion+"_linux_amd64"); err != nil {
-		return fmt.Errorf("download and extract restic: %w", err)
-	}
-
-	if err := os.Chmod(wd+"/restic_"+resticVersion+"_linux_amd64", 0755); err != nil {
-		return fmt.Errorf("chmod restic: %w", err)
-	}
-
-	if err := ln("restic_"+resticVersion+"_linux_amd64", wd+"/restic"); err != nil {
-		return fmt.Errorf("ln restic: %w", err)
-	}
-
-	if err := sudoLn(wd+"/restic", "/usr/bin/restic"); err != nil {
-		return fmt.Errorf("sudo ln /usr/bin/restic: %w", err)
-	}
-
-	return nil
-}
-
-func icdiff(ctx context.Context) error {
-	mg.CtxDeps(ctx, timezone, caCertificates)
-
-	wd, err := os.Getwd()
-	if err != nil {
-		return fmt.Errorf("Getwd: %w", err)
-	}
-
-	if err := downloadAndUnTarGZIPTo(ctx, icdiffURL, wd); err != nil {
-		return fmt.Errorf("download and extract icdiff: %w", err)
-	}
-
-	if err := ln("icdiff-release-"+icdiffVersion, wd+"/icdiff"); err != nil {
-		return fmt.Errorf("ln icdiff: %w", err)
-	}
-
-	if err := sudoLn(wd+"/icdiff/icdiff", "/usr/bin/icdiff"); err != nil {
-		return fmt.Errorf("sudo ln /usr/bin/icdiff: %w", err)
 	}
 
 	return nil
