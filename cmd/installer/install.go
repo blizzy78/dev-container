@@ -4,7 +4,7 @@ package main
 
 const (
 	// https://github.com/protocolbuffers/protobuf/releases
-	protocVersion = "3.20.0"
+	protocVersion = "3.20.1"
 
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
 	protocGenGRPCJavaVersion = "1.45.1"
@@ -13,8 +13,8 @@ const (
 	nvmVersion = "0.39.1"
 
 	// https://www.azul.com/downloads/?version=java-11-lts&os=linux&architecture=x86-64-bit&package=jdk
-	zuluVersion    = "11.54.25"
-	zuluJDKVersion = "11.0.14.1"
+	zuluVersion    = "11.56.19"
+	zuluJDKVersion = "11.0.15"
 
 	// https://maven.apache.org/download.cgi
 	mavenVersion = "3.8.5"
