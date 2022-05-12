@@ -3,12 +3,10 @@
 package main
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"io/fs"
 	"os"
-	"os/exec"
 	"path"
 	"strings"
 	"sync"
@@ -34,28 +32,31 @@ func Install(ctx context.Context) {
 	mg.CtxDeps(ctx,
 		timezone,
 		caCertificates,
-		bashrc,
-		pacmanPackages)
+		pacmanPackages,
+	)
 
 	// need to do this separately because of different working directory
 	mg.CtxDeps(ctx, yay)
 
+	// these all depend on yay
 	mg.CtxDeps(ctx,
+		bashrc,
+		volumes,
+		dockerGroup,
 		yayPackages,
 		installGo,
 		installGoSecondary,
 		goModules,
-		mage,
 		protoc,
 		protocGenGRPCJava,
 		protocGoModules,
+		nvm,
+		nodeJS,
 		npm,
 		npmPackages,
 		jdk,
 		maven,
-		volumes,
 		gatsby,
-		dockerGroup,
 		gitCompletion,
 		gitPrompt,
 	)
@@ -175,36 +176,6 @@ func goModules(ctx context.Context) error {
 	return nil
 }
 
-func mage(ctx context.Context) error {
-	mg.CtxDeps(ctx, timezone, caCertificates, pacmanPackages, installGo)
-
-	if err := sh.Run("git", "clone", "https://github.com/magefile/mage"); err != nil {
-		return fmt.Errorf("git clone mage: %w", err)
-	}
-	defer sh.Rm("mage")
-
-	wd, err := os.Getwd()
-	if err != nil {
-		return fmt.Errorf("Getwd: %w", err)
-	}
-
-	goMu.Lock()
-	defer goMu.Unlock()
-
-	c := exec.Command("go", "run", "bootstrap.go")
-	c.Dir = wd + "/mage"
-	o, err := c.CombinedOutput()
-	if mg.Verbose() {
-		_, _ = os.Stdout.Write(o)
-	}
-
-	if err != nil {
-		return fmt.Errorf("go run bootstrap.go: %w", err)
-	}
-
-	return nil
-}
-
 func protoc(ctx context.Context) error {
 	mg.CtxDeps(ctx, timezone, caCertificates)
 
@@ -277,15 +248,10 @@ func protocGoModules(ctx context.Context) error {
 }
 
 func nvm(ctx context.Context) error {
-	mg.CtxDeps(ctx, timezone, caCertificates, pacmanPackages)
+	mg.CtxDeps(ctx, timezone, caCertificates, bashrc, pacmanPackages, yayPackages)
 
-	b, err := download(ctx, nvmInstallURL)
-	if err != nil {
-		return fmt.Errorf("download nvm install script: %w", err)
-	}
-
-	if err := bashStdin(bytes.NewReader(b)); err != nil {
-		return fmt.Errorf("run nvm install script: %w", err)
+	if err := appendText(".bashrc", ". /usr/share/nvm/init-nvm.sh\n"); err != nil {
+		return fmt.Errorf("source init-nvm.sh in .bashrc: %w", err)
 	}
 
 	return nil
@@ -294,13 +260,7 @@ func nvm(ctx context.Context) error {
 func nodeJS(ctx context.Context) error {
 	mg.CtxDeps(ctx, timezone, caCertificates, pacmanPackages, nvm)
 
-	wd, err := os.Getwd()
-	if err != nil {
-		return fmt.Errorf("Getwd: %w", err)
-	}
-
-	s := "export NVM_DIR=\"" + wd + "/.nvm\"\n" +
-		". ${NVM_DIR}/nvm.sh\n"
+	s := ". /usr/share/nvm/init-nvm.sh\n"
 
 	for _, v := range nodeLTSNames {
 		s += "nvm install --lts=" + v + "\n"
@@ -325,16 +285,10 @@ func npm(ctx context.Context) error {
 	}
 	defer sh.Rm("install-npm.sh")
 
-	wd, err := os.Getwd()
-	if err != nil {
-		return fmt.Errorf("Getwd: %w", err)
-	}
-
 	mg.CtxDeps(ctx, nodeJS)
 
-	s := "export NVM_DIR=\"" + wd + "/.nvm\"\n" +
-		". ${NVM_DIR}/nvm.sh\n" +
-		"bash install-npm.sh\n" +
+	s := ". /usr/share/nvm/init-nvm.sh\n" +
+		"bash -e install-npm.sh\n" +
 		"sudo ln -s $(which npm) /usr/bin/npm\n" +
 		"sudo ln -s $(which npx) /usr/bin/npx"
 
@@ -467,7 +421,7 @@ func gitCompletion(ctx context.Context) error {
 	}
 
 	if err := appendText(".bashrc", ". ~/.git-completion.sh\n"); err != nil {
-		return fmt.Errorf("add git-completion to .bashrc: %w", err)
+		return fmt.Errorf("source .git-completion.sh in .bashrc: %w", err)
 	}
 
 	return nil

@@ -9,9 +9,6 @@ const (
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
 	protocGenGRPCJavaVersion = "1.46.0"
 
-	// https://github.com/nvm-sh/nvm/releases
-	nvmVersion = "0.39.1"
-
 	// https://www.azul.com/downloads/?version=java-11-lts&os=linux&architecture=x86-64-bit&package=jdk
 	zuluVersion    = "11.56.19"
 	zuluJDKVersion = "11.0.15"
@@ -22,7 +19,7 @@ const (
 
 var (
 	// https://golang.org/dl/
-	goVersions = []string{"1.18.1", "1.16.15"} // first is default
+	goVersions = []string{"1.18.2", "1.16.15"} // first is default
 
 	pacmanPackageNames = []string{
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "fontconfig",
@@ -31,7 +28,7 @@ var (
 	}
 
 	yayPackageNames = []string{
-		"icdiff",
+		"icdiff", "nvm-git", "mage-bin",
 	}
 
 	goToolModules = []string{
@@ -84,7 +81,6 @@ const (
 	protocURL            = "https://github.com/protocolbuffers/protobuf/releases/download/v" + protocVersion + "/protoc-" + protocVersion + "-linux-x86_64.zip"
 	protocGenGRPCJavaURL = "https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/" + protocGenGRPCJavaVersion + "/protoc-gen-grpc-java-" + protocGenGRPCJavaVersion + "-linux-x86_64.exe"
 
-	nvmInstallURL = "https://raw.githubusercontent.com/nvm-sh/nvm/v" + nvmVersion + "/install.sh"
 	npmInstallURL = "https://www.npmjs.com/install.sh"
 
 	zuluJDKURL = "https://cdn.azul.com/zulu/bin/zulu" + zuluVersion + "-ca-jdk" + zuluJDKVersion + "-linux_x64.tar.gz"
