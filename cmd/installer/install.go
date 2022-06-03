@@ -7,7 +7,7 @@ const (
 	protocVersion = "21.1"
 
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
-	protocGenGRPCJavaVersion = "1.46.0"
+	protocGenGRPCJavaVersion = "1.47.0"
 
 	// https://www.azul.com/downloads/?version=java-11-lts&os=linux&architecture=x86-64-bit&package=jdk
 	zuluVersion    = "11.56.19"
@@ -19,7 +19,7 @@ const (
 
 var (
 	// https://golang.org/dl/
-	goVersions = []string{"1.18.2", "1.16.15"} // first is default
+	goVersions = []string{"1.18.3", "1.16.15"} // first is default
 
 	pacmanPackageNames = []string{
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "fontconfig",
