@@ -250,7 +250,7 @@ func protocGoModules(ctx context.Context) error {
 func nvm(ctx context.Context) error {
 	mg.CtxDeps(ctx, timezone, caCertificates, bashrc, pacmanPackages, yayPackages)
 
-	if err := appendText(".bashrc", ". /usr/share/nvm/init-nvm.sh\n"); err != nil {
+	if err := appendText(".bashrc", ". /usr/share/nvm/init-nvm.sh\nnvm use --silent default\n"); err != nil {
 		return fmt.Errorf("source init-nvm.sh in .bashrc: %w", err)
 	}
 

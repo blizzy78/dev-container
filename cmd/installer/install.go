@@ -14,7 +14,7 @@ const (
 	zuluJDKVersion = "11.0.15"
 
 	// https://maven.apache.org/download.cgi
-	mavenVersion = "3.8.5"
+	mavenVersion = "3.8.6"
 )
 
 var (
