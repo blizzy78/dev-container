@@ -42,7 +42,6 @@ var (
 		"github.com/golangci/golangci-lint/cmd/golangci-lint@latest",
 		"golang.org/x/tools/gopls@latest",
 		"golang.org/x/perf/cmd/benchstat@latest",
-		"github.com/orijtech/structslop/cmd/structslop@latest",
 		"github.com/blizzy78/textsimilarity/cmd/textsimilarity@latest",
 	}
 
