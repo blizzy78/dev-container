@@ -4,7 +4,7 @@ package main
 
 const (
 	// https://github.com/protocolbuffers/protobuf/releases
-	protocVersion = "21.3"
+	protocVersion = "21.4"
 
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
 	protocGenGRPCJavaVersion = "1.48.0"
