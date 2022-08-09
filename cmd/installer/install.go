@@ -4,10 +4,10 @@ package main
 
 const (
 	// https://github.com/protocolbuffers/protobuf/releases
-	protocVersion = "21.4"
+	protocVersion = "21.5"
 
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
-	protocGenGRPCJavaVersion = "1.48.0"
+	protocGenGRPCJavaVersion = "1.48.1"
 
 	// https://www.azul.com/downloads/?version=java-11-lts&os=linux&architecture=x86-64-bit&package=jdk
 	zuluVersion    = "11.58.15"
@@ -19,7 +19,7 @@ const (
 
 var (
 	// https://golang.org/dl/
-	goVersions = []string{"1.18.4", "1.16.15"} // first is default
+	goVersions = []string{"1.19", "1.16.15"} // first is default
 
 	pacmanPackageNames = []string{
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "fontconfig",
