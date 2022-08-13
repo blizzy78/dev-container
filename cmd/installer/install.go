@@ -50,7 +50,7 @@ var (
 
 	nodeLTSNames = []string{"gallium", "dubnium"} // first is default
 
-	npmPackageNames = []string{"serve", "gatsby"}
+	npmPackageNames = []string{"serve"}
 
 	volumeFolders = []string{
 		".vscode-server/extensions",

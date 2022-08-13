@@ -56,7 +56,6 @@ func Install(ctx context.Context) {
 		npmPackages,
 		jdk,
 		maven,
-		gatsby,
 		gitCompletion,
 		gitPrompt,
 	)
@@ -383,16 +382,6 @@ func volumes(ctx context.Context) error {
 		if err := ln(f+"_dir/"+f, f); err != nil {
 			return fmt.Errorf("ln volume folder %s_dir: %w", f, err)
 		}
-	}
-
-	return nil
-}
-
-func gatsby(ctx context.Context) error {
-	mg.CtxDeps(ctx, timezone, npmPackages)
-
-	if err := sh.Run("npx", "gatsby", "telemetry", "--disable"); err != nil {
-		return fmt.Errorf("disable Gatsby telemetry: %w", err)
 	}
 
 	return nil
