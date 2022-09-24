@@ -21,7 +21,6 @@ var (
 	ln                = sh.RunCmd("ln", "-s")
 	sudoLn            = sh.RunCmd("sudo", "ln", "-s")
 	g0                = sh.RunCmd("/go/bin/go")
-	npmInstall        = sh.RunCmd("npm", "install")
 )
 
 var goMu sync.Mutex
@@ -261,13 +260,17 @@ func nodeJS(ctx context.Context) error {
 
 	s := ". /usr/share/nvm/init-nvm.sh\n"
 
-	for _, v := range nodeLTSNames {
-		s += "nvm install --lts=" + v + "\n"
+	for _, v := range nodeVersionNames {
+		if strings.HasPrefix(v, "lts/") {
+			v = strings.TrimPrefix(v, "lts/")
+			s += "nvm install --lts=" + v + "\n"
+			continue
+		}
+
+		s += "nvm install " + v + "\n"
 	}
 
-	s += "nvm alias default lts/" + nodeLTSNames[0] + "\n" +
-		"nvm use default\n" +
-		"sudo ln -s $(which node) /usr/bin/node"
+	s += "nvm alias default " + nodeVersionNames[0]
 
 	if err := bashStdin(strings.NewReader(s), "-e"); err != nil {
 		return fmt.Errorf("run node install script: %w", err)
@@ -287,9 +290,7 @@ func npm(ctx context.Context) error {
 	mg.CtxDeps(ctx, nodeJS)
 
 	s := ". /usr/share/nvm/init-nvm.sh\n" +
-		"bash -e install-npm.sh\n" +
-		"sudo ln -s $(which npm) /usr/bin/npm\n" +
-		"sudo ln -s $(which npx) /usr/bin/npx"
+		"bash -e install-npm.sh"
 
 	if err := bashStdin(strings.NewReader(s), "-e"); err != nil {
 		return fmt.Errorf("run npm install script: %w", err)
@@ -301,7 +302,11 @@ func npm(ctx context.Context) error {
 func npmPackages(ctx context.Context) error {
 	mg.CtxDeps(ctx, timezone, caCertificates, npm)
 
-	if err := npmInstall(append([]string{"-g"}, npmPackageNames...)...); err != nil {
+	s := ". /usr/share/nvm/init-nvm.sh\n" +
+		"nvm use default\n" +
+		"npm install -g " + strings.Join(npmPackageNames, " ")
+
+	if err := bashStdin(strings.NewReader(s), "-e"); err != nil {
 		return fmt.Errorf("npm install packages: %w", err)
 	}
 

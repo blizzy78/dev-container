@@ -4,10 +4,10 @@ package main
 
 const (
 	// https://github.com/protocolbuffers/protobuf/releases
-	protocVersion = "21.5"
+	protocVersion = "21.6"
 
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
-	protocGenGRPCJavaVersion = "1.49.0"
+	protocGenGRPCJavaVersion = "1.49.1"
 
 	// https://www.azul.com/downloads/?version=java-11-lts&os=linux&architecture=x86-64-bit&package=jdk
 	zuluVersion    = "11.58.23"
@@ -24,7 +24,7 @@ var (
 	pacmanPackageNames = []string{
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "fontconfig",
 		"postgresql", "git", "graphviz", "inetutils", "openssh", "man-db", "man-pages", "diffutils", "bash-completion", "fakeroot",
-		"restic", "dnsutils",
+		"restic", "dnsutils", "ack",
 
 		// dependencies for Chromium in react-snap
 		"libxcomposite", "libxcursor", "libxdamage", "libxi", "libxtst", "libxss", "libxrandr", "alsa-lib", "atk", "at-spi2-atk", "gtk3", "nss",
@@ -48,7 +48,7 @@ var (
 		"github.com/blizzy78/textsimilarity/cmd/textsimilarity@latest",
 	}
 
-	nodeLTSNames = []string{"gallium", "dubnium"} // first is default
+	nodeVersionNames = []string{"18", "lts/gallium", "lts/dubnium"} // first is default
 
 	npmPackageNames = []string{"serve"}
 
