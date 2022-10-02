@@ -4,10 +4,10 @@ package main
 
 const (
 	// https://github.com/protocolbuffers/protobuf/releases
-	protocVersion = "21.6"
+	protocVersion = "21.7"
 
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
-	protocGenGRPCJavaVersion = "1.49.1"
+	protocGenGRPCJavaVersion = "1.49.2"
 
 	// https://www.azul.com/downloads/?version=java-11-lts&os=linux&architecture=x86-64-bit&package=jdk
 	zuluVersion    = "11.58.23"
@@ -48,7 +48,7 @@ var (
 		"github.com/blizzy78/textsimilarity/cmd/textsimilarity@latest",
 	}
 
-	nodeVersionNames = []string{"18", "lts/gallium", "lts/dubnium"} // first is default
+	nodeVersionNames = []string{"lts/gallium", "lts/dubnium", "18"} // first is default
 
 	npmPackageNames = []string{"serve"}
 
