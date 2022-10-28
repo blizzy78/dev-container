@@ -38,6 +38,19 @@ services:
     networks:
       - dev-container
 
+  pgadmin:
+    container_name: dev-container-pgadmin-1
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=user@example.com
+      - PGADMIN_DEFAULT_PASSWORD=postgres
+    volumes:
+      - {{$volume_prefix}}pgadmin:/var/lib/pgadmin
+    ports:
+      - "25432:80"
+    networks:
+      - dev-container
+
 {{if eq .GOOS "windows"}}
 
 volumes:
@@ -53,6 +66,7 @@ volumes:
   containerrunner:
   go-fuzz-cache:
   pg:
+  pgadmin:
 
 {{end}}
 
