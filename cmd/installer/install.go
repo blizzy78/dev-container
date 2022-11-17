@@ -7,7 +7,7 @@ const (
 	protocVersion = "21.9"
 
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
-	protocGenGRPCJavaVersion = "1.50.2"
+	protocGenGRPCJavaVersion = "1.51.0"
 
 	// https://www.azul.com/downloads/?version=java-11-lts&os=linux&architecture=x86-64-bit&package=jdk
 	zuluVersion    = "11.60.19"
