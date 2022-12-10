@@ -3,7 +3,7 @@
   {{$volume_prefix = "/home/mickey/.dev-container-volumes/" -}}
 {{end -}}
 
-version: '3'
+version: '3.5'
 
 services:
   dev:
@@ -25,8 +25,10 @@ services:
       - {{$volume_prefix}}go-fuzz-cache:/home/vscode/.cache/go-build/fuzz
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      - dev-container
+      - pg
     command: /home/vscode/containerrunner -config /home/vscode/.containerrunner/config.yaml
+    depends_on:
+      - pg
 
   pg:
     container_name: dev-container-pg-1
@@ -36,7 +38,7 @@ services:
     volumes:
       - {{$volume_prefix}}pg:/var/lib/postgresql/data
     networks:
-      - dev-container
+      - pg
 
   pgadmin:
     container_name: dev-container-pgadmin-1
@@ -49,7 +51,9 @@ services:
     ports:
       - "25432:80"
     networks:
-      - dev-container
+      - pg
+    depends_on:
+      - pg
 
 {{if eq .GOOS "windows"}}
 
@@ -71,6 +75,6 @@ volumes:
 {{end}}
 
 networks:
-  dev-container:
+  pg:
 
 {{- end}}

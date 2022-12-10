@@ -4,7 +4,7 @@ package main
 
 const (
 	// https://github.com/protocolbuffers/protobuf/releases
-	protocVersion = "21.9"
+	protocVersion = "21.11"
 
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
 	protocGenGRPCJavaVersion = "1.51.0"
@@ -19,7 +19,7 @@ const (
 
 var (
 	// https://golang.org/dl/
-	goVersions = []string{"1.19.3", "1.16.15"} // first is default
+	goVersions = []string{"1.19.4", "1.16.15"} // first is default
 
 	pacmanPackageNames = []string{
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "fontconfig",
