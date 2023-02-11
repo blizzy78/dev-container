@@ -7,19 +7,19 @@ const (
 	protocVersion = "21.12"
 
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
-	protocGenGRPCJavaVersion = "1.52.1"
+	protocGenGRPCJavaVersion = "1.53.0"
 
 	// https://www.azul.com/downloads/?version=java-11-lts&os=linux&architecture=x86-64-bit&package=jdk
-	zuluVersion    = "11.60.19"
-	zuluJDKVersion = "11.0.17"
+	zuluVersion    = "11.62.17"
+	zuluJDKVersion = "11.0.18"
 
 	// https://maven.apache.org/download.cgi
-	mavenVersion = "3.8.7"
+	mavenVersion = "3.9.0"
 )
 
 var (
 	// https://golang.org/dl/
-	goVersions = []string{"1.19.5", "1.16.15"} // first is default
+	goVersions = []string{"1.20"} // first is default
 
 	pacmanPackageNames = []string{
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "fontconfig",
@@ -48,6 +48,7 @@ var (
 		"github.com/blizzy78/textsimilarity/cmd/textsimilarity@latest",
 	}
 
+	// https://github.com/nodejs/release#release-schedule
 	nodeVersionNames = []string{"lts/gallium", "lts/dubnium", "19"} // first is default
 
 	npmPackageNames = []string{"serve"}
