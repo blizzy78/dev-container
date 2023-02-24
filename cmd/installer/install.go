@@ -46,6 +46,7 @@ var (
 		"golang.org/x/tools/gopls@latest",
 		"golang.org/x/perf/cmd/benchstat@latest",
 		"github.com/blizzy78/textsimilarity/cmd/textsimilarity@latest",
+		"github.com/blizzy78/xmlquery@latest",
 	}
 
 	// https://github.com/nodejs/release#release-schedule
