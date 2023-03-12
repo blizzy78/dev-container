@@ -129,7 +129,11 @@ func installGo(ctx context.Context) error {
 	}
 
 	if err := appendText(".bashrc", "export PATH=\"$PATH:/go/bin\"\n"); err != nil {
-		return fmt.Errorf("write Go PATH to .bashrc: %w", err)
+		return fmt.Errorf("add Go PATH to .bashrc: %w", err)
+	}
+
+	if err := appendText(".zshrc", "export PATH=\"$PATH:/go/bin\"\n"); err != nil {
+		return fmt.Errorf("add Go PATH to .zshrc: %w", err)
 	}
 
 	return nil
@@ -249,7 +253,11 @@ func nvm(ctx context.Context) error {
 	mg.CtxDeps(ctx, timezone, caCertificates, bashrc, pacmanPackages, yayPackages)
 
 	if err := appendText(".bashrc", ". /usr/share/nvm/init-nvm.sh\nnvm use --silent default\n"); err != nil {
-		return fmt.Errorf("source init-nvm.sh in .bashrc: %w", err)
+		return fmt.Errorf("add init-nvm.sh to .bashrc: %w", err)
+	}
+
+	if err := appendText(".zshrc", ". /usr/share/nvm/init-nvm.sh\nnvm use --silent default\n"); err != nil {
+		return fmt.Errorf("add init-nvm.sh to .zshrc: %w", err)
 	}
 
 	return nil
@@ -344,7 +352,11 @@ func jdk(ctx context.Context) error {
 	}
 
 	if err := appendText(".bashrc", "export JAVA_HOME=\""+wd+"/jdk\"\n"); err != nil {
-		return fmt.Errorf("write JAVA_HOME to .bashrc: %w", err)
+		return fmt.Errorf("add JAVA_HOME to .bashrc: %w", err)
+	}
+
+	if err := appendText(".zshrc", "export JAVA_HOME=\""+wd+"/jdk\"\n"); err != nil {
+		return fmt.Errorf("add JAVA_HOME to .zshrc: %w", err)
 	}
 
 	return nil
@@ -460,11 +472,11 @@ func bashrc(ctx context.Context) error {
 	mg.CtxDeps(ctx, timezone)
 
 	if err := appendText(".bashrc", "[[ -f ~/.bashrc_dir/.bashrc ]] && . ~/.bashrc_dir/.bashrc\n"); err != nil {
-		return fmt.Errorf("source ~/.bashrc_dir/.bashrc in .bashrc: %w", err)
+		return fmt.Errorf("add ~/.bashrc_dir/.bashrc to .bashrc: %w", err)
 	}
 
 	if err := appendText(".zshrc", "[[ -f ~/.zshrc_dir/.zshrc ]] && . ~/.zshrc_dir/.zshrc\n"); err != nil {
-		return fmt.Errorf("source ~/.zshrc_dir/.zshrc in .zshrc: %w", err)
+		return fmt.Errorf("add ~/.zshrc_dir/.zshrc to .zshrc: %w", err)
 	}
 
 	return nil
