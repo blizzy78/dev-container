@@ -109,7 +109,22 @@ func download(ctx context.Context, url string) ([]byte, error) {
 }
 
 func appendText(path string, text string) error {
-	file, err := os.OpenFile(path, os.O_WRONLY|os.O_APPEND, os.ModePerm)
+	exists := true
+
+	if _, err := os.Stat(path); err != nil {
+		if !os.IsNotExist(err) {
+			return fmt.Errorf("%s: stat: %w", path, err)
+		}
+
+		exists = false
+	}
+
+	flags := os.O_WRONLY | os.O_APPEND
+	if !exists {
+		flags = os.O_CREATE | os.O_TRUNC | os.O_WRONLY
+	}
+
+	file, err := os.OpenFile(path, flags, os.ModePerm)
 	if err != nil {
 		return fmt.Errorf("open: %w", err)
 	}

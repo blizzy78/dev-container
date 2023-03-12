@@ -304,7 +304,7 @@ func npmPackages(ctx context.Context) error {
 
 	s := ". /usr/share/nvm/init-nvm.sh\n" +
 		"nvm use default\n" +
-		"npm install -g " + strings.Join(npmPackageNames, " ")
+		"npm install -g --no-audit --no-fund " + strings.Join(npmPackageNames, " ")
 
 	if err := bashStdin(strings.NewReader(s), "-e"); err != nil {
 		return fmt.Errorf("npm install packages: %w", err)
@@ -383,7 +383,7 @@ func volumes(ctx context.Context) error {
 		}
 	}
 
-	for _, f := range []string{".bash_history", ".gitconfig"} {
+	for _, f := range []string{".bash_history", ".zsh_history", ".gitconfig"} {
 		if err := ln(f+"_dir/"+f, f); err != nil {
 			return fmt.Errorf("ln volume folder %s_dir: %w", f, err)
 		}
@@ -410,12 +410,24 @@ func gitCompletion(ctx context.Context) error {
 		return fmt.Errorf("Getwd: %w", err)
 	}
 
-	if err = downloadAs(ctx, gitCompletionURL, wd+"/.git-completion.sh"); err != nil {
-		return fmt.Errorf("download git-completion: %w", err)
+	if err = downloadAs(ctx, gitCompletionBashURL, wd+"/.git-completion.sh"); err != nil {
+		return fmt.Errorf("download git-completion.sh: %w", err)
+	}
+
+	if err = os.Mkdir(wd+"/.zsh", os.ModePerm); err != nil {
+		return fmt.Errorf("mkdir .zsh: %w", err)
+	}
+
+	if err = downloadAs(ctx, gitCompletionZSHURL, wd+"/.zsh/_git"); err != nil {
+		return fmt.Errorf("download git-completion.zsh: %w", err)
 	}
 
 	if err := appendText(".bashrc", ". ~/.git-completion.sh\n"); err != nil {
-		return fmt.Errorf("source .git-completion.sh in .bashrc: %w", err)
+		return fmt.Errorf("add git-completion.sh to .bashrc: %w", err)
+	}
+
+	if err := appendText(".zshrc", "fpath=(~/.zsh $fpath)\nzstyle ':completion:*:*:git:*' script ~/.git-completion.sh\n"); err != nil {
+		return fmt.Errorf("add git-completion.zsh to .zshrc: %w", err)
 	}
 
 	return nil
@@ -437,6 +449,10 @@ func gitPrompt(ctx context.Context) error {
 		return fmt.Errorf("add git-prompt to .bashrc: %w", err)
 	}
 
+	if err := appendText(".zshrc", ". ~/.git-prompt.sh\n"+gitPromptZSHRC); err != nil {
+		return fmt.Errorf("add git-prompt to .zshrc: %w", err)
+	}
+
 	return nil
 }
 
@@ -445,6 +461,10 @@ func bashrc(ctx context.Context) error {
 
 	if err := appendText(".bashrc", "[[ -f ~/.bashrc_dir/.bashrc ]] && . ~/.bashrc_dir/.bashrc\n"); err != nil {
 		return fmt.Errorf("source ~/.bashrc_dir/.bashrc in .bashrc: %w", err)
+	}
+
+	if err := appendText(".zshrc", "[[ -f ~/.zshrc_dir/.zshrc ]] && . ~/.zshrc_dir/.zshrc\n"); err != nil {
+		return fmt.Errorf("source ~/.zshrc_dir/.zshrc in .zshrc: %w", err)
 	}
 
 	return nil

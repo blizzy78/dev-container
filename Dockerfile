@@ -36,4 +36,6 @@ COPY --from=containerrunner-builder /source/containerrunner /home/$USERNAME
 
 RUN sudo -i -u $USERNAME /home/$USERNAME/installer -v && rm /home/$USERNAME/installer
 
+RUN usermod -s /bin/zsh $USERNAME
+
 USER $USERNAME

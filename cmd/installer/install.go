@@ -4,7 +4,7 @@ package main
 
 const (
 	// https://github.com/protocolbuffers/protobuf/releases
-	protocVersion = "22.1"
+	protocVersion = "22.2"
 
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
 	protocGenGRPCJavaVersion = "1.53.0"
@@ -24,7 +24,7 @@ var (
 	pacmanPackageNames = []string{
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "fontconfig",
 		"postgresql", "git", "graphviz", "inetutils", "openssh", "man-db", "man-pages", "diffutils", "bash-completion", "fakeroot",
-		"restic", "dnsutils", "ack", "imagemagick",
+		"restic", "dnsutils", "ack", "imagemagick", "zsh",
 
 		// dependencies for Chromium in react-snap
 		"libxcomposite", "libxcursor", "libxdamage", "libxi", "libxtst", "libxss", "libxrandr", "alsa-lib", "atk", "at-spi2-atk", "gtk3", "nss",
@@ -59,6 +59,8 @@ var (
 		"workspaces",
 		".bash_history_dir",
 		".bashrc_dir",
+		".zsh_history_dir",
+		".zshrc_dir",
 		".gitconfig_dir",
 		".m2",
 		"sophora-repo",
@@ -73,10 +75,13 @@ var (
 		"google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest",
 	}
 
-	gitCompletionURL = "https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash"
+	gitCompletionBashURL = "https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash"
+	gitCompletionZSHURL  = "https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.zsh"
 
 	gitPromptURL    = "https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh"
 	gitPromptBashRC = `export PS1="\[\033[30;44m\] \w \[\033[00m\]\[\033[30;42m\]\$(__git_ps1 \" %s \")\[\033[00m\] "` + "\n"
+	gitPromptZSHRC  = `setopt PROMPT_SUBST` + "\n" +
+		`PS1=$'%{\e[30;44m%} %c %{\e[00m\e[30;42m%}\$(__git_ps1 \" %s \")%{\e[00m%}%(?..%{\e[30;41m%} %? %{\e[00m%}) '` + "\n"
 )
 
 const tz = "Europe/Berlin"

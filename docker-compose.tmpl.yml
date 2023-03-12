@@ -16,6 +16,8 @@ services:
       - {{$volume_prefix}}workspaces:/home/vscode/workspaces
       - {{$volume_prefix}}bash-history:/home/vscode/.bash_history_dir
       - {{$volume_prefix}}bashrc:/home/vscode/.bashrc_dir
+      - {{$volume_prefix}}zsh-history:/home/vscode/.zsh_history_dir
+      - {{$volume_prefix}}zshrc:/home/vscode/.zshrc_dir
       - {{$volume_prefix}}git-config:/home/vscode/.gitconfig_dir
       - {{$volume_prefix}}m2-repo:/home/vscode/.m2
       - {{$volume_prefix}}sophora-repo:/home/vscode/sophora-repo
@@ -62,6 +64,8 @@ volumes:
   workspaces:
   bash-history:
   bashrc:
+  zsh-history:
+  zshrc:
   git-config:
   m2-repo:
   sophora-repo:
