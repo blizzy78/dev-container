@@ -14,7 +14,7 @@ const (
 	zuluJDKVersion = "11.0.18"
 
 	// https://maven.apache.org/download.cgi
-	mavenVersion = "3.9.0"
+	mavenVersion = "3.9.1"
 )
 
 var (
@@ -24,14 +24,14 @@ var (
 	pacmanPackageNames = []string{
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "fontconfig",
 		"postgresql", "git", "graphviz", "inetutils", "openssh", "man-db", "man-pages", "diffutils", "bash-completion", "fakeroot",
-		"restic", "dnsutils", "ack", "imagemagick", "zsh",
+		"restic", "dnsutils", "ack", "imagemagick", "zsh", "patch",
 
 		// dependencies for Chromium in react-snap
 		"libxcomposite", "libxcursor", "libxdamage", "libxi", "libxtst", "libxss", "libxrandr", "alsa-lib", "atk", "at-spi2-atk", "gtk3", "nss",
 	}
 
 	yayPackageNames = []string{
-		"icdiff", "nvm-git", "mage-bin",
+		"icdiff", "nvm-git", "mage-bin", "google-cloud-cli",
 	}
 
 	goToolModules = []string{
