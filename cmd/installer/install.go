@@ -7,7 +7,7 @@ const (
 	protocVersion = "22.2"
 
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
-	protocGenGRPCJavaVersion = "1.53.0"
+	protocGenGRPCJavaVersion = "1.54.0"
 
 	// https://www.azul.com/downloads/?version=java-11-lts&os=linux&architecture=x86-64-bit&package=jdk
 	zuluVersion    = "11.62.17"
@@ -19,10 +19,10 @@ const (
 
 var (
 	// https://golang.org/dl/
-	goVersions = []string{"1.20.2"} // first is default
+	goVersions = []string{"1.20.3"} // first is default
 
 	pacmanPackageNames = []string{
-		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "fontconfig",
+		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "docker-buildx", "fontconfig",
 		"postgresql", "git", "graphviz", "inetutils", "openssh", "man-db", "man-pages", "diffutils", "bash-completion", "fakeroot",
 		"restic", "dnsutils", "ack", "imagemagick", "zsh", "patch",
 
@@ -52,7 +52,7 @@ var (
 	// https://github.com/nodejs/release#release-schedule
 	nodeVersionNames = []string{"lts/gallium", "lts/dubnium", "19"} // first is default
 
-	npmPackageNames = []string{"serve"}
+	npmPackageNames = []string{"serve", "pnpm"}
 
 	volumeFolders = []string{
 		".vscode-server/extensions",
