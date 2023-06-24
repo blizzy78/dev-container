@@ -51,7 +51,6 @@ func Install(ctx context.Context) {
 		protocGoModules,
 		nvm,
 		nodeJS,
-		npm,
 		npmPackages,
 		jdk,
 		maven,
@@ -287,31 +286,12 @@ func nodeJS(ctx context.Context) error {
 	return nil
 }
 
-func npm(ctx context.Context) error {
-	mg.CtxDeps(ctx, timezone, caCertificates, pacmanPackages)
-
-	if err := downloadAs(ctx, npmInstallURL, "install-npm.sh"); err != nil {
-		return fmt.Errorf("download npm install script: %w", err)
-	}
-	defer sh.Rm("install-npm.sh")
-
-	mg.CtxDeps(ctx, nodeJS)
-
-	s := ". /usr/share/nvm/init-nvm.sh\n" +
-		"bash -e install-npm.sh"
-
-	if err := bashStdin(strings.NewReader(s), "-e"); err != nil {
-		return fmt.Errorf("run npm install script: %w", err)
-	}
-
-	return nil
-}
-
 func npmPackages(ctx context.Context) error {
-	mg.CtxDeps(ctx, timezone, caCertificates, npm)
+	mg.CtxDeps(ctx, timezone, caCertificates, nodeJS)
 
 	s := ". /usr/share/nvm/init-nvm.sh\n" +
-		"nvm use default\n" +
+		"nvm use --silent default\n" +
+		"npm install -g --no-audit --no-fund npm\n" +
 		"npm install -g --no-audit --no-fund " + strings.Join(npmPackageNames, " ")
 
 	if err := bashStdin(strings.NewReader(s), "-e"); err != nil {

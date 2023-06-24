@@ -4,10 +4,10 @@ package main
 
 const (
 	// https://github.com/protocolbuffers/protobuf/releases
-	protocVersion = "23.2"
+	protocVersion = "23.3"
 
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
-	protocGenGRPCJavaVersion = "1.55.1"
+	protocGenGRPCJavaVersion = "1.56.0"
 
 	// https://www.azul.com/downloads/?version=java-11-lts&os=linux&architecture=x86-64-bit&package=jdk
 	zuluVersion    = "11.64.19"
@@ -19,7 +19,7 @@ const (
 
 var (
 	// https://golang.org/dl/
-	goVersions = []string{"1.20.4"} // first is default
+	goVersions = []string{"1.20.5"} // first is default
 
 	pacmanPackageNames = []string{
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "docker-buildx", "fontconfig",
@@ -57,6 +57,7 @@ var (
 
 	volumeFolders = []string{
 		".vscode-server/extensions",
+		".vscode-server-insiders/extensions",
 		"workspaces",
 		".bash_history_dir",
 		".bashrc_dir",
@@ -90,8 +91,6 @@ const tz = "Europe/Berlin"
 const (
 	protocURL            = "https://github.com/protocolbuffers/protobuf/releases/download/v" + protocVersion + "/protoc-" + protocVersion + "-linux-x86_64.zip"
 	protocGenGRPCJavaURL = "https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/" + protocGenGRPCJavaVersion + "/protoc-gen-grpc-java-" + protocGenGRPCJavaVersion + "-linux-x86_64.exe"
-
-	npmInstallURL = "https://www.npmjs.com/install.sh"
 
 	zuluJDKURL = "https://cdn.azul.com/zulu/bin/zulu" + zuluVersion + "-ca-jdk" + zuluJDKVersion + "-linux_x64.tar.gz"
 
