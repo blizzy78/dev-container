@@ -7,7 +7,7 @@ version: '3.5'
 
 services:
   dev:
-    container_name: dev-container-dev-1
+    container_name: dev-container-dev
     build:
       context: .
       dockerfile: Dockerfile
@@ -34,7 +34,7 @@ services:
       - pg
 
   pg:
-    container_name: dev-container-pg-1
+    container_name: dev-container-pg
     image: ankane/pgvector
     environment:
       - POSTGRES_PASSWORD=postgres
@@ -44,7 +44,7 @@ services:
       - pg
 
   pgadmin:
-    container_name: dev-container-pgadmin-1
+    container_name: dev-container-pgadmin
     image: dpage/pgadmin4
     environment:
       - PGADMIN_DEFAULT_EMAIL=user@example.com

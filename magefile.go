@@ -16,97 +16,93 @@ import (
 )
 
 const (
-	composeFile         = "docker-compose.yml"
-	composeTemplateFile = "docker-compose.tmpl.yml"
+	composeFile         = "docker-compose.yaml"
+	composeTemplateFile = "docker-compose.yaml.tmpl"
 
 	projectName = "dev-container"
 )
 
 var (
-	Default = BuildImage
+	Default = Build
 
 	composeFileMu sync.Mutex
 )
 
-// BuildImage rebuilds the docker image.
-func BuildImage(ctx context.Context) error {
+// Build builds the docker image.
+func Build(ctx context.Context) error {
 	mg.CtxDeps(ctx, pullGolang, pullArchLinux)
 
-	removeComposeFile, err := createComposeFile()
-	if err != nil {
-		return fmt.Errorf("create compose file: %w", err)
-	}
-	defer removeComposeFile()
-
-	if err = dockerCompose("build", "--no-cache", "--force-rm"); err != nil {
-		return fmt.Errorf("docker compose build: %w", err)
-	}
-
-	return nil
-}
-
-// RecreateContainer destroys the container and spins up a new one, optionally recreating the image first.
-func RecreateContainer(ctx context.Context, rebuildImage bool) {
-	if rebuildImage {
-		mg.CtxDeps(ctx, DestroyContainer, BuildImage)
-	} else {
-		mg.CtxDeps(ctx, DestroyContainer)
-	}
-
-	mg.CtxDeps(ctx, CreateContainer)
-}
-
-// Bash enters into a new shell inside a running container.
-func Bash(ctx context.Context) error {
-	removeComposeFile, err := createComposeFile()
-	if err != nil {
-		return fmt.Errorf("create compose file: %w", err)
-	}
-	defer removeComposeFile()
-
-	if !isatty.IsTerminal(os.Stdout.Fd()) && runtime.GOOS == "windows" {
-		if err := sh.RunV("winpty", "docker", "compose", "-f", composeFile, "-p", projectName, "exec", "dev", "bash", "--login"); err != nil {
-			return fmt.Errorf("winpty docker compose exec bash: %w", err)
+	return withComposeFile(ctx, func() error {
+		if err := dockerCompose("build", "--no-cache", "--force-rm"); err != nil {
+			return fmt.Errorf("docker compose build: %w", err)
 		}
 
 		return nil
-	}
-
-	if err := sh.RunV("docker", "compose", "-f", composeFile, "-p", projectName, "exec", "dev", "bash", "--login"); err != nil {
-		return fmt.Errorf("docker compose exec bash: %w", err)
-	}
-
-	return nil
+	})
 }
 
-// CreateContainer creates the container.
-func CreateContainer(ctx context.Context) error {
-	removeComposeFile, err := createComposeFile()
-	if err != nil {
-		return fmt.Errorf("create compose file: %w", err)
-	}
-	defer removeComposeFile()
-
-	if err := dockerCompose("up", "-d"); err != nil {
-		return fmt.Errorf("docker compose up: %w", err)
+// Recreate destroys the container and spins up a new one, optionally recreating the image first.
+func Recreate(ctx context.Context, rebuildImage bool) {
+	if rebuildImage {
+		mg.CtxDeps(ctx, Build)
 	}
 
-	return nil
+	mg.SerialCtxDeps(ctx, Destroy, Create)
 }
 
-// DestroyContainer destroys the container.
-func DestroyContainer(ctx context.Context) error {
-	removeComposeFile, err := createComposeFile()
-	if err != nil {
-		return fmt.Errorf("create compose file: %w", err)
-	}
-	defer removeComposeFile()
+// Zsh enters into a new shell inside a running container.
+func Zsh(ctx context.Context) error {
+	return withComposeFile(ctx, func() error {
+		if err := dockerCompose("exec", "dev", "zsh", "--login"); err != nil {
+			return fmt.Errorf("docker compose exec zsh: %w", err)
+		}
 
-	if err := dockerCompose("down", "--remove-orphans"); err != nil {
-		return fmt.Errorf("docker compose down: %w", err)
-	}
+		return nil
+	})
+}
 
-	return nil
+// Create creates the container.
+func Create(ctx context.Context) error {
+	return withComposeFile(ctx, func() error {
+		if err := dockerCompose("up", "-d"); err != nil {
+			return fmt.Errorf("docker compose up: %w", err)
+		}
+
+		return nil
+	})
+}
+
+// Destroy destroys the container.
+func Destroy(ctx context.Context) error {
+	return withComposeFile(ctx, func() error {
+		if err := dockerCompose("down", "--remove-orphans"); err != nil {
+			return fmt.Errorf("docker compose down: %w", err)
+		}
+
+		return nil
+	})
+}
+
+// Start starts the container.
+func Start(ctx context.Context) error {
+	return withComposeFile(ctx, func() error {
+		if err := dockerCompose("start"); err != nil {
+			return fmt.Errorf("docker compose start: %w", err)
+		}
+
+		return nil
+	})
+}
+
+// Stop stops the container.
+func Stop(ctx context.Context) error {
+	return withComposeFile(ctx, func() error {
+		if err := dockerCompose("stop"); err != nil {
+			return fmt.Errorf("docker compose stop: %w", err)
+		}
+
+		return nil
+	})
 }
 
 func pullGolang() error {
@@ -153,6 +149,16 @@ func dockerCompose(args ...string) error {
 	}
 
 	return nil
+}
+
+func withComposeFile(ctx context.Context, fn func() error) error {
+	removeComposeFile, err := createComposeFile()
+	if err != nil {
+		return fmt.Errorf("create compose file: %w", err)
+	}
+	defer removeComposeFile()
+
+	return fn()
 }
 
 func createComposeFile() (func(), error) {
