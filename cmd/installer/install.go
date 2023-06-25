@@ -51,7 +51,13 @@ var (
 	}
 
 	// https://github.com/nodejs/release#release-schedule
-	nodeVersionNames = []string{"lts/gallium", "lts/hydrogen", "lts/dubnium", "20"} // first is default
+	// first is default
+	nodeVersionNames = []string{
+		"20",
+		"lts/hydrogen", // 18
+		"lts/gallium",  // 16
+		"lts/dubnium",  // 10
+	}
 
 	npmPackageNames = []string{"serve", "pnpm"}
 
