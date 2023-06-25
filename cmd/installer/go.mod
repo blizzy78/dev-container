@@ -1,5 +1,5 @@
 module installer
 
-go 1.18
+go 1.20
 
-require github.com/magefile/mage v1.13.0
+require github.com/magefile/mage v1.15.0
