@@ -309,12 +309,19 @@ func jdk(ctx context.Context) error {
 		return fmt.Errorf("Getwd: %w", err)
 	}
 
-	name := "zulu" + zuluVersion + "-ca-jdk" + zuluJDKVersion + "-linux_x64"
-	if err := downloadAndUnTarGZIPTo(ctx, zuluJDKURL, wd); err != nil {
-		return fmt.Errorf("download and extract JDK: %w", err)
+	for _, version := range zuluVersions {
+		if err := downloadAndUnTarGZIPTo(ctx, zuluJDKURL(version), wd); err != nil {
+			return fmt.Errorf("download and extract JDK: %w", err)
+		}
+
+		name := "zulu" + version.version + "-" + version.tag + "-jdk" + version.jdkVersion + "-linux_x64"
+		if err := ln(name, "jdk-"+version.jdkMajorVersion); err != nil {
+			return fmt.Errorf("ln JDK "+version.jdkMajorVersion+" folder: %w", err)
+		}
 	}
 
-	if err := ln(name, "jdk"); err != nil {
+	defaultVersion := zuluVersions[0]
+	if err := ln("jdk-"+defaultVersion.jdkMajorVersion, "jdk"); err != nil {
 		return fmt.Errorf("ln JDK folder: %w", err)
 	}
 

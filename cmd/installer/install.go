@@ -9,15 +9,37 @@ const (
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
 	protocGenGRPCJavaVersion = "1.56.0"
 
-	// https://www.azul.com/downloads/?version=java-11-lts&os=linux&architecture=x86-64-bit&package=jdk
-	zuluVersion    = "11.64.19"
-	zuluJDKVersion = "11.0.19"
-
 	// https://maven.apache.org/download.cgi
-	mavenVersion = "3.9.2"
+	mavenVersion = "3.9.3"
 )
 
+type zuluVersion struct {
+	jdkMajorVersion string
+	jdkVersion      string
+	version         string
+	tag             string
+}
+
 var (
+	// first is default
+	zuluVersions = []zuluVersion{
+		// https://www.azul.com/downloads/?version=java-17-lts&os=linux&architecture=x86-64-bit&package=jdk
+		{
+			jdkMajorVersion: "17",
+			jdkVersion:      "17.0.7",
+			version:         "17.42.21",
+			tag:             "ca-crac",
+		},
+
+		// https://www.azul.com/downloads/?version=java-11-lts&os=linux&architecture=x86-64-bit&package=jdk
+		{
+			jdkMajorVersion: "11",
+			jdkVersion:      "11.0.19",
+			version:         "11.64.19",
+			tag:             "ca",
+		},
+	}
+
 	// https://golang.org/dl/
 	goVersions = []string{"1.20.5"} // first is default
 
@@ -98,11 +120,13 @@ const (
 	protocURL            = "https://github.com/protocolbuffers/protobuf/releases/download/v" + protocVersion + "/protoc-" + protocVersion + "-linux-x86_64.zip"
 	protocGenGRPCJavaURL = "https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/" + protocGenGRPCJavaVersion + "/protoc-gen-grpc-java-" + protocGenGRPCJavaVersion + "-linux-x86_64.exe"
 
-	zuluJDKURL = "https://cdn.azul.com/zulu/bin/zulu" + zuluVersion + "-ca-jdk" + zuluJDKVersion + "-linux_x64.tar.gz"
-
 	mavenURL = "https://dlcdn.apache.org/maven/maven-3/" + mavenVersion + "/binaries/apache-maven-" + mavenVersion + "-bin.tar.gz"
 
 	yayURL = "https://aur.archlinux.org/yay-bin.git"
 )
 
 var goURL = "https://golang.org/dl/go" + goVersions[0] + ".linux-amd64.tar.gz"
+
+func zuluJDKURL(version zuluVersion) string {
+	return "https://cdn.azul.com/zulu/bin/zulu" + version.version + "-" + version.tag + "-jdk" + version.jdkVersion + "-linux_x64.tar.gz"
+}
