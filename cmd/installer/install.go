@@ -3,11 +3,8 @@
 package main
 
 const (
-	// https://github.com/protocolbuffers/protobuf/releases
-	protocVersion = "23.3"
-
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
-	protocGenGRPCJavaVersion = "1.56.0"
+	protocGenGRPCJavaVersion = "1.56.1"
 
 	// https://maven.apache.org/download.cgi
 	mavenVersion = "3.9.3"
@@ -46,7 +43,7 @@ var (
 	pacmanPackageNames = []string{
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "docker-buildx", "fontconfig",
 		"postgresql", "git", "graphviz", "inetutils", "openssh", "man-db", "man-pages", "diffutils", "bash-completion", "fakeroot",
-		"restic", "dnsutils", "ack", "imagemagick", "zsh", "patch",
+		"restic", "dnsutils", "ack", "imagemagick", "zsh", "patch", "protobuf", "podman",
 
 		// dependencies for Chromium in react-snap
 		"libxcomposite", "libxcursor", "libxdamage", "libxi", "libxtst", "libxss", "libxrandr", "alsa-lib", "atk", "at-spi2-atk", "gtk3", "nss",
@@ -117,7 +114,6 @@ var (
 const tz = "Europe/Berlin"
 
 const (
-	protocURL            = "https://github.com/protocolbuffers/protobuf/releases/download/v" + protocVersion + "/protoc-" + protocVersion + "-linux-x86_64.zip"
 	protocGenGRPCJavaURL = "https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/" + protocGenGRPCJavaVersion + "/protoc-gen-grpc-java-" + protocGenGRPCJavaVersion + "-linux-x86_64.exe"
 
 	mavenURL = "https://dlcdn.apache.org/maven/maven-3/" + mavenVersion + "/binaries/apache-maven-" + mavenVersion + "-bin.tar.gz"

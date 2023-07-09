@@ -46,7 +46,6 @@ func Install(ctx context.Context) {
 		installGo,
 		installGoSecondary,
 		goModules,
-		protoc,
 		protocGenGRPCJava,
 		protocGoModules,
 		nvm,
@@ -177,36 +176,8 @@ func goModules(ctx context.Context) error {
 	return nil
 }
 
-func protoc(ctx context.Context) error {
-	mg.CtxDeps(ctx, timezone, caCertificates)
-
-	dir := "protoc-" + protocVersion
-	if err := mkdir(dir); err != nil {
-		return fmt.Errorf("create protoc folder: %w", err)
-	}
-
-	if err := downloadAndUnZipTo(ctx, protocURL, dir); err != nil {
-		return fmt.Errorf("download and extract protoc: %w", err)
-	}
-
-	if err := ln(dir, "protoc"); err != nil {
-		return fmt.Errorf("ln protoc folder: %w", err)
-	}
-
-	wd, err := os.Getwd()
-	if err != nil {
-		return fmt.Errorf("Getwd: %w", err)
-	}
-
-	if err := sudoLn(wd+"/protoc/bin/protoc", "/usr/bin/protoc"); err != nil {
-		return fmt.Errorf("sudo ln /usr/bin/protoc: %w", err)
-	}
-
-	return nil
-}
-
 func protocGenGRPCJava(ctx context.Context) error {
-	mg.CtxDeps(ctx, timezone, caCertificates, protoc)
+	mg.CtxDeps(ctx, timezone, caCertificates)
 
 	name := "protoc-gen-grpc-java-" + protocGenGRPCJavaVersion
 	if err := downloadAs(ctx, protocGenGRPCJavaURL, "protoc/bin/"+name); err != nil {
