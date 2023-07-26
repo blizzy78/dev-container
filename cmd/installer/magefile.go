@@ -180,11 +180,11 @@ func protocGenGRPCJava(ctx context.Context) error {
 	mg.CtxDeps(ctx, timezone, caCertificates)
 
 	name := "protoc-gen-grpc-java-" + protocGenGRPCJavaVersion
-	if err := downloadAs(ctx, protocGenGRPCJavaURL, "protoc/bin/"+name); err != nil {
+	if err := downloadAs(ctx, protocGenGRPCJavaURL, name); err != nil {
 		return fmt.Errorf("download protoc-gen-grpc-java: %w", err)
 	}
 
-	if err := ln(name, "protoc/bin/protoc-gen-grpc-java"); err != nil {
+	if err := ln(name, "protoc-gen-grpc-java"); err != nil {
 		return fmt.Errorf("ln protoc-gen-grpc-java: %w", err)
 	}
 
@@ -193,7 +193,7 @@ func protocGenGRPCJava(ctx context.Context) error {
 		return fmt.Errorf("Getwd: %w", err)
 	}
 
-	if err := sudoLn(wd+"/protoc/bin/protoc-gen-grpc-java", "/usr/bin/protoc-gen-grpc-java"); err != nil {
+	if err := sudoLn(wd+"/protoc-gen-grpc-java", "/usr/bin/protoc-gen-grpc-java"); err != nil {
 		return fmt.Errorf("sudo ln /usr/bin/protoc-gen-grpc-java: %w", err)
 	}
 

@@ -23,22 +23,22 @@ var (
 		// https://www.azul.com/downloads/?version=java-17-lts&os=linux&architecture=x86-64-bit&package=jdk
 		{
 			jdkMajorVersion: "17",
-			jdkVersion:      "17.0.7",
-			version:         "17.42.21",
+			jdkVersion:      "17.0.8",
+			version:         "17.44.17",
 			tag:             "ca-crac",
 		},
 
 		// https://www.azul.com/downloads/?version=java-11-lts&os=linux&architecture=x86-64-bit&package=jdk
 		{
 			jdkMajorVersion: "11",
-			jdkVersion:      "11.0.19",
-			version:         "11.64.19",
+			jdkVersion:      "11.0.20",
+			version:         "11.66.15",
 			tag:             "ca",
 		},
 	}
 
 	// https://golang.org/dl/
-	goVersions = []string{"1.20.5"} // first is default
+	goVersions = []string{"1.20.6"} // first is default
 
 	pacmanPackageNames = []string{
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "docker-buildx", "fontconfig",
