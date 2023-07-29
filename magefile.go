@@ -30,10 +30,8 @@ var (
 
 // Build builds the docker image.
 func Build(ctx context.Context) error {
-	mg.CtxDeps(ctx, pullGolang, pullArchLinux)
-
 	return withComposeFile(ctx, func() error {
-		if err := dockerCompose("build", "--no-cache", "--force-rm"); err != nil {
+		if err := dockerCompose("build", "--no-cache", "--pull", "--force-rm"); err != nil {
 			return fmt.Errorf("docker compose build: %w", err)
 		}
 
@@ -103,36 +101,6 @@ func Stop(ctx context.Context) error {
 
 		return nil
 	})
-}
-
-func pullGolang() error {
-	if err := dockerPull("golang"); err != nil {
-		return fmt.Errorf("docker pull golang: %w", err)
-	}
-
-	return nil
-}
-
-func pullArchLinux() error {
-	if err := dockerPull("archlinux"); err != nil {
-		return fmt.Errorf("docker pull archlinux: %w", err)
-	}
-
-	return nil
-}
-
-func dockerPull(args ...string) error {
-	if !isatty.IsTerminal(os.Stdout.Fd()) && runtime.GOOS == "windows" {
-		if err := sh.RunV("winpty", append([]string{"docker", "pull"}, args...)...); err != nil {
-			return fmt.Errorf("winpty docker pull: %w", err)
-		}
-	}
-
-	if err := sh.RunV("docker", append([]string{"pull"}, args...)...); err != nil {
-		return fmt.Errorf("docker pull: %w", err)
-	}
-
-	return nil
 }
 
 func dockerCompose(args ...string) error {
