@@ -4,7 +4,7 @@ package main
 
 const (
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
-	protocGenGRPCJavaVersion = "1.56.1"
+	protocGenGRPCJavaVersion = "1.57.0"
 
 	// https://maven.apache.org/download.cgi
 	mavenVersion = "3.9.3"
@@ -78,7 +78,7 @@ var (
 		"lts/dubnium",  // 10
 	}
 
-	npmPackageNames = []string{"serve", "pnpm"}
+	npmPackageNames = []string{"serve", "pnpm", "yarn"}
 
 	volumeFolders = []string{
 		".vscode-server/extensions",
