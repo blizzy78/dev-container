@@ -7,7 +7,7 @@ const (
 	protocGenGRPCJavaVersion = "1.57.1"
 
 	// https://maven.apache.org/download.cgi
-	mavenVersion = "3.9.3"
+	mavenVersion = "3.9.4"
 )
 
 type zuluVersion struct {
@@ -38,7 +38,7 @@ var (
 	}
 
 	// https://golang.org/dl/
-	goVersions = []string{"1.20.7"} // first is default
+	goVersions = []string{"1.21.0"} // first is default
 
 	pacmanPackageNames = []string{
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "docker-buildx", "fontconfig",
