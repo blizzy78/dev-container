@@ -4,7 +4,7 @@ package main
 
 const (
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
-	protocGenGRPCJavaVersion = "1.57.1"
+	protocGenGRPCJavaVersion = "1.57.2"
 
 	// https://maven.apache.org/download.cgi
 	mavenVersion = "3.9.4"
@@ -20,7 +20,7 @@ type zuluVersion struct {
 var (
 	// first is default
 	zuluVersions = []zuluVersion{
-		// https://www.azul.com/downloads/?version=java-17-lts&os=linux&architecture=x86-64-bit&package=jdk
+		// https://www.azul.com/downloads/?version=java-17-lts&architecture=x86-64-bit&package=jdk-crac#zulu
 		{
 			jdkMajorVersion: "17",
 			jdkVersion:      "17.0.8",
@@ -28,7 +28,7 @@ var (
 			tag:             "ca-crac",
 		},
 
-		// https://www.azul.com/downloads/?version=java-11-lts&os=linux&architecture=x86-64-bit&package=jdk
+		// https://www.azul.com/downloads/?version=java-11-lts&os=linux&architecture=x86-64-bit&package=jdk#zulu
 		{
 			jdkMajorVersion: "11",
 			jdkVersion:      "11.0.20",
@@ -68,12 +68,7 @@ var (
 
 	// https://github.com/nodejs/release#release-schedule
 	// first is default
-	nodeVersionNames = []string{
-		"20",
-		"lts/hydrogen", // 18
-		"lts/gallium",  // 16
-		"lts/dubnium",  // 10
-	}
+	nodeVersionNames = []string{"20"}
 
 	npmPackageNames = []string{"serve", "pnpm", "yarn"}
 
