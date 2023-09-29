@@ -29,6 +29,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - pg
+      - embedding
+      - language-tool
     command: /home/vscode/containerrunner -config /home/vscode/.containerrunner/config.yaml
     depends_on:
       - pg
@@ -58,6 +60,18 @@ services:
     depends_on:
       - pg
 
+  embedding:
+    container_name: dev-container-embedding
+    image: ghcr.io/bergos/embedding-server
+    networks:
+      - embedding
+
+  language-tool:
+    container_name: dev-container-language-tool
+    image: erikvl87/languagetool
+    networks:
+      - language-tool
+
 {{if eq .GOOS "windows"}}
 
 volumes:
@@ -82,5 +96,7 @@ volumes:
 
 networks:
   pg:
+  embedding:
+  language-tool:
 
 {{- end}}
