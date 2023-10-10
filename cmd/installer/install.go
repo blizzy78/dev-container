@@ -7,7 +7,7 @@ const (
 	protocGenGRPCJavaVersion = "1.58.0"
 
 	// https://maven.apache.org/download.cgi
-	mavenVersion = "3.9.4"
+	mavenVersion = "3.9.5"
 )
 
 type zuluVersion struct {
@@ -38,16 +38,16 @@ var (
 	}
 
 	// https://golang.org/dl/
-	goVersions = []string{"1.21.1"} // first is default
+	goVersions = []string{"1.21.3"} // first is default
 
 	pacmanPackageNames = []string{
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "docker-buildx", "fontconfig",
 		"postgresql", "git", "graphviz", "inetutils", "openssh", "man-db", "man-pages", "diffutils", "bash-completion", "fakeroot",
-		"restic", "dnsutils", "ack", "imagemagick", "zsh", "patch", "protobuf", "podman",
+		"restic", "dnsutils", "ack", "imagemagick", "zsh", "patch", "protobuf", "podman", "kubectl", "helm", "helmfile", "k9s",
 	}
 
 	yayPackageNames = []string{
-		"icdiff", "nvm-git", "google-cloud-cli",
+		"icdiff", "nvm-git", "google-cloud-cli", "google-cloud-cli-gke-gcloud-auth-plugin",
 	}
 
 	goToolModules = []string{
@@ -87,6 +87,8 @@ var (
 		"restic-repos",
 		".containerrunner",
 		".cache/go-build/fuzz",
+		".kube",
+		".config",
 	}
 
 	protocGoModuleURLs = []string{

@@ -26,14 +26,14 @@ services:
       - {{$volume_prefix}}restic-repos:/home/vscode/restic-repos
       - {{$volume_prefix}}containerrunner:/home/vscode/.containerrunner
       - {{$volume_prefix}}go-fuzz-cache:/home/vscode/.cache/go-build/fuzz
+      - {{$volume_prefix}}kube:/home/vscode/.kube
+      - {{$volume_prefix}}config:/home/vscode/.config
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - pg
       - embedding
       - language-tool
     command: /home/vscode/containerrunner -config /home/vscode/.containerrunner/config.yaml
-    depends_on:
-      - pg
 
   pg:
     container_name: dev-container-pg
@@ -89,8 +89,10 @@ volumes:
   restic-repos:
   containerrunner:
   go-fuzz-cache:
+  kube:
   pg:
   pgadmin:
+  config:
 
 {{end}}
 
