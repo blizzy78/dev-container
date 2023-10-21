@@ -4,7 +4,7 @@ package main
 
 const (
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
-	protocGenGRPCJavaVersion = "1.58.0"
+	protocGenGRPCJavaVersion = "1.59.0"
 
 	// https://maven.apache.org/download.cgi
 	mavenVersion = "3.9.5"
@@ -31,8 +31,8 @@ var (
 		// https://www.azul.com/downloads/?version=java-11-lts&os=linux&architecture=x86-64-bit&package=jdk#zulu
 		{
 			jdkMajorVersion: "11",
-			jdkVersion:      "11.0.20.1",
-			version:         "11.66.19",
+			jdkVersion:      "11.0.21",
+			version:         "11.68.17",
 			tag:             "ca",
 		},
 	}
@@ -68,7 +68,7 @@ var (
 
 	// https://github.com/nodejs/release#release-schedule
 	// first is default
-	nodeVersionNames = []string{"20"}
+	nodeVersionNames = []string{"21", "20"}
 
 	npmPackageNames = []string{"serve", "pnpm", "yarn"}
 

@@ -31,7 +31,11 @@ var (
 // Build builds the docker image.
 func Build(ctx context.Context) error {
 	return withComposeFile(ctx, func() error {
-		if err := dockerCompose("build", "--no-cache", "--pull", "--force-rm"); err != nil {
+		if err := dockerCompose("pull"); err != nil {
+			return fmt.Errorf("docker compose pull: %w", err)
+		}
+
+		if err := dockerCompose("build", "--no-cache", "--force-rm"); err != nil {
 			return fmt.Errorf("docker compose build: %w", err)
 		}
 
