@@ -6,8 +6,8 @@
 version: '3.5'
 
 services:
-  dev:
-    container_name: dev-container-dev
+  vscode:
+    container_name: vscode
     build:
       context: .
       dockerfile: Dockerfile
@@ -32,11 +32,11 @@ services:
     networks:
       - pg
       - embedding
-      - language-tool
+      - languagetool
     command: /home/vscode/containerrunner -config /home/vscode/.containerrunner/config.yaml
 
   pg:
-    container_name: dev-container-pg
+    container_name: pg
     image: ankane/pgvector
     environment:
       - POSTGRES_PASSWORD=postgres
@@ -46,7 +46,7 @@ services:
       - pg
 
   pgadmin:
-    container_name: dev-container-pgadmin
+    container_name: pgadmin
     image: dpage/pgadmin4
     environment:
       - PGADMIN_DEFAULT_EMAIL=user@example.com
@@ -61,16 +61,16 @@ services:
       - pg
 
   embedding:
-    container_name: dev-container-embedding
+    container_name: embedding
     image: ghcr.io/bergos/embedding-server
     networks:
       - embedding
 
-  language-tool:
-    container_name: dev-container-language-tool
+  languagetool:
+    container_name: languagetool
     image: erikvl87/languagetool
     networks:
-      - language-tool
+      - languagetool
 
 {{if eq .GOOS "windows"}}
 
@@ -99,6 +99,6 @@ volumes:
 networks:
   pg:
   embedding:
-  language-tool:
+  languagetool:
 
 {{- end}}
