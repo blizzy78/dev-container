@@ -23,8 +23,8 @@ var (
 		// https://www.azul.com/downloads/?version=java-17-lts&architecture=x86-64-bit&package=jdk-crac#zulu
 		{
 			jdkMajorVersion: "17",
-			jdkVersion:      "17.0.8.1",
-			version:         "17.44.55",
+			jdkVersion:      "17.0.9",
+			version:         "17.46.27",
 			tag:             "ca-crac",
 		},
 
