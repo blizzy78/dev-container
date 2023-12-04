@@ -4,10 +4,10 @@ package main
 
 const (
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
-	protocGenGRPCJavaVersion = "1.59.0"
+	protocGenGRPCJavaVersion = "1.59.1"
 
 	// https://maven.apache.org/download.cgi
-	mavenVersion = "3.9.5"
+	mavenVersion = "3.9.6"
 )
 
 type zuluVersion struct {
@@ -20,11 +20,19 @@ type zuluVersion struct {
 var (
 	// first is default
 	zuluVersions = []zuluVersion{
-		// https://www.azul.com/downloads/?version=java-17-lts&architecture=x86-64-bit&package=jdk-crac#zulu
+		// https://www.azul.com/downloads/?version=java-21-lts&os=linux&architecture=x86-64-bit&package=jdk-crac#zulu
+		// {
+		// 	jdkMajorVersion: "21",
+		// 	jdkVersion:      "21.0.1",
+		// 	version:         "21.30.23",
+		// 	tag:             "ca-crac",
+		// },
+
+		// https://www.azul.com/downloads/?version=java-17-lts&os=linux&architecture=x86-64-bit&package=jdk-crac#zulu
 		{
 			jdkMajorVersion: "17",
 			jdkVersion:      "17.0.9",
-			version:         "17.46.27",
+			version:         "17.46.29",
 			tag:             "ca-crac",
 		},
 
