@@ -21,12 +21,12 @@ var (
 	// first is default
 	zuluVersions = []zuluVersion{
 		// https://www.azul.com/downloads/?version=java-21-lts&os=linux&architecture=x86-64-bit&package=jdk-crac#zulu
-		// {
-		// 	jdkMajorVersion: "21",
-		// 	jdkVersion:      "21.0.1",
-		// 	version:         "21.30.23",
-		// 	tag:             "ca-crac",
-		// },
+		{
+			jdkMajorVersion: "21",
+			jdkVersion:      "21.0.1",
+			version:         "21.30.23",
+			tag:             "ca-crac",
+		},
 
 		// https://www.azul.com/downloads/?version=java-17-lts&os=linux&architecture=x86-64-bit&package=jdk-crac#zulu
 		{
