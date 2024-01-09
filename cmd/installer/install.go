@@ -4,7 +4,7 @@ package main
 
 const (
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
-	protocGenGRPCJavaVersion = "1.60.0"
+	protocGenGRPCJavaVersion = "1.60.1"
 
 	// https://maven.apache.org/download.cgi
 	mavenVersion = "3.9.6"
@@ -76,7 +76,7 @@ var (
 
 	// https://github.com/nodejs/release#release-schedule
 	// first is default
-	nodeVersionNames = []string{"21", "20"}
+	nodeVersionNames = []string{"21"}
 
 	npmPackageNames = []string{"serve", "pnpm", "yarn"}
 
