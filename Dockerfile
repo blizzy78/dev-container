@@ -21,7 +21,7 @@ ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
 RUN pacman -Syu --noconfirm --needed rsync reflector
-RUN reflector -c DE -f 12 -l 10 -n 12 --save /etc/pacman.d/mirrorlist
+RUN reflector -c DE -f 12 -l 12 -n 12 -p https --completion-percent 98 --save /etc/pacman.d/mirrorlist
 RUN sed -i -r '/^NoExtract / d' /etc/pacman.conf
 RUN pacman -Qqn | pacman -S --noconfirm -
 RUN pacman -S --noconfirm --needed sudo
