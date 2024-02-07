@@ -4,7 +4,7 @@ package main
 
 const (
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
-	protocGenGRPCJavaVersion = "1.61.0"
+	protocGenGRPCJavaVersion = "1.61.1"
 
 	// https://maven.apache.org/download.cgi
 	mavenVersion = "3.9.6"
@@ -46,12 +46,12 @@ var (
 	}
 
 	// https://golang.org/dl/
-	goVersions = []string{"1.21.6"} // first is default
+	goVersions = []string{"1.22.0"} // first is default
 
 	pacmanPackageNames = []string{
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "docker-buildx", "fontconfig",
 		"postgresql", "git", "graphviz", "inetutils", "openssh", "man-db", "man-pages", "diffutils", "bash-completion", "fakeroot",
-		"restic", "dnsutils", "ack", "imagemagick", "zsh", "patch", "protobuf", "podman", "kubectl", "helm", "helmfile", "k9s",
+		"restic", "dnsutils", "ack", "imagemagick", "zsh", "patch", "protobuf", "podman", "kubectl", "helm", "helmfile", "k9s", "hyperfine",
 	}
 
 	yayPackageNames = []string{
