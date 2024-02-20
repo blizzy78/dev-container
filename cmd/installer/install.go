@@ -31,8 +31,8 @@ var (
 		// https://www.azul.com/downloads/?version=java-17-lts&os=linux&architecture=x86-64-bit&package=jdk-crac#zulu
 		{
 			jdkMajorVersion: "17",
-			jdkVersion:      "17.0.9",
-			version:         "17.46.29",
+			jdkVersion:      "17.0.10",
+			version:         "17.48.15",
 			tag:             "ca-crac",
 		},
 
@@ -51,7 +51,7 @@ var (
 	pacmanPackageNames = []string{
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "docker-buildx", "fontconfig",
 		"postgresql", "git", "graphviz", "inetutils", "openssh", "man-db", "man-pages", "diffutils", "bash-completion", "fakeroot",
-		"restic", "dnsutils", "ack", "imagemagick", "zsh", "patch", "protobuf", "podman", "kubectl", "helm", "helmfile", "k9s", "hyperfine",
+		"restic", "dnsutils", "ack", "imagemagick", "zsh", "patch", "protobuf", "podman", "kubectl", "helm", "helmfile", "k9s", "hyperfine", "jq",
 	}
 
 	yayPackageNames = []string{
