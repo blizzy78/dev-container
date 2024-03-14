@@ -33,6 +33,7 @@ services:
       - pg
       - embedding
       - languagetool
+      - testing
     command: /home/vscode/containerrunner -config /home/vscode/.containerrunner/config.yaml
 
   pg:
@@ -100,5 +101,6 @@ networks:
   pg:
   embedding:
   languagetool:
+  testing:
 
 {{- end}}
