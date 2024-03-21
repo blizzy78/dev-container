@@ -55,6 +55,7 @@ func Install(ctx context.Context) {
 		maven,
 		gitCompletion,
 		gitPrompt,
+		zoxide,
 	)
 
 	mg.CtxDeps(ctx, manPages)
@@ -473,6 +474,20 @@ func yay(ctx context.Context) error {
 			return nil
 		})
 	})
+}
+
+func zoxide(ctx context.Context) error {
+	mg.CtxDeps(ctx, bashrc, pacmanPackages)
+
+	if err := appendText(".bashrc", "export _ZO_DATA_DIR=/home/vscode/.zoxide\neval \"$(zoxide init --cmd cd bash)\"\n"); err != nil {
+		return fmt.Errorf("add zoxide to .bashrc: %w", err)
+	}
+
+	if err := appendText(".zshrc", "export _ZO_DATA_DIR=/home/vscode/.zoxide\neval \"$(zoxide init --cmd cd zsh)\"\n"); err != nil {
+		return fmt.Errorf("add zoxide to .zshrc: %w", err)
+	}
+
+	return nil
 }
 
 func doInTempDir(f func() error) error {

@@ -52,7 +52,7 @@ var (
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "docker-buildx", "fontconfig",
 		"postgresql", "git", "graphviz", "inetutils", "openssh", "man-db", "man-pages", "diffutils", "bash-completion", "fakeroot",
 		"restic", "dnsutils", "ack", "imagemagick", "zsh", "patch", "protobuf", "podman", "kubectl", "helm", "helmfile", "k9s", "hyperfine", "jq",
-		"base-devel",
+		"base-devel", "zoxide", "fzf",
 	}
 
 	yayPackageNames = []string{
@@ -98,6 +98,7 @@ var (
 		".cache/go-build/fuzz",
 		".kube",
 		".config",
+		".zoxide",
 	}
 
 	protocGoModuleURLs = []string{

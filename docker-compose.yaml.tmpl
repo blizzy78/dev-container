@@ -28,6 +28,7 @@ services:
       - {{$volume_prefix}}go-fuzz-cache:/home/vscode/.cache/go-build/fuzz
       - {{$volume_prefix}}kube:/home/vscode/.kube
       - {{$volume_prefix}}config:/home/vscode/.config
+      - {{$volume_prefix}}zoxide:/home/vscode/.zoxide
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - pg
@@ -94,6 +95,7 @@ volumes:
   pg:
   pgadmin:
   config:
+  zoxide:
 
 {{end}}
 
