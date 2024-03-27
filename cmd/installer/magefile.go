@@ -39,7 +39,6 @@ func Install(ctx context.Context) {
 
 	// these all depend on yay
 	mg.CtxDeps(ctx,
-		bashrc,
 		volumes,
 		dockerGroup,
 		yayPackages,
@@ -58,7 +57,12 @@ func Install(ctx context.Context) {
 		zoxide,
 	)
 
-	mg.CtxDeps(ctx, manPages)
+	mg.CtxDeps(ctx,
+		// source user RC files last
+		zshrc,
+
+		manPages,
+	)
 }
 
 func timezone() error {
@@ -100,7 +104,7 @@ func yayPackages(ctx context.Context) error {
 }
 
 func installGo(ctx context.Context) error {
-	mg.CtxDeps(ctx, timezone, caCertificates, bashrc)
+	mg.CtxDeps(ctx, timezone, caCertificates)
 
 	wd, err := os.Getwd()
 	if err != nil {
@@ -221,7 +225,7 @@ func protocGoModules(ctx context.Context) error {
 }
 
 func nvm(ctx context.Context) error {
-	mg.CtxDeps(ctx, timezone, caCertificates, bashrc, pacmanPackages, yayPackages)
+	mg.CtxDeps(ctx, timezone, caCertificates, pacmanPackages, yayPackages)
 
 	if err := appendText(".bashrc", ". /usr/share/nvm/init-nvm.sh\nnvm use --silent default\n"); err != nil {
 		return fmt.Errorf("add init-nvm.sh to .bashrc: %w", err)
@@ -274,7 +278,7 @@ func npmPackages(ctx context.Context) error {
 }
 
 func jdk(ctx context.Context) error {
-	mg.CtxDeps(ctx, timezone, caCertificates, bashrc)
+	mg.CtxDeps(ctx, timezone, caCertificates)
 
 	wd, err := os.Getwd()
 	if err != nil {
@@ -374,7 +378,7 @@ func dockerGroup(ctx context.Context) error {
 }
 
 func gitCompletion(ctx context.Context) error {
-	mg.CtxDeps(ctx, timezone, caCertificates, bashrc)
+	mg.CtxDeps(ctx, timezone, caCertificates)
 
 	wd, err := os.Getwd()
 	if err != nil {
@@ -405,7 +409,7 @@ func gitCompletion(ctx context.Context) error {
 }
 
 func gitPrompt(ctx context.Context) error {
-	mg.CtxDeps(ctx, timezone, caCertificates, bashrc)
+	mg.CtxDeps(ctx, timezone, caCertificates)
 
 	wd, err := os.Getwd()
 	if err != nil {
@@ -427,7 +431,7 @@ func gitPrompt(ctx context.Context) error {
 	return nil
 }
 
-func bashrc(ctx context.Context) error {
+func zshrc(ctx context.Context) error {
 	mg.CtxDeps(ctx, timezone)
 
 	if err := appendText(".bashrc", "[[ -f ~/.bashrc_dir/.bashrc ]] && . ~/.bashrc_dir/.bashrc\n"); err != nil {
@@ -477,7 +481,7 @@ func yay(ctx context.Context) error {
 }
 
 func zoxide(ctx context.Context) error {
-	mg.CtxDeps(ctx, bashrc, pacmanPackages)
+	mg.CtxDeps(ctx, pacmanPackages)
 
 	if err := appendText(".bashrc", "export _ZO_DATA_DIR=/home/vscode/.zoxide\neval \"$(zoxide init --cmd cd bash)\"\n"); err != nil {
 		return fmt.Errorf("add zoxide to .bashrc: %w", err)
