@@ -131,10 +131,6 @@ func installGo(ctx context.Context) error {
 		return fmt.Errorf("sudo ln /go/bin/go: %w", err)
 	}
 
-	if err := appendText(".bashrc", "export PATH=\"$PATH:/go/bin\"\n"); err != nil {
-		return fmt.Errorf("add Go PATH to .bashrc: %w", err)
-	}
-
 	if err := appendText(".zshrc", "export PATH=\"$PATH:/go/bin\"\n"); err != nil {
 		return fmt.Errorf("add Go PATH to .zshrc: %w", err)
 	}
@@ -227,10 +223,6 @@ func protocGoModules(ctx context.Context) error {
 func nvm(ctx context.Context) error {
 	mg.CtxDeps(ctx, timezone, caCertificates, pacmanPackages, yayPackages)
 
-	if err := appendText(".bashrc", ". /usr/share/nvm/init-nvm.sh\nnvm use --silent default\n"); err != nil {
-		return fmt.Errorf("add init-nvm.sh to .bashrc: %w", err)
-	}
-
 	if err := appendText(".zshrc", ". /usr/share/nvm/init-nvm.sh\nnvm use --silent default\n"); err != nil {
 		return fmt.Errorf("add init-nvm.sh to .zshrc: %w", err)
 	}
@@ -314,10 +306,6 @@ func jdk(ctx context.Context) error {
 		}
 	}
 
-	if err := appendText(".bashrc", "export JAVA_HOME=\""+wd+"/jdk\"\n"); err != nil {
-		return fmt.Errorf("add JAVA_HOME to .bashrc: %w", err)
-	}
-
 	if err := appendText(".zshrc", "export JAVA_HOME=\""+wd+"/jdk\"\n"); err != nil {
 		return fmt.Errorf("add JAVA_HOME to .zshrc: %w", err)
 	}
@@ -358,7 +346,7 @@ func volumes(ctx context.Context) error {
 		}
 	}
 
-	for _, f := range []string{".bash_history", ".zsh_history", ".gitconfig"} {
+	for _, f := range []string{".zsh_history", ".gitconfig"} {
 		if err := ln(f+"_dir/"+f, f); err != nil {
 			return fmt.Errorf("ln volume folder %s_dir: %w", f, err)
 		}
@@ -385,20 +373,12 @@ func gitCompletion(ctx context.Context) error {
 		return fmt.Errorf("Getwd: %w", err)
 	}
 
-	if err = downloadAs(ctx, gitCompletionBashURL, wd+"/.git-completion.sh"); err != nil {
-		return fmt.Errorf("download git-completion.sh: %w", err)
-	}
-
 	if err = os.Mkdir(wd+"/.zsh", os.ModePerm); err != nil {
 		return fmt.Errorf("mkdir .zsh: %w", err)
 	}
 
 	if err = downloadAs(ctx, gitCompletionZSHURL, wd+"/.zsh/_git"); err != nil {
 		return fmt.Errorf("download git-completion.zsh: %w", err)
-	}
-
-	if err := appendText(".bashrc", ". ~/.git-completion.sh\n"); err != nil {
-		return fmt.Errorf("add git-completion.sh to .bashrc: %w", err)
 	}
 
 	if err := appendText(".zshrc", "fpath=(~/.zsh $fpath)\nzstyle ':completion:*:*:git:*' script ~/.git-completion.sh\n"); err != nil {
@@ -420,10 +400,6 @@ func gitPrompt(ctx context.Context) error {
 		return fmt.Errorf("download git-prompt: %w", err)
 	}
 
-	if err := appendText(".bashrc", ". ~/.git-prompt.sh\n"+gitPromptBashRC); err != nil {
-		return fmt.Errorf("add git-prompt to .bashrc: %w", err)
-	}
-
 	if err := appendText(".zshrc", ". ~/.git-prompt.sh\n"+gitPromptZSHRC); err != nil {
 		return fmt.Errorf("add git-prompt to .zshrc: %w", err)
 	}
@@ -433,10 +409,6 @@ func gitPrompt(ctx context.Context) error {
 
 func zshrc(ctx context.Context) error {
 	mg.CtxDeps(ctx, timezone)
-
-	if err := appendText(".bashrc", "[[ -f ~/.bashrc_dir/.bashrc ]] && . ~/.bashrc_dir/.bashrc\n"); err != nil {
-		return fmt.Errorf("add ~/.bashrc_dir/.bashrc to .bashrc: %w", err)
-	}
 
 	if err := appendText(".zshrc", "[[ -f ~/.zshrc_dir/.zshrc ]] && . ~/.zshrc_dir/.zshrc\n"); err != nil {
 		return fmt.Errorf("add ~/.zshrc_dir/.zshrc to .zshrc: %w", err)
@@ -482,10 +454,6 @@ func yay(ctx context.Context) error {
 
 func zoxide(ctx context.Context) error {
 	mg.CtxDeps(ctx, pacmanPackages)
-
-	if err := appendText(".bashrc", "export _ZO_DATA_DIR=/home/vscode/.zoxide\neval \"$(zoxide init --cmd cd bash)\"\n"); err != nil {
-		return fmt.Errorf("add zoxide to .bashrc: %w", err)
-	}
 
 	if err := appendText(".zshrc", "export _ZO_DATA_DIR=/home/vscode/.zoxide\neval \"$(zoxide init --cmd cd zsh)\"\n"); err != nil {
 		return fmt.Errorf("add zoxide to .zshrc: %w", err)

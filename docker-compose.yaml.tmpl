@@ -15,8 +15,6 @@ services:
       - {{$volume_prefix}}vscode-extensions:/home/vscode/.vscode-server/extensions
       - {{$volume_prefix}}vscode-insiders-extensions:/home/vscode/.vscode-server-insiders/extensions
       - {{$volume_prefix}}workspaces:/home/vscode/workspaces
-      - {{$volume_prefix}}bash-history:/home/vscode/.bash_history_dir
-      - {{$volume_prefix}}bashrc:/home/vscode/.bashrc_dir
       - {{$volume_prefix}}zsh-history:/home/vscode/.zsh_history_dir
       - {{$volume_prefix}}zshrc:/home/vscode/.zshrc_dir
       - {{$volume_prefix}}git-config:/home/vscode/.gitconfig_dir
@@ -80,8 +78,6 @@ volumes:
   vscode-extensions:
   vscode-insiders-extensions:
   workspaces:
-  bash-history:
-  bashrc:
   zsh-history:
   zshrc:
   git-config:

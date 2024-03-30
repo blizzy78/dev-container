@@ -50,9 +50,9 @@ var (
 
 	pacmanPackageNames = []string{
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "docker-buildx", "fontconfig",
-		"postgresql", "git", "graphviz", "inetutils", "openssh", "man-db", "man-pages", "diffutils", "bash-completion", "fakeroot",
-		"restic", "dnsutils", "ack", "imagemagick", "zsh", "patch", "protobuf", "podman", "kubectl", "helm", "helmfile", "k9s", "hyperfine", "jq",
-		"base-devel", "zoxide", "fzf", "act",
+		"postgresql", "git", "graphviz", "inetutils", "openssh", "man-db", "man-pages", "diffutils", "fakeroot", "restic", "dnsutils", "ack",
+		"imagemagick", "zsh", "patch", "protobuf", "podman", "kubectl", "helm", "helmfile", "k9s", "hyperfine", "jq", "base-devel", "zoxide",
+		"fzf", "act",
 	}
 
 	yayPackageNames = []string{
@@ -85,8 +85,6 @@ var (
 		".vscode-server/extensions",
 		".vscode-server-insiders/extensions",
 		"workspaces",
-		".bash_history_dir",
-		".bashrc_dir",
 		".zsh_history_dir",
 		".zshrc_dir",
 		".gitconfig_dir",
@@ -106,12 +104,10 @@ var (
 		"google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest",
 	}
 
-	gitCompletionBashURL = "https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash"
-	gitCompletionZSHURL  = "https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.zsh"
+	gitCompletionZSHURL = "https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.zsh"
 
-	gitPromptURL    = "https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh"
-	gitPromptBashRC = `export PS1="\[\033[30;44m\] \w \[\033[00m\]\[\033[30;42m\]\$(__git_ps1 \" %s \")\[\033[00m\] "` + "\n"
-	gitPromptZSHRC  = `setopt PROMPT_SUBST` + "\n" +
+	gitPromptURL   = "https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh"
+	gitPromptZSHRC = `setopt PROMPT_SUBST` + "\n" +
 		`PS1=$'%{\e[30;44m%} %d %{\e[00m\e[30;42m%}\$(__git_ps1 \" %s \")%{\e[00m%}%(?..%{\e[30;41m%} %? %{\e[00m%}) '` + "\n"
 )
 
