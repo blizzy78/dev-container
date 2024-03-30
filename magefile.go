@@ -22,15 +22,13 @@ const (
 	projectName = "dev-container"
 )
 
-var (
-	Default = Build
+var Default = Build
 
-	composeFileMu sync.Mutex
-)
+var composeFileMu sync.Mutex
 
-// Build builds the docker image.
+// Build builds the Docker image.
 func Build(ctx context.Context) error {
-	return withComposeFile(ctx, func() error {
+	return withComposeFile(func() error {
 		if err := dockerCompose("pull"); err != nil {
 			return fmt.Errorf("docker compose pull: %w", err)
 		}
@@ -43,19 +41,15 @@ func Build(ctx context.Context) error {
 	})
 }
 
-// Recreate destroys the container and spins up a new one, optionally recreating the image first.
-func Recreate(ctx context.Context, rebuildImage bool) {
-	if rebuildImage {
-		mg.CtxDeps(ctx, Build)
-	}
-
+// Recreate destroys the containers and spins up new ones.
+func Recreate(ctx context.Context) {
 	mg.SerialCtxDeps(ctx, Destroy, Create)
 }
 
 // Zsh enters into a new shell inside a running container.
 func Zsh(ctx context.Context) error {
-	return withComposeFile(ctx, func() error {
-		if err := dockerCompose("exec", "dev", "zsh", "--login"); err != nil {
+	return withComposeFile(func() error {
+		if err := dockerCompose("exec", "vscode", "zsh", "--login"); err != nil {
 			return fmt.Errorf("docker compose exec zsh: %w", err)
 		}
 
@@ -63,32 +57,14 @@ func Zsh(ctx context.Context) error {
 	})
 }
 
-// Create creates the container.
+// Create creates the containers.
 func Create(ctx context.Context) error {
-	return withComposeFile(ctx, func() error {
-		if err := dockerCompose("up", "-d"); err != nil {
+	return withComposeFile(func() error {
+		if err := dockerCompose("up", "-d", "--no-start"); err != nil {
 			return fmt.Errorf("docker compose up: %w", err)
 		}
 
-		return nil
-	})
-}
-
-// Destroy destroys the container.
-func Destroy(ctx context.Context) error {
-	return withComposeFile(ctx, func() error {
-		if err := dockerCompose("down", "--remove-orphans"); err != nil {
-			return fmt.Errorf("docker compose down: %w", err)
-		}
-
-		return nil
-	})
-}
-
-// Start starts the container.
-func Start(ctx context.Context) error {
-	return withComposeFile(ctx, func() error {
-		if err := dockerCompose("start"); err != nil {
+		if err := dockerCompose("start", "vscode", "pg"); err != nil {
 			return fmt.Errorf("docker compose start: %w", err)
 		}
 
@@ -96,11 +72,11 @@ func Start(ctx context.Context) error {
 	})
 }
 
-// Stop stops the container.
-func Stop(ctx context.Context) error {
-	return withComposeFile(ctx, func() error {
-		if err := dockerCompose("stop"); err != nil {
-			return fmt.Errorf("docker compose stop: %w", err)
+// Destroy destroys the containers.
+func Destroy(ctx context.Context) error {
+	return withComposeFile(func() error {
+		if err := dockerCompose("down", "--remove-orphans"); err != nil {
+			return fmt.Errorf("docker compose down: %w", err)
 		}
 
 		return nil
@@ -123,7 +99,7 @@ func dockerCompose(args ...string) error {
 	return nil
 }
 
-func withComposeFile(ctx context.Context, fn func() error) error {
+func withComposeFile(fn func() error) error {
 	removeComposeFile, err := createComposeFile()
 	if err != nil {
 		return fmt.Errorf("create compose file: %w", err)
