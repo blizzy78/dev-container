@@ -52,7 +52,7 @@ var (
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "docker-buildx", "fontconfig",
 		"postgresql", "git", "graphviz", "inetutils", "openssh", "man-db", "man-pages", "diffutils", "fakeroot", "restic", "dnsutils", "ack",
 		"imagemagick", "zsh", "patch", "protobuf", "podman", "kubectl", "helm", "helmfile", "k9s", "hyperfine", "jq", "base-devel", "zoxide",
-		"fzf", "act",
+		"fzf", "act", "gnupg",
 	}
 
 	yayPackageNames = []string{
@@ -83,7 +83,6 @@ var (
 
 	volumeFolders = []string{
 		".vscode-server/extensions",
-		".vscode-server-insiders/extensions",
 		"workspaces",
 		".zsh_history_dir",
 		".zshrc_dir",
@@ -104,7 +103,8 @@ var (
 		"google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest",
 	}
 
-	gitCompletionZSHURL = "https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.zsh"
+	gitCompletionBashURL = "https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash"
+	gitCompletionZSHURL  = "https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.zsh"
 
 	gitPromptURL   = "https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh"
 	gitPromptZSHRC = `setopt PROMPT_SUBST` + "\n" +

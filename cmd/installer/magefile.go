@@ -373,6 +373,10 @@ func gitCompletion(ctx context.Context) error {
 		return fmt.Errorf("Getwd: %w", err)
 	}
 
+	if err = downloadAs(ctx, gitCompletionBashURL, wd+"/.git-completion.sh"); err != nil {
+		return fmt.Errorf("download git-completion.sh: %w", err)
+	}
+
 	if err = os.Mkdir(wd+"/.zsh", os.ModePerm); err != nil {
 		return fmt.Errorf("mkdir .zsh: %w", err)
 	}

@@ -13,7 +13,6 @@ services:
       dockerfile: Dockerfile
     volumes:
       - {{$volume_prefix}}vscode-extensions:/home/vscode/.vscode-server/extensions
-      - {{$volume_prefix}}vscode-insiders-extensions:/home/vscode/.vscode-server-insiders/extensions
       - {{$volume_prefix}}workspaces:/home/vscode/workspaces
       - {{$volume_prefix}}zsh-history:/home/vscode/.zsh_history_dir
       - {{$volume_prefix}}zshrc:/home/vscode/.zshrc_dir
@@ -76,7 +75,6 @@ services:
 
 volumes:
   vscode-extensions:
-  vscode-insiders-extensions:
   workspaces:
   zsh-history:
   zshrc:
