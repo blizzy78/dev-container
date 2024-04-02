@@ -26,6 +26,7 @@ services:
       - {{$volume_prefix}}kube:/home/vscode/.kube
       - {{$volume_prefix}}config:/home/vscode/.config
       - {{$volume_prefix}}zoxide:/home/vscode/.zoxide
+      - {{$volume_prefix}}gnupg:/home/vscode/.gnupg
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - pg
@@ -90,6 +91,7 @@ volumes:
   pgadmin:
   config:
   zoxide:
+  gnupg:
 
 {{end}}
 
