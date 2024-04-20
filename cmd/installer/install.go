@@ -23,24 +23,24 @@ var (
 		// https://www.azul.com/downloads/?version=java-21-lts&os=linux&architecture=x86-64-bit&package=jdk-crac#zulu
 		{
 			jdkMajorVersion: "21",
-			jdkVersion:      "21.0.2",
-			version:         "21.32.17",
+			jdkVersion:      "21.0.3",
+			version:         "21.34.19",
 			tag:             "ca-crac",
 		},
 
 		// https://www.azul.com/downloads/?version=java-17-lts&os=linux&architecture=x86-64-bit&package=jdk-crac#zulu
 		{
 			jdkMajorVersion: "17",
-			jdkVersion:      "17.0.10",
-			version:         "17.48.15",
+			jdkVersion:      "17.0.11",
+			version:         "17.50.19",
 			tag:             "ca-crac",
 		},
 
 		// https://www.azul.com/downloads/?version=java-11-lts&os=linux&architecture=x86-64-bit&package=jdk#zulu
 		{
 			jdkMajorVersion: "11",
-			jdkVersion:      "11.0.22",
-			version:         "11.70.15",
+			jdkVersion:      "11.0.23",
+			version:         "11.72.19",
 			tag:             "ca",
 		},
 	}
