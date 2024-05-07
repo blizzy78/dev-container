@@ -46,7 +46,7 @@ var (
 	}
 
 	// https://golang.org/dl/
-	goVersions = []string{"1.22.2"} // first is default
+	goVersions = []string{"1.22.3"} // first is default
 
 	pacmanPackageNames = []string{
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "docker-buildx", "fontconfig",
