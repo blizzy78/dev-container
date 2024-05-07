@@ -77,7 +77,7 @@ var (
 
 	// https://github.com/nodejs/release#release-schedule
 	// first is default
-	nodeVersionNames = []string{"21"}
+	nodeVersionNames = []string{"22"}
 
 	npmPackageNames = []string{"serve", "pnpm", "yarn"}
 
