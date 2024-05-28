@@ -31,6 +31,7 @@ services:
       - embedding
       - languagetool
       - testing
+      - redis
     command: /home/vscode/containerrunner -config /home/vscode/.containerrunner/config.yaml
 
   pg:
@@ -70,6 +71,15 @@ services:
     networks:
       - languagetool
 
+  redis:
+    container_name: redis
+    image: redis:alpine3.19
+    volumes:
+      - {{$volume_prefix}}redis:/data
+    networks:
+      - redis
+    command: redis-server --save 60 1 --loglevel warning
+
 {{if eq .GOOS "windows"}}
 
 volumes:
@@ -90,6 +100,7 @@ volumes:
   config:
   zoxide:
   gnupg:
+  redis:
 
 {{end}}
 
@@ -98,5 +109,6 @@ networks:
   embedding:
   languagetool:
   testing:
+  redis:
 
 {{- end}}
