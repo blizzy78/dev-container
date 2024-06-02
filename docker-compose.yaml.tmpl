@@ -25,6 +25,7 @@ services:
       - {{$volume_prefix}}config:/home/vscode/.config
       - {{$volume_prefix}}zoxide:/home/vscode/.zoxide
       - {{$volume_prefix}}gnupg:/home/vscode/.gnupg
+      - {{$volume_prefix}}supermaven:/home/vscode/.supermaven
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - pg
@@ -101,6 +102,7 @@ volumes:
   zoxide:
   gnupg:
   redis:
+  supermaven:
 
 {{end}}
 
