@@ -54,7 +54,7 @@ var (
 	}
 
 	// https://golang.org/dl/
-	goVersions = []string{"1.22.3"} // first is default
+	goVersions = []string{"1.22.4"} // first is default
 
 	pacmanPackageNames = []string{
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "docker-buildx", "fontconfig",
@@ -104,6 +104,7 @@ var (
 		".kube",
 		".config",
 		".zoxide",
+		".supermaven",
 	}
 
 	protocGoModuleURLs = []string{
