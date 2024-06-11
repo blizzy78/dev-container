@@ -37,7 +37,7 @@ services:
 
   pg:
     container_name: pg
-    image: ankane/pgvector
+    image: pgvector/pgvector:pg15
     environment:
       - POSTGRES_PASSWORD=postgres
     volumes:
