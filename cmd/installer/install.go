@@ -7,7 +7,7 @@ const (
 	protocGenGRPCJavaVersion = "1.64.0"
 
 	// https://maven.apache.org/download.cgi
-	mavenVersion = "3.9.7"
+	mavenVersion = "3.9.8"
 )
 
 type zuluVersion struct {
@@ -60,7 +60,7 @@ var (
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "docker-buildx", "fontconfig",
 		"postgresql", "git", "graphviz", "inetutils", "openssh", "man-db", "man-pages", "diffutils", "fakeroot", "restic", "dnsutils", "ack",
 		"imagemagick", "zsh", "patch", "protobuf", "podman", "kubectl", "helm", "helmfile", "k9s", "hyperfine", "jq", "base-devel", "zoxide",
-		"fzf", "act", "gnupg",
+		"fzf", "act", "gnupg", "pwgen",
 	}
 
 	yayPackageNames = []string{
