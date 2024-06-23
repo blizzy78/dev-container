@@ -69,6 +69,8 @@ services:
   languagetool:
     container_name: languagetool
     image: erikvl87/languagetool
+    environment:
+      Java_Xmx: "2G"
     networks:
       - languagetool
 
