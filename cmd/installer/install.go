@@ -4,7 +4,7 @@ package main
 
 const (
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
-	protocGenGRPCJavaVersion = "1.65.0"
+	protocGenGRPCJavaVersion = "1.65.1"
 
 	// https://maven.apache.org/download.cgi
 	mavenVersion = "3.9.8"
@@ -47,8 +47,8 @@ var (
 		// https://www.azul.com/downloads/?version=java-11-lts&os=linux&architecture=x86-64-bit&package=jdk#zulu
 		{
 			jdkMajorVersion: "11",
-			jdkVersion:      "11.0.23",
-			version:         "11.72.19",
+			jdkVersion:      "11.0.24",
+			version:         "11.74.15",
 			tag:             "ca",
 		},
 	}
