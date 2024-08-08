@@ -83,6 +83,24 @@ services:
       - redis
     command: redis-server --save 60 1 --loglevel warning
 
+  open-webui:
+    container_name: open-webui
+    image: ghcr.io/open-webui/open-webui:main
+    volumes:
+      - {{$volume_prefix}}open-webui:/app/backend/data
+    ports:
+      - "25500:8080"
+    networks:
+      - open-webui
+
+  open-webui-pipelines:
+    container_name: open-webui-pipelines
+    image: ghcr.io/open-webui/pipelines:main
+    volumes:
+      - {{$volume_prefix}}open-webui-pipelines:/app/pipelines
+    networks:
+      - open-webui
+
 {{if eq .GOOS "windows"}}
 
 volumes:
@@ -105,6 +123,8 @@ volumes:
   gnupg:
   redis:
   supermaven:
+  open-webui:
+  open-webui-pipelines:
 
 {{end}}
 
@@ -114,5 +134,6 @@ networks:
   languagetool:
   testing:
   redis:
+  open-webui:
 
 {{- end}}
