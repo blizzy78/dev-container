@@ -33,6 +33,7 @@ services:
       - languagetool
       - testing
       - redis
+      - prometheus
     command: /home/vscode/containerrunner -config /home/vscode/.containerrunner/config.yaml
 
   pg:
@@ -101,6 +102,27 @@ services:
     networks:
       - open-webui
 
+  prometheus:
+    container_name: prometheus
+    image: bitnami/prometheus
+    volumes:
+      - ./prometheus.yaml:/opt/bitnami/prometheus/conf/prometheus.yml
+      - {{$volume_prefix}}prometheus:/opt/bitnami/prometheus/data
+    networks:
+      - prometheus
+
+  grafana:
+    container_name: grafana
+    image: bitnami/grafana
+    ports:
+      - "25600:3000"
+    volumes:
+      - ./grafana.ini:/opt/bitnami/grafana/conf/grafana.ini
+      - {{$volume_prefix}}grafana:/opt/bitnami/grafana/data
+    networks:
+      - grafana
+      - prometheus
+
 {{if eq .GOOS "windows"}}
 
 volumes:
@@ -125,6 +147,8 @@ volumes:
   supermaven:
   open-webui:
   open-webui-pipelines:
+  prometheus:
+  grafana:
 
 {{end}}
 
@@ -135,5 +159,7 @@ networks:
   testing:
   redis:
   open-webui:
+  prometheus:
+  grafana:
 
 {{- end}}

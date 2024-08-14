@@ -26,13 +26,22 @@ var Default = Build
 
 var composeFileMu sync.Mutex
 
-// Build builds the Docker image.
-func Build(ctx context.Context) error {
+// Pull pulls all images.
+func Pull(ctx context.Context) error {
 	return withComposeFile(func() error {
 		if err := dockerCompose("pull"); err != nil {
 			return fmt.Errorf("docker compose pull: %w", err)
 		}
 
+		return nil
+	})
+}
+
+// Build builds the Docker image.
+func Build(ctx context.Context) error {
+	mg.CtxDeps(ctx, Pull)
+
+	return withComposeFile(func() error {
 		if err := dockerCompose("build", "--no-cache", "--force-rm"); err != nil {
 			return fmt.Errorf("docker compose build: %w", err)
 		}
@@ -46,17 +55,6 @@ func Recreate(ctx context.Context) {
 	mg.SerialCtxDeps(ctx, Destroy, Create)
 }
 
-// Zsh enters into a new shell inside a running container.
-func Zsh(ctx context.Context) error {
-	return withComposeFile(func() error {
-		if err := dockerCompose("exec", "vscode", "zsh", "--login"); err != nil {
-			return fmt.Errorf("docker compose exec zsh: %w", err)
-		}
-
-		return nil
-	})
-}
-
 // Create creates the containers.
 func Create(ctx context.Context) error {
 	return withComposeFile(func() error {
@@ -64,7 +62,7 @@ func Create(ctx context.Context) error {
 			return fmt.Errorf("docker compose up: %w", err)
 		}
 
-		if err := dockerCompose("start", "vscode", "pg", "redis"); err != nil {
+		if err := dockerCompose("start", "vscode", "pg", "pgadmin", "redis", "open-webui", "open-webui-pipelines", "prometheus", "grafana"); err != nil {
 			return fmt.Errorf("docker compose start: %w", err)
 		}
 
@@ -77,6 +75,17 @@ func Destroy(ctx context.Context) error {
 	return withComposeFile(func() error {
 		if err := dockerCompose("down", "--remove-orphans"); err != nil {
 			return fmt.Errorf("docker compose down: %w", err)
+		}
+
+		return nil
+	})
+}
+
+// Zsh enters into a new shell inside a running container.
+func Zsh(ctx context.Context) error {
+	return withComposeFile(func() error {
+		if err := dockerCompose("exec", "vscode", "zsh", "--login"); err != nil {
+			return fmt.Errorf("docker compose exec zsh: %w", err)
 		}
 
 		return nil
