@@ -62,7 +62,7 @@ func Create(ctx context.Context) error {
 			return fmt.Errorf("docker compose up: %w", err)
 		}
 
-		if err := dockerCompose("start", "vscode", "pg", "pgadmin", "redis", "open-webui", "open-webui-pipelines", "prometheus", "grafana"); err != nil {
+		if err := dockerCompose("start", "vscode", "pg", "pgadmin", "redis", "prometheus", "grafana"); err != nil {
 			return fmt.Errorf("docker compose start: %w", err)
 		}
 

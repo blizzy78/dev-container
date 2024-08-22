@@ -7,7 +7,7 @@ const (
 	protocGenGRPCJavaVersion = "1.66.0"
 
 	// https://maven.apache.org/download.cgi
-	mavenVersion = "3.9.8"
+	mavenVersion = "3.9.9"
 )
 
 type zuluVersion struct {
