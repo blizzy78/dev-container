@@ -61,6 +61,10 @@ var (
 		"postgresql", "git", "graphviz", "inetutils", "openssh", "man-db", "man-pages", "diffutils", "fakeroot", "restic", "dnsutils", "ack",
 		"imagemagick", "zsh", "patch", "protobuf", "podman", "kubectl", "helm", "helmfile", "k9s", "hyperfine", "jq", "base-devel", "zoxide",
 		"fzf", "act", "gnupg", "pwgen",
+
+		// dependencies for Playwright
+		"nss", "nspr", "atk", "at-spi2-atk", "libdrm", "libxkbcommon", "at-spi2-core", "libxcomposite", "libxdamage", "libxfixes", "libxrandr",
+		"mesa", "alsa-lib", "libxcursor", "gtk3",
 	}
 
 	yayPackageNames = []string{
