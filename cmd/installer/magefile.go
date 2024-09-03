@@ -37,7 +37,6 @@ func Install(ctx context.Context) {
 	// need to do this separately because of different working directory
 	mg.CtxDeps(ctx, yay)
 
-	// these all depend on yay
 	mg.CtxDeps(ctx,
 		volumes,
 		dockerGroup,
@@ -55,6 +54,7 @@ func Install(ctx context.Context) {
 		gitCompletion,
 		gitPrompt,
 		zoxide,
+		llm,
 	)
 
 	mg.CtxDeps(ctx,
@@ -461,6 +461,24 @@ func zoxide(ctx context.Context) error {
 
 	if err := appendText(".zshrc", "export _ZO_DATA_DIR=/home/vscode/.zoxide\neval \"$(zoxide init --cmd cd zsh)\"\n"); err != nil {
 		return fmt.Errorf("add zoxide to .zshrc: %w", err)
+	}
+
+	return nil
+}
+
+func llm(ctx context.Context) error {
+	mg.CtxDeps(ctx, pacmanPackages)
+
+	if err := sh.Run("pipx", "install", "llm"); err != nil {
+		return fmt.Errorf("pipx install llm: %w", err)
+	}
+
+	if err := sh.Run("/home/vscode/.local/bin/llm", "install", "llm-claude-3"); err != nil {
+		return fmt.Errorf("llm install llm-claude-3: %w", err)
+	}
+
+	if err := appendText(".zshrc", "export PATH=\"$PATH:/home/vscode/.local/bin\"\n"); err != nil {
+		return fmt.Errorf("add ~/.local/bin PATH to .zshrc: %w", err)
 	}
 
 	return nil
