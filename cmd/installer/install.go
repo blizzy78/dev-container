@@ -60,7 +60,7 @@ var (
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "docker-buildx", "fontconfig",
 		"postgresql", "git", "graphviz", "inetutils", "openssh", "man-db", "man-pages", "diffutils", "fakeroot", "restic", "dnsutils", "ack",
 		"imagemagick", "zsh", "patch", "protobuf", "podman", "kubectl", "helm", "helmfile", "k9s", "hyperfine", "jq", "base-devel", "zoxide",
-		"fzf", "act", "gnupg", "pwgen", "python-pipx", "git-delta",
+		"fzf", "act", "gnupg", "pwgen", "python-pipx", "git-delta", "lazygit",
 
 		// dependencies for Playwright
 		"nss", "nspr", "atk", "at-spi2-atk", "libdrm", "libxkbcommon", "at-spi2-core", "libxcomposite", "libxdamage", "libxfixes", "libxrandr",
