@@ -32,7 +32,7 @@ var (
 		{
 			jdkMajorVersion: "22",
 			jdkVersion:      "22.0.2",
-			version:         "22.32.17",
+			version:         "22.32.21",
 			tag:             "ca-crac",
 		},
 
@@ -54,7 +54,7 @@ var (
 	}
 
 	// https://golang.org/dl/
-	goVersions = []string{"1.23.0"} // first is default
+	goVersions = []string{"1.23.1"} // first is default
 
 	pacmanPackageNames = []string{
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "docker-buildx", "fontconfig",
