@@ -26,14 +26,9 @@ services:
       - {{$volume_prefix}}zoxide:/home/vscode/.zoxide
       - {{$volume_prefix}}gnupg:/home/vscode/.gnupg
       - {{$volume_prefix}}supermaven:/home/vscode/.supermaven
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock.raw:/var/run/docker.sock
     networks:
-      - pg
-      - embedding
-      - languagetool
-      - testing
-      - redis
-      - prometheus
+      - dev-container
     command: /home/vscode/containerrunner -config /home/vscode/.containerrunner/config.yaml
 
   pg:
@@ -44,7 +39,7 @@ services:
     volumes:
       - {{$volume_prefix}}pg:/var/lib/postgresql/data
     networks:
-      - pg
+      - dev-container
 
   pgadmin:
     container_name: pgadmin
@@ -57,7 +52,7 @@ services:
     ports:
       - "25432:80"
     networks:
-      - pg
+      - dev-container
     depends_on:
       - pg
 
@@ -65,7 +60,7 @@ services:
     container_name: embedding
     image: ghcr.io/bergos/embedding-server
     networks:
-      - embedding
+      - dev-container
 
   languagetool:
     container_name: languagetool
@@ -73,7 +68,7 @@ services:
     environment:
       Java_Xmx: "2G"
     networks:
-      - languagetool
+      - dev-container
 
   redis:
     container_name: redis
@@ -81,7 +76,7 @@ services:
     volumes:
       - {{$volume_prefix}}redis:/data
     networks:
-      - redis
+      - dev-container
     command: redis-server --save 60 1 --loglevel warning
 
   prometheus:
@@ -91,7 +86,7 @@ services:
       - ./prometheus.yaml:/opt/bitnami/prometheus/conf/prometheus.yml
       - {{$volume_prefix}}prometheus:/opt/bitnami/prometheus/data
     networks:
-      - prometheus
+      - dev-container
 
   grafana:
     container_name: grafana
@@ -102,8 +97,7 @@ services:
       - ./grafana.ini:/opt/bitnami/grafana/conf/grafana.ini
       - {{$volume_prefix}}grafana:/opt/bitnami/grafana/data
     networks:
-      - grafana
-      - prometheus
+      - dev-container
 
 {{if eq .GOOS "windows"}}
 
@@ -133,12 +127,7 @@ volumes:
 {{end}}
 
 networks:
-  pg:
-  embedding:
-  languagetool:
-  testing:
-  redis:
-  prometheus:
-  grafana:
+  dev-container:
+    name: dev-container
 
 {{- end}}
