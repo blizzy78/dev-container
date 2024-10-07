@@ -247,7 +247,7 @@ func nodeJS(ctx context.Context) error {
 
 	s += "nvm alias default " + nodeVersionNames[0]
 
-	if err := bashStdin(strings.NewReader(s), "-e"); err != nil {
+	if err := bashStdin(ctx, strings.NewReader(s), "-e"); err != nil {
 		return fmt.Errorf("run node install script: %w", err)
 	}
 
@@ -262,7 +262,7 @@ func npmPackages(ctx context.Context) error {
 		"npm install -g --no-audit --no-fund npm\n" +
 		"npm install -g --no-audit --no-fund " + strings.Join(npmPackageNames, " ")
 
-	if err := bashStdin(strings.NewReader(s), "-e"); err != nil {
+	if err := bashStdin(ctx, strings.NewReader(s), "-e"); err != nil {
 		return fmt.Errorf("npm install packages: %w", err)
 	}
 

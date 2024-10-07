@@ -18,8 +18,11 @@ import (
 
 type httpError string
 
-func bashStdin(r io.Reader, args ...string) error {
-	c := exec.Command("bash", args...)
+func bashStdin(ctx context.Context, r io.Reader, args ...string) error {
+	ctx, cancel := context.WithTimeout(ctx, 3*time.Minute)
+	defer cancel()
+
+	c := exec.CommandContext(ctx, "bash", args...)
 	c.Stdin = r
 	o, err := c.CombinedOutput()
 	if mg.Verbose() {
@@ -74,7 +77,7 @@ func downloadAs(ctx context.Context, url string, path string) error {
 func download(ctx context.Context, url string) ([]byte, error) {
 	c := http.Client{
 		Transport: &http.Transport{
-			ResponseHeaderTimeout: 2 * time.Minute,
+			ResponseHeaderTimeout: 15 * time.Second,
 
 			TLSClientConfig: &tls.Config{
 				InsecureSkipVerify: true,

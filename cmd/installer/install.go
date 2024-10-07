@@ -4,7 +4,7 @@ package main
 
 const (
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
-	protocGenGRPCJavaVersion = "1.66.0"
+	protocGenGRPCJavaVersion = "1.68.0"
 
 	// https://maven.apache.org/download.cgi
 	mavenVersion = "3.9.9"
@@ -28,11 +28,11 @@ var (
 			tag:             "ca-crac",
 		},
 
-		// https://www.azul.com/downloads/?version=java-22&os=linux&architecture=x86-64-bit&package=jdk-crac#zulu
+		// https://www.azul.com/downloads/?version=java-23&os=linux&architecture=x86-64-bit&package=jdk-crac#zulu
 		{
-			jdkMajorVersion: "22",
-			jdkVersion:      "22.0.2",
-			version:         "22.32.21",
+			jdkMajorVersion: "23",
+			jdkVersion:      "23.0.0",
+			version:         "23.28.85",
 			tag:             "ca-crac",
 		},
 
@@ -54,7 +54,7 @@ var (
 	}
 
 	// https://golang.org/dl/
-	goVersions = []string{"1.23.1"} // first is default
+	goVersions = []string{"1.23.2"} // first is default
 
 	pacmanPackageNames = []string{
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "docker-buildx", "fontconfig",
