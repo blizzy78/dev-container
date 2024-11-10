@@ -4,7 +4,7 @@ package main
 
 const (
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
-	protocGenGRPCJavaVersion = "1.68.0"
+	protocGenGRPCJavaVersion = "1.68.1"
 
 	// https://maven.apache.org/download.cgi
 	mavenVersion = "3.9.9"
@@ -47,20 +47,20 @@ var (
 		// https://www.azul.com/downloads/?version=java-11-lts&os=linux&architecture=x86-64-bit&package=jdk#zulu
 		{
 			jdkMajorVersion: "11",
-			jdkVersion:      "11.0.24",
-			version:         "11.74.15",
+			jdkVersion:      "11.0.25",
+			version:         "11.76.21",
 			tag:             "ca",
 		},
 	}
 
 	// https://golang.org/dl/
-	goVersions = []string{"1.23.2"} // first is default
+	goVersions = []string{"1.23.3"} // first is default
 
 	pacmanPackageNames = []string{
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "docker-buildx", "fontconfig",
 		"postgresql", "git", "graphviz", "inetutils", "openssh", "man-db", "man-pages", "diffutils", "fakeroot", "restic", "dnsutils", "ack",
 		"imagemagick", "zsh", "patch", "protobuf", "podman", "kubectl", "helm", "helmfile", "k9s", "hyperfine", "jq", "base-devel", "zoxide",
-		"fzf", "act", "gnupg", "pwgen", "python-pipx", "git-delta", "lazygit",
+		"fzf", "act", "gnupg", "pwgen", "python-pipx", "git-delta", "lazygit", "cmctl",
 
 		// dependencies for Playwright
 		"nss", "nspr", "atk", "at-spi2-atk", "libdrm", "libxkbcommon", "at-spi2-core", "libxcomposite", "libxdamage", "libxfixes", "libxrandr",
@@ -89,8 +89,9 @@ var (
 
 	// https://github.com/nodejs/release#release-schedule
 	// first is default
-	nodeVersionNames = []string{"21", "22"}
+	nodeVersionNames = []string{"lts/jod", "21"}
 
+	npmVersion      = "10.8.3"
 	npmPackageNames = []string{"serve", "pnpm", "yarn"}
 
 	volumeFolders = []string{

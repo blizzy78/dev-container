@@ -259,7 +259,7 @@ func npmPackages(ctx context.Context) error {
 
 	s := ". /usr/share/nvm/init-nvm.sh\n" +
 		"nvm use --silent default\n" +
-		"npm install -g --no-audit --no-fund npm\n" +
+		"npm install -g --no-audit --no-fund npm@" + npmVersion + "\n" +
 		"npm install -g --no-audit --no-fund " + strings.Join(npmPackageNames, " ")
 
 	if err := bashStdin(ctx, strings.NewReader(s), "-e"); err != nil {
