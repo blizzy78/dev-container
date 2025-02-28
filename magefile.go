@@ -42,7 +42,7 @@ func Build(ctx context.Context) error {
 	mg.CtxDeps(ctx, Pull)
 
 	return withComposeFile(func() error {
-		if err := dockerCompose("build", "--no-cache", "--force-rm"); err != nil {
+		if err := dockerCompose("--progress", "plain", "build", "--no-cache", "--force-rm"); err != nil {
 			return fmt.Errorf("docker compose build: %w", err)
 		}
 

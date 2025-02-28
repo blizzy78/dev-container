@@ -4,7 +4,7 @@ package main
 
 const (
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
-	protocGenGRPCJavaVersion = "1.68.1"
+	protocGenGRPCJavaVersion = "1.70.0"
 
 	// https://maven.apache.org/download.cgi
 	mavenVersion = "3.9.9"
@@ -23,38 +23,38 @@ var (
 		// https://www.azul.com/downloads/?version=java-21-lts&os=linux&architecture=x86-64-bit&package=jdk-crac#zulu
 		{
 			jdkMajorVersion: "21",
-			jdkVersion:      "21.0.5",
-			version:         "21.38.21",
+			jdkVersion:      "21.0.6",
+			version:         "21.40.17",
 			tag:             "ca-crac",
 		},
 
 		// https://www.azul.com/downloads/?version=java-23&os=linux&architecture=x86-64-bit&package=jdk-crac#zulu
 		{
 			jdkMajorVersion: "23",
-			jdkVersion:      "23.0.1",
-			version:         "23.30.13",
+			jdkVersion:      "23.0.2",
+			version:         "23.32.11",
 			tag:             "ca-crac",
 		},
 
 		// https://www.azul.com/downloads/?version=java-17-lts&os=linux&architecture=x86-64-bit&package=jdk-crac#zulu
 		{
 			jdkMajorVersion: "17",
-			jdkVersion:      "17.0.13",
-			version:         "17.54.21",
+			jdkVersion:      "17.0.14",
+			version:         "17.56.15",
 			tag:             "ca-crac",
 		},
 
 		// https://www.azul.com/downloads/?version=java-11-lts&os=linux&architecture=x86-64-bit&package=jdk#zulu
 		{
 			jdkMajorVersion: "11",
-			jdkVersion:      "11.0.25",
-			version:         "11.76.21",
+			jdkVersion:      "11.0.26",
+			version:         "11.78.15",
 			tag:             "ca",
 		},
 	}
 
 	// https://golang.org/dl/
-	goVersions = []string{"1.23.3"} // first is default
+	goVersions = []string{"1.24.0"} // first is default
 
 	pacmanPackageNames = []string{
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "docker-buildx", "fontconfig",

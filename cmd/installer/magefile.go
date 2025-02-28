@@ -473,8 +473,8 @@ func llm(ctx context.Context) error {
 		return fmt.Errorf("pipx install llm: %w", err)
 	}
 
-	if err := sh.Run("/home/vscode/.local/bin/llm", "install", "llm-claude-3"); err != nil {
-		return fmt.Errorf("llm install llm-claude-3: %w", err)
+	if err := sh.Run("/home/vscode/.local/bin/llm", "install", "llm-anthropic"); err != nil {
+		return fmt.Errorf("llm install llm-anthropic: %w", err)
 	}
 
 	if err := appendText(".zshrc", "export PATH=\"$PATH:/home/vscode/.local/bin\"\n"); err != nil {
