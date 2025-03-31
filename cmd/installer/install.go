@@ -4,7 +4,7 @@ package main
 
 const (
 	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
-	protocGenGRPCJavaVersion = "1.70.0"
+	protocGenGRPCJavaVersion = "1.71.0"
 
 	// https://maven.apache.org/download.cgi
 	mavenVersion = "3.9.9"
@@ -54,7 +54,7 @@ var (
 	}
 
 	// https://golang.org/dl/
-	goVersions = []string{"1.24.0"} // first is default
+	goVersions = []string{"1.24.1"} // first is default
 
 	pacmanPackageNames = []string{
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "docker-buildx", "fontconfig",
