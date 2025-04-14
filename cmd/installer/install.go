@@ -54,11 +54,11 @@ var (
 	}
 
 	// https://golang.org/dl/
-	goVersions = []string{"1.24.1"} // first is default
+	goVersions = []string{"1.24.2"} // first is default
 
 	pacmanPackageNames = []string{
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "docker-buildx", "fontconfig",
-		"postgresql", "git", "graphviz", "inetutils", "openssh", "man-db", "man-pages", "diffutils", "fakeroot", "restic", "dnsutils", "ack",
+		"postgresql", "git", "graphviz", "inetutils", "openssh", "man-db", "man-pages", "diffutils", "fakeroot", "restic", "dnsutils",
 		"imagemagick", "zsh", "patch", "protobuf", "podman", "kubectl", "helm", "helmfile", "k9s", "hyperfine", "jq", "base-devel", "zoxide",
 		"fzf", "act", "gnupg", "pwgen", "python-pipx", "git-delta", "lazygit", "cmctl",
 
@@ -68,7 +68,7 @@ var (
 	}
 
 	yayPackageNames = []string{
-		"icdiff", "nvm-git", "google-cloud-cli", "google-cloud-cli-gke-gcloud-auth-plugin",
+		"icdiff", "nvm-git", "google-cloud-cli", "google-cloud-cli-gke-gcloud-auth-plugin", "ack",
 	}
 
 	goToolModules = []string{
