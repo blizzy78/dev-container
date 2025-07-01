@@ -3,11 +3,8 @@
 package main
 
 const (
-	// https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/
-	protocGenGRPCJavaVersion = "1.72.0"
-
 	// https://maven.apache.org/download.cgi
-	mavenVersion = "3.9.9"
+	mavenVersion = "3.9.10"
 )
 
 type zuluVersion struct {
@@ -46,12 +43,12 @@ var (
 	}
 
 	// https://golang.org/dl/
-	goVersions = []string{"1.24.3"} // first is default
+	goVersions = []string{"1.24.4"} // first is default
 
 	pacmanPackageNames = []string{
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "docker-buildx", "fontconfig",
 		"postgresql", "git", "graphviz", "inetutils", "openssh", "man-db", "man-pages", "diffutils", "fakeroot", "restic", "dnsutils",
-		"imagemagick", "zsh", "patch", "protobuf", "podman", "kubectl", "helm", "helmfile", "k9s", "hyperfine", "jq", "base-devel", "zoxide",
+		"imagemagick", "zsh", "patch", "podman", "kubectl", "helm", "helmfile", "k9s", "hyperfine", "jq", "base-devel", "zoxide",
 		"fzf", "act", "gnupg", "pwgen", "python-pipx", "git-delta", "lazygit", "cmctl",
 
 		// dependencies for Playwright
@@ -104,11 +101,6 @@ var (
 		".supermaven",
 	}
 
-	protocGoModuleURLs = []string{
-		"google.golang.org/protobuf/cmd/protoc-gen-go@latest",
-		"google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest",
-	}
-
 	gitCompletionBashURL = "https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash"
 	gitCompletionZSHURL  = "https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.zsh"
 
@@ -120,8 +112,6 @@ var (
 const tz = "Europe/Berlin"
 
 const (
-	protocGenGRPCJavaURL = "https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/" + protocGenGRPCJavaVersion + "/protoc-gen-grpc-java-" + protocGenGRPCJavaVersion + "-linux-x86_64.exe"
-
 	mavenURL = "https://dlcdn.apache.org/maven/maven-3/" + mavenVersion + "/binaries/apache-maven-" + mavenVersion + "-bin.tar.gz"
 
 	yayURL = "https://aur.archlinux.org/yay-bin.git"

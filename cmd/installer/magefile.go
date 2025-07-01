@@ -44,8 +44,6 @@ func Install(ctx context.Context) {
 		installGo,
 		installGoSecondary,
 		goModules,
-		protocGenGRPCJava,
-		protocGoModules,
 		nvm,
 		nodeJS,
 		npmPackages,
@@ -172,49 +170,6 @@ func goModules(ctx context.Context) error {
 
 	if err := ln("dlv", "/home/vscode/go/bin/dlv-dap"); err != nil {
 		return fmt.Errorf("ln dlv-dap: %w", err)
-	}
-
-	return nil
-}
-
-func protocGenGRPCJava(ctx context.Context) error {
-	mg.CtxDeps(ctx, timezone, caCertificates)
-
-	name := "protoc-gen-grpc-java-" + protocGenGRPCJavaVersion
-	if err := downloadAs(ctx, protocGenGRPCJavaURL, name); err != nil {
-		return fmt.Errorf("download protoc-gen-grpc-java: %w", err)
-	}
-
-	if err := ln(name, "protoc-gen-grpc-java"); err != nil {
-		return fmt.Errorf("ln protoc-gen-grpc-java: %w", err)
-	}
-
-	wd, err := os.Getwd()
-	if err != nil {
-		return fmt.Errorf("Getwd: %w", err)
-	}
-
-	if err := sudoLn(wd+"/protoc-gen-grpc-java", "/usr/bin/protoc-gen-grpc-java"); err != nil {
-		return fmt.Errorf("sudo ln /usr/bin/protoc-gen-grpc-java: %w", err)
-	}
-
-	return nil
-}
-
-func protocGoModules(ctx context.Context) error {
-	mg.CtxDeps(ctx, timezone, caCertificates, installGo)
-
-	for _, mod := range protocGoModuleURLs {
-		err := func() error {
-			goMu.Lock()
-			defer goMu.Unlock()
-
-			return g0("install", mod)
-		}()
-
-		if err != nil {
-			return fmt.Errorf("install protoc Go module %s: %w", mod, err)
-		}
 	}
 
 	return nil
