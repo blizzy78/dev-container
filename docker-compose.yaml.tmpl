@@ -10,7 +10,7 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - {{$volume_prefix}}vscode-extensions:/home/vscode/.vscode-server/extensions
+      - {{$volume_prefix}}vscode-server:/home/vscode/.vscode-server
       - {{$volume_prefix}}workspaces:/home/vscode/workspaces
       - {{$volume_prefix}}zsh-history:/home/vscode/.zsh_history_dir
       - {{$volume_prefix}}zshrc:/home/vscode/.zshrc_dir
@@ -99,10 +99,21 @@ services:
     networks:
       - dev-container
 
+  searxng:
+    container_name: searxng
+    image: searxng/searxng
+    ports:
+      - "25700:8080"
+    volumes:
+      - {{$volume_prefix}}searxng-config:/etc/searxng
+      - {{$volume_prefix}}searxng-data:/var/cache/searxng
+    networks:
+      - dev-container
+
 {{if eq .GOOS "windows"}}
 
 volumes:
-  vscode-extensions:
+  vscode-server:
   workspaces:
   zsh-history:
   zshrc:
@@ -123,6 +134,8 @@ volumes:
   supermaven:
   prometheus:
   grafana:
+  searxng-config:
+  searxng-data:
 
 {{end}}
 

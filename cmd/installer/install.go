@@ -4,7 +4,7 @@ package main
 
 const (
 	// https://maven.apache.org/download.cgi
-	mavenVersion = "3.9.10"
+	mavenVersion = "3.9.11"
 )
 
 type zuluVersion struct {
@@ -36,14 +36,14 @@ var (
 		// https://www.azul.com/downloads/?version=java-11-lts&os=linux&architecture=x86-64-bit&package=jdk#zulu
 		{
 			jdkMajorVersion: "11",
-			jdkVersion:      "11.0.27",
-			version:         "11.80.21",
+			jdkVersion:      "11.0.28",
+			version:         "11.82.19",
 			tag:             "ca",
 		},
 	}
 
 	// https://golang.org/dl/
-	goVersions = []string{"1.24.4"} // first is default
+	goVersions = []string{"1.24.5"} // first is default
 
 	pacmanPackageNames = []string{
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "docker-buildx", "fontconfig",
@@ -84,7 +84,7 @@ var (
 	npmPackageNames = []string{"serve", "pnpm", "yarn"}
 
 	volumeFolders = []string{
-		".vscode-server/extensions",
+		".vscode-server",
 		"workspaces",
 		".zsh_history_dir",
 		".zshrc_dir",
