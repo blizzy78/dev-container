@@ -20,16 +20,16 @@ var (
 		// https://www.azul.com/downloads/?version=java-21-lts&os=linux&architecture=x86-64-bit&package=jdk-crac#zulu
 		{
 			jdkMajorVersion: "21",
-			jdkVersion:      "21.0.7",
-			version:         "21.42.21",
+			jdkVersion:      "21.0.8",
+			version:         "21.44.17",
 			tag:             "ca-crac",
 		},
 
 		// https://www.azul.com/downloads/?version=java-17-lts&os=linux&architecture=x86-64-bit&package=jdk-crac#zulu
 		{
 			jdkMajorVersion: "17",
-			jdkVersion:      "17.0.15",
-			version:         "17.58.25",
+			jdkVersion:      "17.0.16",
+			version:         "17.60.17",
 			tag:             "ca-crac",
 		},
 
@@ -43,7 +43,7 @@ var (
 	}
 
 	// https://golang.org/dl/
-	goVersions = []string{"1.24.5"} // first is default
+	goVersions = []string{"1.24.6"} // first is default
 
 	pacmanPackageNames = []string{
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "docker-buildx", "fontconfig",
@@ -78,7 +78,7 @@ var (
 
 	// https://github.com/nodejs/release#release-schedule
 	// first is default
-	nodeVersionNames = []string{"lts/jod", "21"}
+	nodeVersionNames = []string{"lts/jod"}
 
 	npmVersion      = "10.8.3"
 	npmPackageNames = []string{"serve", "pnpm", "yarn"}

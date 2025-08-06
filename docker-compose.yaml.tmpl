@@ -27,19 +27,23 @@ services:
       - {{$volume_prefix}}gnupg:/home/vscode/.gnupg
       - {{$volume_prefix}}supermaven:/home/vscode/.supermaven
       - /var/run/docker.sock.raw:/var/run/docker.sock
-    networks:
-      - dev-container
+    network_mode: bridge
+    links:
+      - pg
+      #- languagetool
+      #- redis
+      - searxng
     command: /home/vscode/containerrunner -config /home/vscode/.containerrunner/config.yaml
 
   pg:
     container_name: pg
+    hostname: pg
     image: pgvector/pgvector:pg15
     environment:
       - POSTGRES_PASSWORD=postgres
     volumes:
       - {{$volume_prefix}}pg:/var/lib/postgresql/data
-    networks:
-      - dev-container
+    network_mode: bridge
 
   pgadmin:
     container_name: pgadmin
@@ -49,34 +53,27 @@ services:
       - PGADMIN_DEFAULT_PASSWORD=postgres
     volumes:
       - {{$volume_prefix}}pgadmin:/var/lib/pgadmin
+    network_mode: bridge
+    links:
+      - pg
     ports:
       - "25432:80"
-    networks:
-      - dev-container
     depends_on:
       - pg
-
-  embedding:
-    container_name: embedding
-    image: ghcr.io/bergos/embedding-server
-    networks:
-      - dev-container
 
   languagetool:
     container_name: languagetool
     image: erikvl87/languagetool
     environment:
       Java_Xmx: "2G"
-    networks:
-      - dev-container
+    network_mode: bridge
 
   redis:
     container_name: redis
     image: redis:alpine3.19
     volumes:
       - {{$volume_prefix}}redis:/data
-    networks:
-      - dev-container
+    network_mode: bridge
     command: redis-server --save 60 1 --loglevel warning
 
   prometheus:
@@ -85,8 +82,7 @@ services:
     volumes:
       - ./prometheus.yaml:/opt/bitnami/prometheus/conf/prometheus.yml
       - {{$volume_prefix}}prometheus:/opt/bitnami/prometheus/data
-    networks:
-      - dev-container
+    network_mode: bridge
 
   grafana:
     container_name: grafana
@@ -96,19 +92,21 @@ services:
     volumes:
       - ./grafana.ini:/opt/bitnami/grafana/conf/grafana.ini
       - {{$volume_prefix}}grafana:/opt/bitnami/grafana/data
-    networks:
-      - dev-container
+    network_mode: bridge
+    links:
+      - prometheus
+    depends_on:
+      - prometheus
 
   searxng:
     container_name: searxng
     image: searxng/searxng
+    network_mode: bridge
     ports:
       - "25700:8080"
     volumes:
       - {{$volume_prefix}}searxng-config:/etc/searxng
       - {{$volume_prefix}}searxng-data:/var/cache/searxng
-    networks:
-      - dev-container
 
 {{if eq .GOOS "windows"}}
 
@@ -138,9 +136,5 @@ volumes:
   searxng-data:
 
 {{end}}
-
-networks:
-  dev-container:
-    name: dev-container
 
 {{- end}}
