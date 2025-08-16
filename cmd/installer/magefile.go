@@ -53,6 +53,7 @@ func Install(ctx context.Context) {
 		gitPrompt,
 		zoxide,
 		llm,
+		helmPlugins,
 	)
 
 	mg.CtxDeps(ctx,
@@ -434,6 +435,18 @@ func llm(ctx context.Context) error {
 
 	if err := appendText(".zshrc", "export PATH=\"$PATH:/home/vscode/.local/bin\"\n"); err != nil {
 		return fmt.Errorf("add ~/.local/bin PATH to .zshrc: %w", err)
+	}
+
+	return nil
+}
+
+func helmPlugins(ctx context.Context) error {
+	mg.CtxDeps(ctx, pacmanPackages)
+
+	for _, url := range helmPluginURLs {
+		if err := sh.Run("helm", "plugin", "install", url); err != nil {
+			return fmt.Errorf("helm plugin install %s: %w", url, err)
+		}
 	}
 
 	return nil

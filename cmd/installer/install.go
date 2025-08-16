@@ -43,7 +43,7 @@ var (
 	}
 
 	// https://golang.org/dl/
-	goVersions = []string{"1.24.6"} // first is default
+	goVersions = []string{"1.25.0"} // first is default
 
 	pacmanPackageNames = []string{
 		"which", "wget", "vim", "nano", "zip", "unzip", "htop", "gcc", "make", "gnu-netcat", "socat", "docker", "docker-buildx", "fontconfig",
@@ -82,6 +82,11 @@ var (
 
 	npmVersion      = "10.8.3"
 	npmPackageNames = []string{"serve", "pnpm", "yarn"}
+
+	helmPluginURLs = []string{
+		"https://github.com/databus23/helm-diff",
+		"https://github.com/hayorov/helm-gcs.git",
+	}
 
 	volumeFolders = []string{
 		".vscode-server",
